@@ -1067,8 +1067,11 @@ class Field(MetaField('DummyField', (object,), {})):
             if self.recursive:
                 self.compute_value(record)
             else:
-                recs = record._in_cache_without(self)
-                recs = recs.with_prefetch(record._prefetch)
+                # TODO: bloopark speed improvment LRMIG-851
+                recs = record
+                if self.store:
+                    recs = recs._in_cache_without(self)
+                    recs = recs.with_prefetch(record._prefetch)
                 self.compute_value(recs)
 
         else:
