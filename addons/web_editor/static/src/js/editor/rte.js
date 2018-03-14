@@ -19,7 +19,6 @@ var History = function History($editable) {
     var aUndo = [];
     var pos = 0;
     var toSnap;
-
     this.makeSnap = function (event, rng) {
         rng = rng || range.create();
         var elEditable = $(rng && rng.sc).closest('.o_editable')[0];
@@ -94,6 +93,15 @@ var History = function History($editable) {
     };
 
     this.undo = function () {
+        // BLOOPARK START
+        /* this fix to core becuase we are not able to override the function
+        from outside this module, and these lines to cover a bug found by cesar on LRMIG-878
+        so when we try to edit a report for frame contract,
+        then we try to undo changes couple of times it stop working */
+        if(aUndo.length === 1){
+            pos = 1;
+        }
+        // BLOOPARK END
         if (!pos) { return; }
         var _toSnap = toSnap;
         if (_toSnap) {
