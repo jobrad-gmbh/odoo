@@ -2486,7 +2486,7 @@ export function fillEmpty(el) {
         fillers.zws = zws;
         // If the parent was filled with BR and we are filling the `el` here
         // we should remove the parent `br` otherwise we fill the el twice.
-        // we do that only for visible el as in `cleanForSave` we remove the 
+        // we do that only for visible el as in `cleanForSave` we remove the
         // non visible elements (with no classes if they are empty) so we should
         // keep the br
         if (el.classList.length && fillers.br) {
