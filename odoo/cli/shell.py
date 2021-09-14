@@ -52,7 +52,7 @@ class Console(code.InteractiveConsole):
 
 class Shell(Command):
     """Start odoo in an interactive shell"""
-    supported_shells = ['ipython', 'ptpython', 'bpython', 'python']
+    supported_shells = ['jupyter_kernel', 'ipython', 'ptpython', 'bpython', 'python']
 
     def init(self, args):
         config.parser.prog = f'{Path(sys.argv[0]).name} {self.name}'
@@ -86,6 +86,13 @@ class Shell(Command):
                     _logger.warning("Could not start '%s' shell." % shell)
                     _logger.debug("Shell error:", exc_info=True)
 
+    def jupyter_kernel(self, local_vars, jupyter_connection_file):
+        _logger.info('🪐🛸👽 LAUNCHING JUPYTER 👽🛸🪐')
+        for i in sorted(local_vars):
+            print('%s: %s' % (i, local_vars[i]))
+        from ipykernel.kernelapp import launch_new_instance
+        launch_new_instance(argv=['-f', jupyter_connection_file], user_ns=local_vars)
+
     def ipython(self, local_vars):
         from IPython import start_ipython
         start_ipython(argv=[], user_ns=local_vars)
@@ -101,7 +108,7 @@ class Shell(Command):
     def python(self, local_vars):
         Console(locals=local_vars).interact()
 
-    def shell(self, dbname):
+    def shell(self, dbname, jupyter_connection_file):
         local_vars = {
             'openerp': odoo,
             'odoo': odoo,
@@ -125,6 +132,11 @@ class Shell(Command):
             self.console(local_vars)
 
     def run(self, args):
+        try:
+            i = args.index('-f')
+            jupyter_connection_file = args[i+1]
+        except ValueError:
+            jupyter_connection_file = None
         self.init(args)
-        self.shell(config['db_name'])
+        self.shell(config['db_name'], jupyter_connection_file)
         return 0
