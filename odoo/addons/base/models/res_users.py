@@ -1061,7 +1061,8 @@ class GroupsImplied(models.Model):
                            JOIN group_imply i ON (r.gid = i.hid)
                           WHERE i.gid = %(gid)s
                 """, dict(gid=group.id))
-            self._check_one_user_type()
+            # JobRad: commented out because of performance problems after migration when updating groups
+            # self._check_one_user_type()
         return res
 
 class UsersImplied(models.Model):
