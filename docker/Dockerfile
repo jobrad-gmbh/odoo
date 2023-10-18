@@ -32,11 +32,12 @@ RUN curl -sL -o /tmp/wkhtmltox.deb https://github.com/wkhtmltopdf/wkhtmltopdf/re
     && rm -rf /tmp/wkhtmltox.deb
 
 # ghostscript
+COPY docker/ghostscript_cmap_copyfix.diff /tmp/ghostscript_cmap_copyfix.diff
 RUN GHOSTSCRIPT_VERSION=10020 && GHOSTSCRIPT_FILE_NAME=ghostscript-10.02.0.tar.gz \
     && curl -sL -o /tmp/${GHOSTSCRIPT_FILE_NAME} https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs${GHOSTSCRIPT_VERSION}/${GHOSTSCRIPT_FILE_NAME} \
     && tar -xzf /tmp/${GHOSTSCRIPT_FILE_NAME} -C /tmp \
     && cd /tmp/$(basename ${GHOSTSCRIPT_FILE_NAME} .tar.gz)/ \
-    && patch -p1 < ghostscript_cmap_copyfix.diff \
+    && patch -p1 < /tmp/ghostscript_cmap_copyfix.diff \
     && ./configure \
     && make \
     && make install \
