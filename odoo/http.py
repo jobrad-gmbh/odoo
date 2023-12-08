@@ -1439,8 +1439,14 @@ class Root(object):
         #   (the one using the cookie). That is a special feature of the Session Javascript class.
         # - It could allow session fixation attacks.
         if not explicit_session and hasattr(response, 'set_cookie'):
+            # breakpoint()
+            domain = httprequest.headers['Host']
+            if 'odoo' in domain:
+                print(f"****************** headers: {httprequest.headers} *********************")
+                domain = None
+            print(f"****************** domain: {domain} *********************")
             response.set_cookie(
-                'session_id', httprequest.session.sid, max_age=1 * 24 * 60 * 60, httponly=True)
+                    'session_id', httprequest.session.sid, max_age=1 * 24 * 60 * 60, httponly=True, domain=domain)
 
         return response
 
