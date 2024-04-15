@@ -33,16 +33,18 @@ RUN curl -sL -o /tmp/wkhtmltox.deb https://github.com/wkhtmltopdf/wkhtmltopdf/re
 
 # ghostscript
 COPY docker/ghostscript_cmap_copyfix.diff /tmp/ghostscript_cmap_copyfix.diff
-RUN GHOSTSCRIPT_VERSION=10020 && GHOSTSCRIPT_FILE_NAME=ghostscript-10.02.0.tar.gz \
+RUN GHOSTSCRIPT_VERSION=10020 \
+    && GHOSTSCRIPT_FILE_NAME=ghostscript-10.02.0.tar.gz \
+    && GHOSTSCRIPT_BASE_NAME=$(basename ${GHOSTSCRIPT_FILE_NAME} .tar.gz) \
     && curl -sL -o /tmp/${GHOSTSCRIPT_FILE_NAME} https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs${GHOSTSCRIPT_VERSION}/${GHOSTSCRIPT_FILE_NAME} \
     && tar -xzf /tmp/${GHOSTSCRIPT_FILE_NAME} -C /tmp \
-    && cd /tmp/$(basename ${GHOSTSCRIPT_FILE_NAME} .tar.gz)/ \
+    && cd /tmp/${GHOSTSCRIPT_BASE_NAME}/ \
     && patch -p1 < /tmp/ghostscript_cmap_copyfix.diff \
     && ./configure \
     && make \
     && make install \
     && ln -s /usr/local/bin/gs /usr/local/bin/ghostscript \
-    && rm -rf /tmp/${GHOSTSCRIPT_FILE_NAME} /tmp/$(basename ${GHOSTSCRIPT_FILE_NAME} .tar.gz})
+    && rm -rf /tmp/${GHOSTSCRIPT_FILE_NAME} /tmp/${GHOSTSCRIPT_BASE_NAME}
 
 # odoo directories
 RUN useradd -s /usr/sbin/nologin --create-home --password odoo odoo \
