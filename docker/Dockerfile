@@ -1,4 +1,4 @@
-FROM ubuntu:20.04
+FROM ubuntu:24.04
 
 # variables & locales
 ENV TZ=Europe/Berlin
@@ -21,15 +21,10 @@ ENV LC_ALL en_US.UTF-8
 RUN apt-get update -qq \
     && apt-get install -y --no-install-recommends python3 python3-pip python3-dev libjpeg-dev libsasl2-dev libxslt-dev libxml2-dev ca-certificates \
     curl file xfonts-75dpi xfonts-base unzip build-essential fontconfig libfontconfig1 libpng16-16 \
-    libldap2-dev libssl-dev poppler-utils ttf-dejavu cabextract libfreetype6 python3-magic git libffi-dev libc6 \
-    libstdc++6 lib32z1 libpoppler-cpp-dev pkg-config librdkafka-dev python3-cairocffi node-less libpq-dev \
+    libldap2-dev libssl-dev poppler-utils fonts-dejavu cabextract libfreetype6 python3-magic git libffi-dev libc6 \
+    libstdc++6 lib32z1 libpoppler-cpp-dev pkg-config librdkafka-dev python3-cairocffi node-less libpq-dev wkhtmltopdf \
+    libbz2-dev libreadline-dev libsqlite3-dev liblzma-dev \
     && rm -rf /var/lib/apt/lists/*
-
-# wkhtmltopdf
-RUN curl -sL -o /tmp/wkhtmltox.deb https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.focal_amd64.deb \
-    && echo 'ae4e85641f004a2097621787bf4381e962fb91e1 /tmp/wkhtmltox.deb' | sha1sum -c - \
-    && apt-get install -y --no-install-recommends /tmp/wkhtmltox.deb \
-    && rm -rf /tmp/wkhtmltox.deb
 
 # ghostscript
 COPY docker/ghostscript_cmap_copyfix.diff /tmp/ghostscript_cmap_copyfix.diff
@@ -47,7 +42,8 @@ RUN GHOSTSCRIPT_VERSION=10020 \
     && rm -rf /tmp/${GHOSTSCRIPT_FILE_NAME} /tmp/${GHOSTSCRIPT_BASE_NAME}
 
 # odoo directories
-RUN useradd -s /usr/sbin/nologin --create-home --password odoo odoo \
+RUN userdel -r ubuntu \
+  && useradd -s /usr/sbin/nologin --create-home --password odoo odoo \
   && mkdir /home/odoo/.local \
   && chown odoo:odoo /home/odoo/.local \
   && mkdir --parents /opt/odoo/tests \
@@ -56,6 +52,14 @@ RUN useradd -s /usr/sbin/nologin --create-home --password odoo odoo \
 # msfonts
 COPY docker/msfonts.sh /tmp/msfonts.sh
 RUN chmod +x /tmp/msfonts.sh; sync; /tmp/msfonts.sh; rm -rf /tmp/msfonts.sh
+
+# Python
+ARG PYTHON_VERSION=3.8
+ENV PYENV_ROOT="$HOME/.pyenv"
+ENV PATH="${PYENV_ROOT}/shims:${PYENV_ROOT}/bin:${PATH}"
+RUN git clone --depth 1 -b v2.4.1 https://github.com/pyenv/pyenv.git "${PYENV_ROOT}" \
+    && pyenv install ${PYTHON_VERSION} \
+    && pyenv global ${PYTHON_VERSION}
 
 # pip dependencies
 COPY requirements.txt /tmp/requirements.txt
