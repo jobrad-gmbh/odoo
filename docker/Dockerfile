@@ -1,4 +1,4 @@
-FROM ubuntu:24.04
+FROM ubuntu:22.04
 
 # variables & locales
 ENV TZ=Europe/Berlin
@@ -42,8 +42,7 @@ RUN GHOSTSCRIPT_VERSION=10020 \
     && rm -rf /tmp/${GHOSTSCRIPT_FILE_NAME} /tmp/${GHOSTSCRIPT_BASE_NAME}
 
 # odoo directories
-RUN userdel -r ubuntu \
-  && useradd -s /usr/sbin/nologin --create-home --password odoo odoo \
+RUN useradd -s /usr/sbin/nologin --create-home --password odoo odoo \
   && mkdir /home/odoo/.local \
   && chown odoo:odoo /home/odoo/.local \
   && mkdir --parents /opt/odoo/tests \
