@@ -53,7 +53,7 @@ COPY docker/msfonts.sh /tmp/msfonts.sh
 RUN chmod +x /tmp/msfonts.sh; sync; /tmp/msfonts.sh; rm -rf /tmp/msfonts.sh
 
 # Python
-ARG PYTHON_VERSION=3.8
+ARG PYTHON_VERSION=3.8.10
 ENV PYENV_ROOT="$HOME/.pyenv"
 ENV PATH="${PYENV_ROOT}/shims:${PYENV_ROOT}/bin:${PATH}"
 RUN git clone --depth 1 -b v2.4.1 https://github.com/pyenv/pyenv.git "${PYENV_ROOT}" \
