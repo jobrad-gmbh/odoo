@@ -4,11 +4,9 @@ import base64
 from collections import defaultdict, OrderedDict
 from decorator import decorator
 from operator import attrgetter
-import importlib
 import io
 import logging
 import os
-import pkg_resources
 import shutil
 import tempfile
 import threading
@@ -78,6 +76,7 @@ class ModuleCategory(models.Model):
     _name = "ir.module.category"
     _description = "Application"
     _order = 'name'
+    _allow_sudo_commands = False
 
     @api.depends('module_ids')
     def _compute_module_nr(self):
@@ -149,11 +148,18 @@ STATES = [
     ('to install', 'To be installed'),
 ]
 
+XML_DECLARATION = (
+    '<?xml version='.encode('utf-8'),
+    '<?xml version='.encode('utf-16-be'),
+    '<?xml version='.encode('utf-16-le'),
+)
+
 class Module(models.Model):
     _name = "ir.module.module"
     _rec_name = "shortdesc"
     _description = "Module"
     _order = 'application desc,sequence,name'
+    _allow_sudo_commands = False
 
     @api.model
     def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
@@ -182,6 +188,11 @@ class Module(models.Model):
             if path:
                 with tools.file_open(path, 'rb') as desc_file:
                     doc = desc_file.read()
+                    if not doc.startswith(XML_DECLARATION):
+                        try:
+                            doc = doc.decode('utf-8')
+                        except UnicodeDecodeError:
+                            pass
                     html = lxml.html.document_fromstring(doc)
                     for element, attribute, link, pos in html.iterlinks():
                         if element.get('src') and not '//' in element.get('src') and not 'static/' in element.get('src'):
@@ -238,15 +249,12 @@ class Module(models.Model):
 
     @api.depends('icon')
     def _get_icon_image(self):
+        self.icon_image = ''
         for module in self:
-            module.icon_image = ''
-            if module.icon:
-                path_parts = module.icon.split('/')
-                path = modules.get_module_resource(path_parts[1], *path_parts[2:])
-            elif module.id:
-                path = modules.module.get_module_icon(module.name)
-            else:
-                path = ''
+            if not module.id:
+                continue
+            icon = module.icon or modules.module.get_module_icon(module.name)
+            path = modules.get_module_resource(*icon.split("/")[1:])
             if path:
                 with tools.file_open(path, 'rb') as image_file:
                     module.icon_image = base64.b64encode(image_file.read())
@@ -320,45 +328,15 @@ class Module(models.Model):
         self.clear_caches()
         return super(Module, self).unlink()
 
-    @staticmethod
-    def _check_python_external_dependency(pydep):
-        try:
-            pkg_resources.get_distribution(pydep)
-        except pkg_resources.DistributionNotFound as e:
-            try:
-                importlib.import_module(pydep)
-                _logger.info("python external dependency on '%s' does not appear to be a valid PyPI package. Using a PyPI package name is recommended.", pydep)
-            except ImportError:
-                # backward compatibility attempt failed
-                _logger.warning("DistributionNotFound: %s", e)
-                raise Exception('Python library not installed: %s' % (pydep,))
-        except pkg_resources.VersionConflict as e:
-            _logger.warning("VersionConflict: %s", e)
-            raise Exception('Python library version conflict: %s' % (pydep,))
-        except Exception as e:
-            _logger.warning("get_distribution(%s) failed: %s", pydep, e)
-            raise Exception('Error finding python library %s' % (pydep,))
-
-
-    @staticmethod
-    def _check_external_dependencies(terp):
-        depends = terp.get('external_dependencies')
-        if not depends:
-            return
-        for pydep in depends.get('python', []):
-            Module._check_python_external_dependency(pydep)
-
-        for binary in depends.get('bin', []):
-            try:
-                tools.find_in_path(binary)
-            except IOError:
-                raise Exception('Unable to find %r in path' % (binary,))
+    def _get_modules_to_load_domain(self):
+        """ Domain to retrieve the modules that should be loaded by the registry. """
+        return [('state', '=', 'installed')]
 
     @classmethod
     def check_external_dependencies(cls, module_name, newstate='to install'):
         terp = cls.get_module_info(module_name)
         try:
-            cls._check_external_dependencies(terp)
+            modules.check_manifest_dependencies(terp)
         except Exception as e:
             if newstate == 'to install':
                 msg = _('Unable to install module "%s" because an external dependency is not met: %s')
@@ -472,7 +450,7 @@ class Module(models.Model):
         # configure the CoA on his own company, which makes no sense.
         if request:
             request.allowed_company_ids = self.env.companies.ids
-        return self._button_immediate_function(type(self).button_install)
+        return self._button_immediate_function(self.env.registry[self._name].button_install)
 
     @assert_log_admin_access
     def button_install_cancel(self):
@@ -614,12 +592,13 @@ class Module(models.Model):
         returns the next res.config action to execute
         """
         _logger.info('User #%d triggered module uninstallation', self.env.uid)
-        return self._button_immediate_function(type(self).button_uninstall)
+        return self._button_immediate_function(self.env.registry[self._name].button_uninstall)
 
     @assert_log_admin_access
     def button_uninstall(self):
-        if 'base' in self.mapped('name'):
-            raise UserError(_("The `base` module cannot be uninstalled"))
+        un_installable_modules = set(odoo.conf.server_wide_modules) & set(self.mapped('name'))
+        if un_installable_modules:
+            raise UserError(_("Those modules cannot be uninstalled: %s", ', '.join(un_installable_modules)))
         if any(state not in ('installed', 'to upgrade') for state in self.mapped('state')):
             raise UserError(_(
                 "One or more of the selected modules have already been uninstalled, if you "
@@ -651,7 +630,7 @@ class Module(models.Model):
         Upgrade the selected module(s) immediately and fully,
         return the next res.config action to execute
         """
-        return self._button_immediate_function(type(self).button_upgrade)
+        return self._button_immediate_function(self.env.registry[self._name].button_upgrade)
 
     @assert_log_admin_access
     def button_upgrade(self):
@@ -1000,6 +979,7 @@ DEP_STATES = STATES + [('unknown', 'Unknown')]
 class ModuleDependency(models.Model):
     _name = "ir.module.module.dependency"
     _description = "Module dependency"
+    _allow_sudo_commands = False
 
     # the dependency name
     name = fields.Char(index=True)
@@ -1042,6 +1022,7 @@ class ModuleDependency(models.Model):
 class ModuleExclusion(models.Model):
     _name = "ir.module.module.exclusion"
     _description = "Module exclusion"
+    _allow_sudo_commands = False
 
     # the exclusion name
     name = fields.Char(index=True)

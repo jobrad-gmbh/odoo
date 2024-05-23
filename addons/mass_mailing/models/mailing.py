@@ -37,8 +37,7 @@ image_re = re.compile(r"data:(image/[A-Za-z]+);base64,(.*)")
 
 
 class MassMailing(models.Model):
-    """ MassMailing models a wave of emails for a mass mailign campaign.
-    A mass mailing is an occurence of sending emails. """
+    """ Mass Mailing models the sending of emails to a list of recipients for a mass mailing campaign."""
     _name = 'mailing.mailing'
     _description = 'Mass Mailing'
     _inherit = ['mail.thread', 'mail.activity.mixin', 'mail.render.mixin']
@@ -294,7 +293,7 @@ class MassMailing(models.Model):
         return super(MassMailing, self).copy(default=default)
 
     def _group_expand_states(self, states, domain, order):
-        return [key for key, val in type(self).state.selection]
+        return [key for key, val in self._fields['state'].selection]
 
     # ------------------------------------------------------
     # ACTIONS
@@ -471,35 +470,12 @@ class MassMailing(models.Model):
         self.ensure_one()
         target = self.env[self.mailing_model_real]
 
-        # avoid loading a large number of records in memory
-        # + use a basic heuristic for extracting emails
         query = """
-            SELECT lower(substring(t.%(mail_field)s, '([^ ,;<@]+@[^> ,;]+)'))
+            SELECT s.email
               FROM mailing_trace s
               JOIN %(target)s t ON (s.res_id = t.id)
-             WHERE substring(t.%(mail_field)s, '([^ ,;<@]+@[^> ,;]+)') IS NOT NULL
+             WHERE s.email IS NOT NULL
         """
-
-        # Apply same 'get email field' rule from mail_thread.message_get_default_recipients
-        if 'partner_id' in target._fields and target._fields['partner_id'].store:
-            mail_field = 'email'
-            query = """
-                SELECT lower(substring(p.%(mail_field)s, '([^ ,;<@]+@[^> ,;]+)'))
-                  FROM mailing_trace s
-                  JOIN %(target)s t ON (s.res_id = t.id)
-                  JOIN res_partner p ON (t.partner_id = p.id)
-                 WHERE substring(p.%(mail_field)s, '([^ ,;<@]+@[^> ,;]+)') IS NOT NULL
-            """
-        elif issubclass(type(target), self.pool['mail.thread.blacklist']):
-            mail_field = 'email_normalized'
-        elif 'email_from' in target._fields and target._fields['email_from'].store:
-            mail_field = 'email_from'
-        elif 'partner_email' in target._fields and target._fields['partner_email'].store:
-            mail_field = 'partner_email'
-        elif 'email' in target._fields and target._fields['email'].store:
-            mail_field = 'email'
-        else:
-            raise UserError(_("Unsupported mass mailing model %s", self.mailing_model_id.name))
 
         if self.unique_ab_testing:
             query += """
@@ -510,8 +486,8 @@ class MassMailing(models.Model):
                AND s.mass_mailing_id = %%(mailing_id)s
                AND s.model = %%(target_model)s;
             """
-        query = query % {'target': target._table, 'mail_field': mail_field}
-        params = {'mailing_id': self.id, 'mailing_campaign_id': self.campaign_id.id, 'target_model': self.mailing_model_real}
+        query = query % {'target': target._table}
+        params = {'mailing_campaign_id': self.campaign_id.id, 'mailing_id': self.id, 'target_model': self.mailing_model_real}
         self._cr.execute(query, params)
         seen_list = set(m[0] for m in self._cr.fetchall())
         _logger.info(

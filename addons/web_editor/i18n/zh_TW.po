@@ -5,6 +5,8 @@
 # Translators:
 # Benson <Benson.Dr@Gmail.com>, 2021
 # 敬雲 林 <chingyun@yuanchih-consult.com>, 2021
+# Wil Odoo, 2024
+# Tony Ng, 2024
 # 
 msgid ""
 msgstr ""
@@ -12,8 +14,8 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-11-27 14:13+0000\n"
 "PO-Revision-Date: 2020-09-07 08:20+0000\n"
-"Last-Translator: 敬雲 林 <chingyun@yuanchih-consult.com>, 2021\n"
-"Language-Team: Chinese (Taiwan) (https://www.transifex.com/odoo/teams/41243/zh_TW/)\n"
+"Last-Translator: Tony Ng, 2024\n"
+"Language-Team: Chinese (Taiwan) (https://app.transifex.com/odoo/teams/41243/zh_TW/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
@@ -93,7 +95,7 @@ msgstr "1977"
 #. module: web_editor
 #: model_terms:ir.ui.view,arch_db:web_editor.snippet_options_image_optimization_widgets
 msgid "<i class=\"fa fa-warning\"/> External Image"
-msgstr ""
+msgstr "<i class=\"fa fa-warning\"/> 外部圖片"
 
 #. module: web_editor
 #: model_terms:ir.ui.view,arch_db:web_editor.snippets
@@ -302,7 +304,7 @@ msgstr "背景位置"
 #. module: web_editor
 #: model_terms:ir.ui.view,arch_db:web_editor.snippet_options_background_options
 msgid "Blobs"
-msgstr ""
+msgstr "流體、油污效果"
 
 #. module: web_editor
 #. openerp-web
@@ -319,7 +321,7 @@ msgstr "Blocks & Rainy"
 #. module: web_editor
 #: model_terms:ir.ui.view,arch_db:web_editor.snippet_options_image_optimization_widgets
 msgid "Blur"
-msgstr ""
+msgstr "模糊"
 
 #. module: web_editor
 #. openerp-web
@@ -436,7 +438,7 @@ msgstr "列"
 #: code:addons/web_editor/static/src/xml/snippets.xml:0
 #, python-format
 msgid "Combinations"
-msgstr ""
+msgstr "組合"
 
 #. module: web_editor
 #. openerp-web
@@ -780,6 +782,13 @@ msgstr "字體大小"
 
 #. module: web_editor
 #. openerp-web
+#: code:addons/web_editor/static/src/js/editor/snippets.editor.js:0
+#, python-format
+msgid "For technical reasons, this block cannot be dropped here"
+msgstr "由於技術原因，此方塊不可放置此處"
+
+#. module: web_editor
+#. openerp-web
 #: code:addons/web_editor/static/src/xml/ace.xml:0
 #, python-format
 msgid "Format"
@@ -1000,7 +1009,7 @@ msgstr "圖片預覽"
 #. module: web_editor
 #: model:ir.model.fields,field_description:web_editor.field_ir_attachment__image_src
 msgid "Image Src"
-msgstr "Image Src"
+msgstr "圖片來源"
 
 #. module: web_editor
 #. openerp-web
@@ -1060,6 +1069,12 @@ msgstr "插入影片"
 #, python-format
 msgid "Install"
 msgstr "安裝"
+
+#. module: web_editor
+#: code:addons/web_editor/models/ir_ui_view.py:0
+#, python-format
+msgid "Invalid field value for %s: %s"
+msgstr "%s 的欄位值無效：%s"
 
 #. module: web_editor
 #. openerp-web
@@ -1278,7 +1293,7 @@ msgstr "找不到圖片。"
 #: code:addons/web_editor/static/src/js/editor/snippets.editor.js:0
 #, python-format
 msgid "No location to drop in"
-msgstr ""
+msgstr "無處可放置"
 
 #. module: web_editor
 #. openerp-web
@@ -1296,7 +1311,7 @@ msgstr "無"
 #: model_terms:ir.ui.view,arch_db:web_editor.snippet_options_image_optimization_widgets
 #, python-format
 msgid "Normal"
-msgstr "一般"
+msgstr "正常"
 
 #. module: web_editor
 #. openerp-web
@@ -1370,7 +1385,7 @@ msgstr "原始(未優化、未調整大小)附件"
 #. module: web_editor
 #: model_terms:ir.ui.view,arch_db:web_editor.snippet_options_background_options
 msgid "Origins"
-msgstr ""
+msgstr "基本幾何圖形"
 
 #. module: web_editor
 #. openerp-web
@@ -1468,7 +1483,7 @@ msgid ""
 "Quality options are unavailable for external images. If you want to change "
 "this image's quality, please first download it from the original source and "
 "upload it in Odoo."
-msgstr ""
+msgstr "外部圖片無法使用品質選項。如果你想更改此圖片的品質，請先從原始來源下載圖片，然後上載至 Odoo。"
 
 #. module: web_editor
 #. openerp-web
@@ -1576,7 +1591,7 @@ msgstr "只讀字段"
 #: code:addons/web_editor/static/src/js/editor/rte.summernote.js:0
 #, python-format
 msgid "Redo"
-msgstr "復原"
+msgstr "取消復原"
 
 #. module: web_editor
 #. openerp-web
@@ -1815,7 +1830,7 @@ msgstr "從文件中選擇"
 #. module: web_editor
 #: model_terms:ir.ui.view,arch_db:web_editor.snippet_options_image_optimization_widgets
 msgid "Sepia"
-msgstr ""
+msgstr "泛黃"
 
 #. module: web_editor
 #. openerp-web
@@ -2151,7 +2166,7 @@ msgstr "下劃線"
 #: code:addons/web_editor/static/src/js/editor/rte.summernote.js:0
 #, python-format
 msgid "Undo"
-msgstr "取消"
+msgstr "復原"
 
 #. module: web_editor
 #. openerp-web
@@ -2191,7 +2206,7 @@ msgstr "上傳圖像"
 #. module: web_editor
 #: model_terms:ir.ui.view,arch_db:web_editor.snippet_options_image_optimization_widgets
 msgid "Valencia"
-msgstr ""
+msgstr "華倫西亞"
 
 #. module: web_editor
 #. openerp-web
@@ -2251,7 +2266,7 @@ msgstr "Vimeo"
 #. module: web_editor
 #: model_terms:ir.ui.view,arch_db:web_editor.snippet_options_image_optimization_widgets
 msgid "Walden"
-msgstr ""
+msgstr "Walden"
 
 #. module: web_editor
 #: model_terms:ir.ui.view,arch_db:web_editor.snippet_options_background_options
@@ -2357,7 +2372,7 @@ msgstr "縮小"
 #. module: web_editor
 #: model_terms:ir.ui.view,arch_db:web_editor.snippet_options_image_optimization_widgets
 msgid "add"
-msgstr "添加"
+msgstr "相加"
 
 #. module: web_editor
 #. openerp-web
@@ -2408,12 +2423,12 @@ msgstr "https://www.odoo.com/mydocument"
 #. module: web_editor
 #: model_terms:ir.ui.view,arch_db:web_editor.snippet_options_image_optimization_widgets
 msgid "lighten"
-msgstr ""
+msgstr "變亮"
 
 #. module: web_editor
 #: model_terms:ir.ui.view,arch_db:web_editor.snippet_options_image_optimization_widgets
 msgid "multiply"
-msgstr ""
+msgstr "相乘"
 
 #. module: web_editor
 #: model_terms:ir.ui.view,arch_db:web_editor.snippet_options_image_optimization_widgets
@@ -2431,7 +2446,7 @@ msgstr "px"
 #. module: web_editor
 #: model_terms:ir.ui.view,arch_db:web_editor.snippet_options_image_optimization_widgets
 msgid "screen"
-msgstr ""
+msgstr "螢幕"
 
 #. module: web_editor
 #. openerp-web
@@ -2443,7 +2458,7 @@ msgstr "影片"
 #. module: web_editor
 #: model_terms:ir.ui.view,arch_db:web_editor.snippet_options_background_options
 msgid "⌙ Color filter"
-msgstr "⌙ 彩色濾鏡..."
+msgstr "⌙ 色彩濾鏡"
 
 #. module: web_editor
 #: model_terms:ir.ui.view,arch_db:web_editor.snippet_options_background_options

@@ -543,6 +543,33 @@ class TestStockValuationAVCO(TestStockValuationCommon):
         self.assertEqual(self.product1.quantity_svl, 0)
         self.assertEqual(self.product1.standard_price, 1.01)
 
+    def test_rounding_svl_3(self):
+        self._make_in_move(self.product1, 1000, unit_cost=0.17)
+        self._make_in_move(self.product1, 800, unit_cost=0.23)
+
+        self.assertEqual(self.product1.standard_price, 0.20)
+
+        self._make_out_move(self.product1, 1000, create_picking=True)
+        self._make_out_move(self.product1, 800, create_picking=True)
+
+        self.assertEqual(self.product1.value_svl, 0)
+
+    def test_rounding_svl_4(self):
+        """
+        The first 2 In moves result in a rounded standard_price at 3.4943, which is rounded at 3.49.
+        This test ensures that no rounding error is generated with small out quantities.
+        """
+        self.product1.categ_id.property_cost_method = 'average'
+        self._make_in_move(self.product1, 2, unit_cost=4.63)
+        self._make_in_move(self.product1, 5, unit_cost=3.04)
+        self.assertEqual(self.product1.standard_price, 3.49)
+
+        for _ in range(70):
+            self._make_out_move(self.product1, 0.1)
+
+        self.assertEqual(self.product1.quantity_svl, 0)
+        self.assertEqual(self.product1.value_svl, 0)
+
     def test_return_delivery_2(self):
         self.product1.write({"standard_price": 1})
         move1 = self._make_out_move(self.product1, 10, create_picking=True, force_assign=True)
@@ -552,6 +579,18 @@ class TestStockValuationAVCO(TestStockValuationCommon):
         self.assertEqual(self.product1.value_svl, 20)
         self.assertEqual(self.product1.quantity_svl, 10)
         self.assertEqual(self.product1.standard_price, 2)
+
+    def test_return_delivery_rounding(self):
+        self.product1.product_tmpl_id.categ_id.property_valuation = 'manual_periodic'
+        self.product1.write({"standard_price": 1})
+        self._make_in_move(self.product1, 1, unit_cost=13.13)
+        self._make_in_move(self.product1, 1, unit_cost=12.20)
+        move3 = self._make_out_move(self.product1, 2, create_picking=True)
+        move4 = self._make_return(move3, 2)
+
+        self.assertAlmostEqual(abs(move3.stock_valuation_layer_ids[0].value), abs(move4.stock_valuation_layer_ids[0].value))
+        self.assertAlmostEqual(self.product1.value_svl, 25.33)
+        self.assertEqual(self.product1.quantity_svl, 2)
 
 
 class TestStockValuationFIFO(TestStockValuationCommon):
@@ -757,7 +796,6 @@ class TestStockValuationFIFO(TestStockValuationCommon):
         finally:
             self.env.user.company_id = old_company
 
-
 class TestStockValuationChangeCostMethod(TestStockValuationCommon):
     def test_standard_to_fifo_1(self):
         """ The accounting impact of this cost method change is neutral.
@@ -870,7 +908,7 @@ class TestStockValuationChangeCostMethod(TestStockValuationCommon):
         self.assertEqual(self.product1.value_svl, 190)
         self.assertEqual(self.product1.quantity_svl, 19)
 
-
+@tagged('post_install', '-at_install')
 class TestStockValuationChangeValuation(TestStockValuationCommon):
     @classmethod
     def setUpClass(cls):
@@ -1038,3 +1076,89 @@ class TestAngloSaxonAccounting(TestStockValuationCommon):
         self.assertEqual(len(anglo_lines), 2)
         self.assertEqual(abs(anglo_lines[0].balance), 10)
         self.assertEqual(abs(anglo_lines[1].balance), 10)
+
+    def test_dropship_return_accounts_1(self):
+        """
+        When returning a dropshipped move, make sure the correct accounts are used
+        """
+        # pylint: disable=bad-whitespace
+        self.product1.categ_id.property_cost_method = 'fifo'
+
+        move1 = self._make_dropship_move(self.product1, 2, unit_cost=10)
+        move2 = self._make_return(move1, 2)
+
+        # First: Input -> Valuation
+        # Second: Valuation -> Output
+        origin_svls = move1.stock_valuation_layer_ids.sorted('quantity', reverse=True)
+        # First: Output -> Valuation
+        # Second: Valuation -> Input
+        return_svls = move2.stock_valuation_layer_ids.sorted('quantity', reverse=True)
+        self.assertEqual(len(origin_svls), 2)
+        self.assertEqual(len(return_svls), 2)
+
+        acc_in, acc_out, acc_valuation = self.stock_input_account, self.stock_output_account, self.stock_valuation_account
+
+        # Dropshipping should be: Input -> Output
+        self.assertRecordValues(origin_svls[0].account_move_id.line_ids, [
+            {'account_id': acc_in.id,        'debit': 0,  'credit': 20},
+            {'account_id': acc_valuation.id, 'debit': 20, 'credit': 0},
+        ])
+        self.assertRecordValues(origin_svls[1].account_move_id.line_ids, [
+            {'account_id': acc_valuation.id, 'debit': 0,  'credit': 20},
+            {'account_id': acc_out.id,       'debit': 20, 'credit': 0},
+        ])
+        # Return should be: Output -> Input
+        self.assertRecordValues(return_svls[0].account_move_id.line_ids, [
+            {'account_id': acc_out.id,       'debit': 0,  'credit': 20},
+            {'account_id': acc_valuation.id, 'debit': 20, 'credit': 0},
+        ])
+        self.assertRecordValues(return_svls[1].account_move_id.line_ids, [
+            {'account_id': acc_valuation.id, 'debit': 0,  'credit': 20},
+            {'account_id': acc_in.id,        'debit': 20, 'credit': 0},
+        ])
+
+    def test_dropship_return_accounts_2(self):
+        """
+        When returning a dropshipped move, make sure the correct accounts are used
+        """
+        # pylint: disable=bad-whitespace
+        self.product1.categ_id.property_cost_method = 'fifo'
+
+        move1 = self._make_dropship_move(self.product1, 2, unit_cost=10)
+
+        # return to WH/Stock
+        stock_return_picking = Form(self.env['stock.return.picking']\
+            .with_context(active_ids=[move1.picking_id.id], active_id=move1.picking_id.id, active_model='stock.picking'))
+        stock_return_picking = stock_return_picking.save()
+        stock_return_picking.product_return_moves.quantity = 2
+        stock_return_picking.location_id = self.stock_location
+        stock_return_picking_action = stock_return_picking.create_returns()
+        return_pick = self.env['stock.picking'].browse(stock_return_picking_action['res_id'])
+        return_pick.move_lines[0].move_line_ids[0].qty_done = 2
+        return_pick._action_done()
+        move2 = return_pick.move_lines
+
+        # First: Input -> Valuation
+        # Second: Valuation -> Output
+        origin_svls = move1.stock_valuation_layer_ids.sorted('quantity', reverse=True)
+        # Only one: Output -> Valuation
+        return_svl = move2.stock_valuation_layer_ids
+        self.assertEqual(len(origin_svls), 2)
+        self.assertEqual(len(return_svl), 1)
+
+        acc_in, acc_out, acc_valuation = self.stock_input_account, self.stock_output_account, self.stock_valuation_account
+
+        # Dropshipping should be: Input -> Output
+        self.assertRecordValues(origin_svls[0].account_move_id.line_ids, [
+            {'account_id': acc_in.id,        'debit': 0,  'credit': 20},
+            {'account_id': acc_valuation.id, 'debit': 20, 'credit': 0},
+        ])
+        self.assertRecordValues(origin_svls[1].account_move_id.line_ids, [
+            {'account_id': acc_valuation.id, 'debit': 0,  'credit': 20},
+            {'account_id': acc_out.id,       'debit': 20, 'credit': 0},
+        ])
+        # Return should be: Output -> Valuation
+        self.assertRecordValues(return_svl.account_move_id.line_ids, [
+            {'account_id': acc_out.id,       'debit': 0,  'credit': 20},
+            {'account_id': acc_valuation.id, 'debit': 20, 'credit': 0},
+        ])

@@ -6,7 +6,7 @@ from uuid import uuid4
 import pytz
 
 from odoo import api, fields, models, tools, _
-from odoo.exceptions import ValidationError, UserError
+from odoo.exceptions import AccessError, ValidationError, UserError
 
 
 class AccountBankStmtCashWizard(models.Model):
@@ -99,7 +99,7 @@ class PosConfig(models.Model):
 
     def _compute_customer_html(self):
         for config in self:
-            config.customer_facing_display_html = self.env['ir.qweb']._render('point_of_sale.customer_facing_display_html')
+            config.customer_facing_display_html = self.env['ir.qweb']._render('point_of_sale.customer_facing_display_html', {'company': self.company_id})
 
     name = fields.Char(string='Point of Sale', index=True, required=True, help="An internal identification of the point of sale.")
     is_installed_account_accountant = fields.Boolean(string="Is the Full Accounting Installed",
@@ -233,10 +233,7 @@ class PosConfig(models.Model):
     @api.depends('company_id')
     def _compute_company_has_template(self):
         for config in self:
-            if config.company_id.chart_template_id:
-                config.company_has_template = True
-            else:
-                config.company_has_template = False
+            config.company_has_template = self.env['account.chart.template'].existing_accounting(config.company_id) or config.company_id.chart_template_id
 
     def _compute_is_installed_account_accountant(self):
         account_accountant = self.env['ir.module.module'].sudo().search([('name', '=', 'account_accountant'), ('state', '=', 'installed')])
@@ -485,8 +482,13 @@ class PosConfig(models.Model):
                 result.append((config.id, "%s (%s)" % (config.name, last_session.user_id.name)))
         return result
 
+    def _check_header_footer(self, values):
+        if not self.env.is_admin() and {'is_header_or_footer', 'receipt_header', 'receipt_footer'} & values.keys():
+            raise AccessError(_('Only administrators can edit receipt headers and footers'))
+
     @api.model
     def create(self, values):
+        self._check_header_footer(values)
         IrSequence = self.env['ir.sequence'].sudo()
         val = {
             'name': _('POS Order %s', values['name']),
@@ -507,6 +509,7 @@ class PosConfig(models.Model):
         return pos_config
 
     def write(self, vals):
+        self._check_header_footer(vals)
         opened_session = self.mapped('session_ids').filtered(lambda s: s.state != 'closed')
         if opened_session:
             forbidden_fields = []

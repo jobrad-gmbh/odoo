@@ -55,7 +55,9 @@ from .tools import ustr, consteq, frozendict, pycompat, unique, date_utils
 from .tools.mimetypes import guess_mimetype
 from .tools.misc import str2bool
 from .tools._vendor import sessions
+from .tools._vendor.useragents import UserAgent
 from .modules.module import module_manifest
+
 
 _logger = logging.getLogger(__name__)
 rpc_request = logging.getLogger(__name__ + '.rpc.request')
@@ -196,10 +198,10 @@ class WebRequest(object):
     def __init__(self, httprequest):
         self.httprequest = httprequest
         self.httpresponse = None
-        self.disable_db = False
         self.endpoint = None
         self.endpoint_arguments = None
         self.auth_method = None
+        self._db = self.session.db
         self._cr = None
         self._uid = None
         self._context = None
@@ -283,7 +285,7 @@ class WebRequest(object):
             finally:
                 self._cr.close()
         # just to be sure no one tries to re-use the request
-        self.disable_db = True
+        self._db = None
         self.uid = None
 
     def set_handler(self, endpoint, arguments, auth):
@@ -343,6 +345,15 @@ class WebRequest(object):
             if self._cr and not first_time:
                 self._cr.rollback()
                 self.env.clear()
+
+            # Rewind files in case of failure
+            if not first_time:
+                for filename, file in self.httprequest.files.items():
+                    if hasattr(file, "seekable") and file.seekable():
+                        file.seek(0)
+                    else:
+                        raise RuntimeError("Cannot retry request on input file %r after serialization failure" % filename)
+
             first_time = False
             result = self.endpoint(*a, **kw)
             if isinstance(result, Response) and result.is_qweb:
@@ -382,7 +393,9 @@ class WebRequest(object):
         The database linked to this request. Can be ``None``
         if the current request uses the ``none`` authentication.
         """
-        return self.session.db if not self.disable_db else None
+        if not self._db:
+            self._db = self.session.db
+        return self._db
 
     def csrf_token(self, time_limit=None):
         """ Generates and returns a CSRF token for the current session
@@ -537,7 +550,7 @@ def route(route=None, **kw):
 
             if isinstance(response, werkzeug.exceptions.HTTPException):
                 response = response.get_response(request.httprequest.environ)
-            if isinstance(response, werkzeug.wrappers.BaseResponse):
+            if isinstance(response, werkzeug.wrappers.Response):
                 response = Response.force_type(response)
                 response.set_default()
                 return response
@@ -743,14 +756,8 @@ class HttpRequest(WebRequest):
         try:
             return super(HttpRequest, self)._handle_exception(exception)
         except SessionExpiredException:
-            redirect = None
-            req = request.httprequest
-            if req.method == 'POST':
-                request.session.save_request_data()
-                redirect = '/web/proxy/post{r.full_path}'.format(r=req)
-            elif not request.params.get('noredirect'):
-                redirect = req.url
-            if redirect:
+            if not request.params.get('noredirect'):
+                redirect = request.httprequest.url
                 query = werkzeug.urls.url_encode({
                     'redirect': redirect,
                 })
@@ -1028,7 +1035,6 @@ class OpenERPSession(sessions.Session):
         self.rotate = True
         self.db = db
         self.login = login
-        request.disable_db = False
 
         user = request.env(user=uid)['res.users'].browse(uid)
         if not user._mfa_url():
@@ -1143,46 +1149,6 @@ class OpenERPSession(sessions.Session):
         saved_actions = self.get('saved_actions', {})
         return saved_actions.get("actions", {}).get(key)
 
-    def save_request_data(self):
-        import uuid
-        req = request.httprequest
-        files = werkzeug.datastructures.MultiDict()
-        # NOTE we do not store files in the session itself to avoid loading them in memory.
-        #      By storing them in the session store, we ensure every worker (even ones on other
-        #      servers) can access them. It also allow stale files to be deleted by `session_gc`.
-        for f in req.files.values():
-            storename = 'werkzeug_%s_%s.file' % (self.sid, uuid.uuid4().hex)
-            path = os.path.join(root.session_store.path, storename)
-            with open(path, 'w') as fp:
-                f.save(fp)
-            files.add(f.name, (storename, f.filename, f.content_type))
-        self['serialized_request_data'] = {
-            'form': req.form,
-            'files': files,
-        }
-
-    @contextlib.contextmanager
-    def load_request_data(self):
-        data = self.pop('serialized_request_data', None)
-        files = werkzeug.datastructures.MultiDict()
-        try:
-            if data:
-                # regenerate files filenames with the current session store
-                for name, (storename, filename, content_type) in data['files'].items():
-                    path = os.path.join(root.session_store.path, storename)
-                    files.add(name, (path, filename, content_type))
-                yield werkzeug.datastructures.CombinedMultiDict([data['form'], files])
-            else:
-                yield None
-        finally:
-            # cleanup files
-            for f, _, _ in files.values():
-                try:
-                    os.unlink(f)
-                except IOError:
-                    pass
-
-
 def session_gc(session_store):
     if random.random() < 0.001:
         # we keep session one week
@@ -1212,6 +1178,49 @@ mimetypes.add_type('application/vnd.ms-fontobject', '.eot')
 mimetypes.add_type('application/x-font-ttf', '.ttf')
 # Add potentially missing (detected on windows) svg mime types
 mimetypes.add_type('image/svg+xml', '.svg')
+
+
+def make_request_wrap_methods(attr):
+    def getter(self):
+        return getattr(self._HTTPRequest__wrapped, attr)
+
+    def setter(self, value):
+        return setattr(self._HTTPRequest__wrapped, attr, value)
+
+    return getter, setter
+
+
+class HTTPRequest:
+    def __init__(self, environ):
+        httprequest = werkzeug.wrappers.Request(environ)
+        httprequest.user_agent_class = UserAgent  # use vendored userAgent since it will be removed in 2.1
+        httprequest.parameter_storage_class = werkzeug.datastructures.ImmutableOrderedMultiDict
+
+        self.__wrapped = httprequest
+        self.__environ = self.__wrapped.environ
+        self.environ = {
+            key: value
+            for key, value in self.__environ.items()
+            if not key.startswith(('werkzeug.', 'wsgi.')) or key in ['wsgi.url_scheme']
+        }
+
+    def __enter__(self):
+        return self
+
+
+HTTPREQUEST_ATTRIBUTES = [
+    '__str__', '__repr__', '__exit__',
+    'accept_charsets', 'accept_languages', 'accept_mimetypes', 'access_route', 'args', 'authorization', 'base_url',
+    'charset', 'content_encoding', 'content_length', 'content_md5', 'content_type', 'cookies', 'data', 'date',
+    'encoding_errors', 'files', 'form', 'full_path', 'get_data', 'get_json', 'headers', 'host', 'host_url', 'if_match',
+    'if_modified_since', 'if_none_match', 'if_range', 'if_unmodified_since', 'is_json', 'is_secure', 'json', 'method',
+    'mimetype', 'mimetype_params', 'origin', 'path', 'pragma', 'query_string', 'range', 'referrer', 'remote_addr',
+    'remote_user', 'root_path', 'root_url', 'scheme', 'script_root', 'server', 'session', 'trusted_hosts', 'url',
+    'url_charset', 'url_root', 'user_agent', 'values',
+]
+for attr in HTTPREQUEST_ATTRIBUTES:
+    setattr(HTTPRequest, attr, property(*make_request_wrap_methods(attr)))
+
 
 class Response(werkzeug.wrappers.Response):
     """ Response object passed through controller route chain.
@@ -1279,15 +1288,19 @@ class DisableCacheMiddleware(object):
 
     def __call__(self, environ, start_response):
         def start_wrapped(status, headers):
-            req = werkzeug.wrappers.Request(environ)
+            req = HTTPRequest(environ)
             root.setup_session(req)
             if req.session and req.session.debug and not 'wkhtmltopdf' in req.headers.get('User-Agent'):
-                new_headers = [('Cache-Control', 'no-cache')]
+                cache_control_value = 'no-cache'
+                new_headers = []
 
                 for k, v in headers:
                     if k.lower() != 'cache-control':
                         new_headers.append((k, v))
+                    elif 'no-cache' not in v:
+                        cache_control_value += ', %s' % v
 
+                new_headers.append(('Cache-Control', cache_control_value))
                 start_response(status, new_headers)
             else:
                 start_response(status, headers)
@@ -1447,7 +1460,7 @@ class Root(object):
 
     def set_csp(self, response):
         # ignore HTTP errors
-        if not isinstance(response, werkzeug.wrappers.BaseResponse):
+        if not isinstance(response, werkzeug.wrappers.Response):
             return
 
         headers = response.headers
@@ -1466,8 +1479,7 @@ class Root(object):
         Performs the actual WSGI dispatching for the application.
         """
         try:
-            httprequest = werkzeug.wrappers.Request(environ)
-            httprequest.parameter_storage_class = werkzeug.datastructures.ImmutableOrderedMultiDict
+            httprequest = HTTPRequest(environ)
 
             current_thread = threading.current_thread()
             current_thread.url = httprequest.url

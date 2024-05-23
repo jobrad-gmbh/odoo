@@ -52,7 +52,7 @@ class Project(models.Model):
     warning_employee_rate = fields.Boolean(compute='_compute_warning_employee_rate')
 
     _sql_constraints = [
-        ('timesheet_product_required_if_billable_and_timesheets', """
+        ('timesheet_product_required_if_billable_and_time', """
             CHECK(
                 (allow_billable = 't' AND allow_timesheets = 't' AND timesheet_product_id IS NOT NULL)
                 OR (allow_billable IS NOT TRUE)
@@ -84,7 +84,7 @@ class Project(models.Model):
     def _compute_warning_employee_rate(self):
         projects = self.filtered(lambda p: p.allow_billable and p.allow_timesheets and p.bill_type == 'customer_project' and p.pricing_type == 'employee_rate')
         tasks = projects.task_ids.filtered(lambda t: not t.non_allow_billable)
-        employees = self.env['account.analytic.line'].read_group([('task_id', 'in', tasks.ids), ('non_allow_billable', '=', False)], ['employee_id', 'project_id'], ['employee_id', 'project_id'], ['employee_id', 'project_id'], lazy=False)
+        employees = self.env['account.analytic.line'].read_group([('task_id', 'in', tasks.ids), ('non_allow_billable', '=', False)], ['employee_id', 'project_id'], ['employee_id', 'project_id'], lazy=False)
         dict_project_employee = defaultdict(list)
         for line in employees:
             dict_project_employee[line['project_id'][0]] += [line['employee_id'][0]] if line['employee_id'] else []

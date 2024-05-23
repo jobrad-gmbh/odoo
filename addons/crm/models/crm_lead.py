@@ -2,6 +2,7 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 import logging
+import re
 import threading
 from datetime import date, datetime, timedelta
 from psycopg2 import sql
@@ -9,7 +10,7 @@ from psycopg2 import sql
 from odoo import api, fields, models, tools, SUPERUSER_ID
 from odoo.osv import expression
 from odoo.tools.translate import _
-from odoo.tools import email_re, email_split
+from odoo.tools import email_split
 from odoo.exceptions import UserError, AccessError
 from odoo.addons.phone_validation.tools import phone_validation
 from collections import OrderedDict, defaultdict
@@ -177,7 +178,9 @@ class Lead(models.Model):
         ('correct', 'Correct'),
         ('incorrect', 'Incorrect')], string='Email Quality', compute="_compute_email_state", store=True)
     website = fields.Char('Website', index=True, help="Website of the contact", compute="_compute_website", readonly=False, store=True)
-    lang_id = fields.Many2one('res.lang', string='Language')
+    lang_id = fields.Many2one(
+        'res.lang', string='Language',
+        compute='_compute_lang_id', readonly=False, store=True)
     # Address fields
     street = fields.Char('Street', compute='_compute_partner_address_values', readonly=False, store=True)
     street2 = fields.Char('Street2', compute='_compute_partner_address_values', readonly=False, store=True)
@@ -340,6 +343,21 @@ class Lead(models.Model):
                 lead.website = lead.partner_id.website
 
     @api.depends('partner_id')
+    def _compute_lang_id(self):
+        """ compute the lang based on partner when partner_id has changed """
+        wo_lang = self.filtered(lambda lead: not lead.lang_id and lead.partner_id)
+        if not wo_lang:
+            return
+        # prepare cache
+        lang_codes = [code for code in wo_lang.mapped('partner_id.lang') if code]
+        lang_id_by_code = dict(
+            (code, self.env['res.lang']._lang_get_id(code))
+            for code in lang_codes
+        )
+        for lead in wo_lang:
+            lead.lang_id = lang_id_by_code.get(lead.partner_id.lang, False)
+
+    @api.depends('partner_id')
     def _compute_partner_address_values(self):
         """ Sync all or none of address fields """
         for lead in self:
@@ -451,6 +469,7 @@ class Lead(models.Model):
                 lead.ribbon_message = False
 
     def _search_phone_mobile_search(self, operator, value):
+        value = re.sub(r'[^\d+]+', '', value)
         if len(value) <= 2:
             raise UserError(_('Please enter at least 3 digits when searching on phone / mobile.'))
 
@@ -496,6 +515,8 @@ class Lead(models.Model):
 
         # For other fields, get the info from the partner, but only if set
         values.update({f: partner[f] or self[f] for f in PARTNER_FIELDS_TO_SYNC})
+        if partner.lang:
+            values['lang_id'] = self.env['res.lang']._lang_get_id(partner.lang)
 
         # Fields with specific logic
         values.update(self._prepare_contact_name_from_partner(partner))
@@ -579,26 +600,31 @@ class Lead(models.Model):
     def write(self, vals):
         if vals.get('website'):
             vals['website'] = self.env['res.partner']._clean_website(vals['website'])
-        stage_is_won = False
+
+        stage_updated, stage_is_won = vals.get('stage_id'), False
         # stage change: update date_last_stage_update
-        if 'stage_id' in vals:
-            stage_id = self.env['crm.stage'].browse(vals['stage_id'])
-            if stage_id.is_won:
+        if stage_updated:
+            stage = self.env['crm.stage'].browse(vals['stage_id'])
+            if stage.is_won:
                 vals.update({'probability': 100, 'automated_probability': 100})
                 stage_is_won = True
+
         # stage change with new stage: update probability and date_closed
         if vals.get('probability', 0) >= 100 or not vals.get('active', True):
             vals['date_closed'] = fields.Datetime.now()
         elif tools.float_compare(vals.get('probability', 0), 0, precision_digits=2) > 0:
             vals['date_closed'] = False
+        elif stage_updated and not stage_is_won and not 'probability' in vals:
+            vals['date_closed'] = False
 
         if any(field in ['active', 'stage_id'] for field in vals):
             self._handle_won_lost(vals)
+
         if not stage_is_won:
             return super(Lead, self).write(vals)
 
         # stage change between two won stages: does not change the date_closed
-        leads_already_won = self.filtered(lambda r: r.stage_id.is_won)
+        leads_already_won = self.filtered(lambda lead: lead.stage_id.is_won)
         remaining = self - leads_already_won
         if remaining:
             result = super(Lead, remaining).write(vals)
@@ -739,6 +765,20 @@ class Lead(models.Model):
             default['recurring_revenue'] = 0
             default['recurring_plan'] = False
         return super(Lead, self.with_context(context)).copy(default=default)
+
+    def unlink(self):
+        """ Update meetings when removing opportunities, otherwise you have
+        a link to a record that does not lead anywhere. """
+        meetings = self.env['calendar.event'].search([
+            ('res_id', 'in', self.ids),
+            ('res_model', '=', self._name),
+        ])
+        if meetings:
+            meetings.write({
+                'res_id': False,
+                'res_model_id': False,
+            })
+        return super(Lead, self).unlink()
 
     @api.model
     def _fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
@@ -1452,11 +1492,13 @@ class Lead(models.Model):
         return res
 
     def _message_get_default_recipients(self):
-        return {r.id: {
-            'partner_ids': [],
-            'email_to': r.email_normalized,
-            'email_cc': False}
-            for r in self}
+        return {
+            r.id: {
+                'partner_ids': [],
+                'email_to': ','.join(tools.email_normalize_all(r.email_from)) or r.email_from,
+                'email_cc': False,
+            } for r in self
+        }
 
     def _message_get_suggested_recipients(self):
         recipients = super(Lead, self)._message_get_suggested_recipients()
@@ -1509,23 +1551,41 @@ class Lead(models.Model):
             # we consider that posting a message with a specified recipient (not a follower, a specific one)
             # on a document without customer means that it was created through the chatter using
             # suggested recipients. This heuristic allows to avoid ugly hacks in JS.
-            new_partner = message.partner_ids.filtered(lambda partner: partner.email == self.email_from)
+            new_partner = message.partner_ids.filtered(
+                lambda partner: partner.email == self.email_from or (self.email_normalized and partner.email_normalized == self.email_normalized)
+            )
             if new_partner:
+                if new_partner[0].email_normalized:
+                    email_domain = ('email_normalized', '=', new_partner[0].email_normalized)
+                else:
+                    email_domain = ('email_from', '=', new_partner[0].email)
                 self.search([
-                    ('partner_id', '=', False),
-                    ('email_from', '=', new_partner.email),
-                    ('stage_id.fold', '=', False)]).write({'partner_id': new_partner.id})
+                    ('partner_id', '=', False), email_domain, ('stage_id.fold', '=', False)
+                ]).write({'partner_id': new_partner[0].id})
         return super(Lead, self)._message_post_after_hook(message, msg_vals)
 
     def _message_partner_info_from_emails(self, emails, link_mail=False):
+        """ Try to propose a better recipient when having only an email by populating
+        it with the partner_name / contact_name field of the lead e.g. if lead
+        contact_name is "Raoul" and email is "raoul@raoul.fr", suggest
+        "Raoul" <raoul@raoul.fr> as recipient. """
         result = super(Lead, self)._message_partner_info_from_emails(emails, link_mail=link_mail)
-        for partner_info in result:
-            if not partner_info.get('partner_id') and (self.partner_name or self.contact_name):
-                emails = email_re.findall(partner_info['full_name'] or '')
-                email = emails and emails[0] or ''
-                if email and self.email_from and email.lower() == self.email_from.lower():
-                    partner_info['full_name'] = tools.formataddr((self.contact_name or self.partner_name, email))
-                    break
+        for email, partner_info in zip(emails, result):
+            if partner_info.get('partner_id') or not email or not (self.partner_name or self.contact_name):
+                continue
+            # reformat email if no name information
+            name_emails = tools.email_split_tuples(email)
+            name_from_email = name_emails[0][0] if name_emails else False
+            if name_from_email:
+                continue  # already containing name + email
+            name_from_email = self.partner_name or self.contact_name
+            emails_normalized = tools.email_normalize_all(email)
+            email_normalized = emails_normalized[0] if emails_normalized else False
+            if email.lower() == self.email_from.lower() or (email_normalized and self.email_normalized == email_normalized):
+                partner_info['full_name'] = tools.formataddr((
+                    name_from_email,
+                    ','.join(emails_normalized) if emails_normalized else email))
+                break
         return result
 
     def _phone_get_number_fields(self):
@@ -1701,7 +1761,8 @@ class Lead(models.Model):
                     s_lead_lost *= value_result['lost'] / total_lost
 
             # 3. Compute Probability to win
-            lead_probabilities[lead_id] = round(100 * s_lead_won / (s_lead_won + s_lead_lost), 2)
+            probability = s_lead_won / (s_lead_won + s_lead_lost)
+            lead_probabilities[lead_id] = min(max(round(100 * probability, 2), 0.01), 99.99)
         return lead_probabilities
 
     # ---------------------------------

@@ -193,7 +193,10 @@ class WebsiteForum(WebsiteProfile):
             fields=['id', 'name'],
             limit=int(limit),
         )
-        return json.dumps(data)
+        return request.make_response(
+            json.dumps(data),
+            headers=[("Content-Type", "application/json")]
+        )
 
     @http.route(['/forum/<model("forum.forum"):forum>/tag', '/forum/<model("forum.forum"):forum>/tag/<string:tag_char>'], type='http', auth="public", website=True, sitemap=False)
     def tags(self, forum, tag_char=None, **post):
@@ -646,7 +649,7 @@ class WebsiteForum(WebsiteProfile):
                 down_votes = rec['vote_count']
 
         # Votes which given by users on others questions and answers.
-        vote_ids = Vote.search([('user_id', '=', user.id)])
+        vote_ids = Vote.search([('user_id', '=', user.id), ('forum_id', 'in', forums.ids)])
 
         # activity by user.
         model, comment = Data.get_object_reference('mail', 'mt_comment')

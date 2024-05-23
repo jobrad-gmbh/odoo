@@ -54,11 +54,22 @@ class AccountFiscalPosition(models.Model):
     def map_tax(self, taxes, product=None, partner=None):
         if not self:
             return taxes
-        result = self.env['account.tax']
-        for tax in taxes:
-            taxes_correspondance = self.tax_ids.filtered(lambda t: t.tax_src_id == tax._origin)
-            result |= taxes_correspondance.tax_dest_id if taxes_correspondance else tax
-        return result
+        tmap = {
+            g["tax_src_id"][0]: g["dest_ids"]
+            for g in self.env["account.fiscal.position.tax"].read_group(
+                [
+                    ("id", "in", self.tax_ids.ids),
+                    ("tax_src_id", "in", [t._origin.id for t in taxes if t._origin and t._origin.id]),
+                ],
+                ["dest_ids:array_agg(tax_dest_id)"],
+                groupby="tax_src_id",
+            )
+        }
+        # get mapped taxes, remove None which means the mapping is to no-tax
+        result_ids = set().union(*tmap.values()) - {None}
+        # for taxes without mapping at all, even to no-tax, we then keep the tax
+        result_ids.update(tax.id for tax in taxes if tax._origin and tax._origin.id not in tmap)
+        return self.env["account.tax"].browse(result_ids)
 
     def map_account(self, account):
         for pos in self.account_ids:
@@ -278,7 +289,7 @@ class ResPartner(models.Model):
     def _asset_difference_search(self, account_type, operator, operand):
         if operator not in ('<', '=', '>', '>=', '<='):
             return []
-        if type(operand) not in (float, int):
+        if not isinstance(operand, (float, int)):
             return []
         sign = 1
         if account_type == 'payable':
@@ -471,7 +482,7 @@ class ResPartner(models.Model):
             ('move_type', 'in', ('out_invoice', 'out_refund')),
             ('partner_id', 'in', all_child.ids)
         ]
-        action['context'] = {'default_move_type': 'out_invoice', 'move_type': 'out_invoice', 'journal_type': 'sale', 'search_default_unpaid': 1, 'active_test': False}
+        action['context'] = {'default_move_type': 'out_invoice', 'move_type': 'out_invoice', 'journal_type': 'sale', 'search_default_unpaid': 1}
         return action
 
     def can_edit_vat(self):

@@ -19,7 +19,7 @@ import odoo
 from odoo import api, models, registry, exceptions, tools, http
 from odoo.addons.base.models.ir_http import RequestUID, ModelConverter
 from odoo.addons.base.models.qweb import QWebException
-from odoo.http import request
+from odoo.http import request, HTTPRequest
 from odoo.osv import expression
 from odoo.tools import config, ustr, pycompat
 
@@ -519,6 +519,10 @@ class IrHttp(models.AbstractModel):
 
     @classmethod
     def reroute(cls, path):
+        if isinstance(path, str):
+            path = path.encode("utf-8")
+        path = path.decode("latin1", "replace")
+
         if not hasattr(request, 'rerouting'):
             request.rerouting = [request.httprequest.path]
         if path in request.rerouting:
@@ -526,11 +530,8 @@ class IrHttp(models.AbstractModel):
         request.rerouting.append(path)
         if len(request.rerouting) > cls.rerouting_limit:
             raise Exception("Rerouting limit exceeded")
-        request.httprequest.environ['PATH_INFO'] = path
-        # void werkzeug cached_property. TODO: find a proper way to do this
-        for key in ('path', 'full_path', 'url', 'base_url'):
-            request.httprequest.__dict__.pop(key, None)
-
+        environ = dict(request.httprequest._HTTPRequest__environ, PATH_INFO=path)
+        request.httprequest = HTTPRequest(environ)
         return cls._dispatch()
 
     @classmethod
@@ -572,7 +573,7 @@ class IrHttp(models.AbstractModel):
         elif isinstance(exception, QWebException):
             values.update(qweb_exception=exception)
 
-            if type(exception.error) == exceptions.AccessError:
+            if isinstance(exception.error, exceptions.AccessError):
                 code = 403
 
         elif isinstance(exception, werkzeug.exceptions.HTTPException):

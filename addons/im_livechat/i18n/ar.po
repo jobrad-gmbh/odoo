@@ -21,6 +21,7 @@
 # Rachid Al Assir <rachidalassir@gmail.com>, 2021
 # Mustafa J. Kadhem <safi2266@gmail.com>, 2022
 # Malaz Abuidris <msea@odoo.com>, 2022
+# Wil Odoo, 2023
 # 
 msgid ""
 msgstr ""
@@ -28,8 +29,8 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-11-27 15:41+0000\n"
 "PO-Revision-Date: 2020-09-07 08:13+0000\n"
-"Last-Translator: Malaz Abuidris <msea@odoo.com>, 2022\n"
-"Language-Team: Arabic (https://www.transifex.com/odoo/teams/41243/ar/)\n"
+"Last-Translator: Wil Odoo, 2023\n"
+"Language-Team: Arabic (https://app.transifex.com/odoo/teams/41243/ar/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
@@ -218,7 +219,7 @@ msgstr "متوسط الوقت بالثواني لمنح الزائر الإجا�
 #. module: im_livechat
 #: model:ir.model.fields,help:im_livechat.field_im_livechat_report_operator__time_to_answer
 msgid "Average time to give the first answer to the visitor"
-msgstr "متوسط وقت منح الزائر الإجابة الأولى"
+msgstr "متوسط الوقت لمنح الزائر الإجابة الأولى "
 
 #. module: im_livechat
 #. openerp-web
@@ -1383,6 +1384,13 @@ msgstr "شوهدت من قبل الجميع"
 #, python-format
 msgid "Seen by:"
 msgstr "تمت المشاهدة من قِبَل: "
+
+#. module: im_livechat
+#. openerp-web
+#: code:addons/im_livechat/static/src/legacy/public_livechat.xml:0
+#, python-format
+msgid "Send"
+msgstr "إرسال"
 
 #. module: im_livechat
 #. openerp-web

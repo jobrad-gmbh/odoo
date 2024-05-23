@@ -11,7 +11,9 @@
 # Damian Brencic <brencicdamian12313@gmail.com>, 2020
 # karolína schusterová <karolina.schusterova@vdp.sk>, 2021
 # Rastislav Brencic <rastislav.brencic@azet.sk>, 2021
-# trendspotter <jirka.p@volny.cz>, 2022
+# Jiří Podhorecký, 2022
+# Aleš Fiala <f.ales1@seznam.cz>, 2023
+# Tomáš Píšek, 2023
 # 
 msgid ""
 msgstr ""
@@ -19,8 +21,8 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-11-27 13:50+0000\n"
 "PO-Revision-Date: 2020-09-07 08:09+0000\n"
-"Last-Translator: trendspotter <jirka.p@volny.cz>, 2022\n"
-"Language-Team: Czech (https://www.transifex.com/odoo/teams/41243/cs/)\n"
+"Last-Translator: Tomáš Píšek, 2023\n"
+"Language-Team: Czech (https://app.transifex.com/odoo/teams/41243/cs/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
@@ -3994,6 +3996,73 @@ msgid ""
 "For Development information go to http://www.afip.gob.ar/fe/documentos/WSBFEv1%20-%20Manual%20para%20el%20desarrollador.pdf\n"
 "\n"
 msgstr ""
+"\n"
+"Funkční\n"
+"----------\n"
+"\n"
+"Schopnost vytvářet deníky v Odoo pro vytváření elektronických faktur pro zákazníky a jejich vykazování do AFIP (prostřednictvím webových faktur).\n"
+"K dispozici jsou tyto možnosti:\n"
+"\n"
+"    * Elektronická faktura - webová služba\n"
+"    * Export poukazu - webová služba\n"
+"    * Elektronický daňový doklad - webová služba\n"
+"\n"
+"Pokud v elektronických denících potvrdíte fakturu, bude tato potvrzena jak v Odoo, tak v AFIP. Tato validace je\n"
+"provedena okamžitě a z AFIPu obdržíme stav \"schváleno/schváleno s připomínkou/zamítnuto\". Pokud vaše faktura byla zamítnuta AFIPem, nebude v systému zaúčtována a zobrazí se vyskakovací zpráva s detailem chyby (důvody zamítnutí),\n"
+"které jsme obdrželi, a nápovědu o tom, v čem by mohl být problém.\n"
+"\n"
+"Pro účely kontroly a řešení problémů jsme také přidali nabídku \"Konzultační faktura v AFIP\", která nám umožňuje nahlížet do dříve vystavených faktur. odeslané\n"
+"do AFIP a poslední použité číslo jako podporu pro případné problémy se synchronizací sekvencí mezi Odoo a AFIP.\n"
+"\n"
+"    POZNÁMKA: Z pohledu formuláře deníku jsme schopni vynutit synchronizaci mezi sekvencemi Odoo ke každému z typů dokladů v sekci\n"
+"    s posledními čísly registrovanými v AFIP.\n"
+"\n"
+"Z dodavatelských účtů jsme přidali funkci, kterou lze nakonfigurovat v nastavení účetnictví, aby bylo možné ověřit\n"
+"dodavatelské účty v AFIP, aby bylo možné zkontrolovat, zda jsou dodavatelské účty skutečné (více informací naleznete v popisu nastavení).\n"
+"\n"
+"Konfigurace:\n"
+"\n"
+"1. Přejděte do sekce Nastavení účetnictví > Argentinská lokalizace.\n"
+"\n"
+"    1.1. Nakonfigurujte režim webových služeb AFIP:\n"
+"\n"
+"* Testovací prostředí pro použití demo certifikátů, které budou použity k testování instance a k provedení NOT\n"
+"skutečné faktury do AFIP. slouží pouze k testování. Pro demo instaces je již předdefinováno, nebudete muset konfigurovat.\n"
+"    (v AFIP se to běžně nazývá Homologační prostředí).\n"
+"     * Produkční prostředí pro generování skutečných certifikátů a legálních faktur do AFIP,\n"
+"\n"
+"    1.2. Nakonfigurujte svůj certifikát AFIP: Pokud se nacházíte v demonstrační instanci, bude tento nastaven jako výchozí. Pokud jste\n"
+"v produkční instanci, stačí přejít k nahrání certifikátu AFIP.\n"
+"\n"
+"    1.3. Volitelně můžete definovat, zda chcete mít možnost ověřovat účty dodavatelů v AFIP.\n"
+"\n"
+"2. Vytvořte prodejní deníky, které budou reprezentovat každou vaši AFIP pokladnu (k dispozici na Portálu AFIP), kterou chcete v Odoo používat.\n"
+"\n"
+"    2.1. Pole Používat doklady je nastaveno jako výchozí, neměňte ho prosím.\n"
+"    2.2. Nastavte systém AFIP POS na jeden z elektronických.\n"
+"\n"
+"        * Elektronická faktura - webová služba'\n"
+"        * Elektronický daňový doklad - webová služba'\n"
+"        * Export voucheru - webová služba'\n"
+"\n"
+"    2.3. Nastavte číslo AFIP POS a adresu AFIP POS s přihlédnutím k tomu, co máte nastaveno na portálu AFIP.\n"
+"\n"
+"    POZNÁMKA: Pro potvrzení můžete použít tlačítko \"Zkontrolovat dostupný AFIP POS\" ve formuláři deníku, které se má použít pro vytvoření deníků.\n"
+"\n"
+"Další informace o argentinské elektronické fakturaci naleznete na adrese http://www.afip.gob.ar/fe/ayuda.asp.\n"
+"\n"
+"Technická podpora\n"
+"---------\n"
+"\n"
+"Implementované webové služby jsou ty nejběžnější:\n"
+"\n"
+"* wsfev1 - \"Factura Electrónica\" (Elektronická faktura)\n"
+"* wsbfev1 - \"Bono Fiscal Electrónico\" (Elektronický daňový doklad)\n"
+"* wsfexv1 - \"Factura de Exportación Electrónica\" (Elektronická faktura za export - stejná jako export poukaz).\n"
+"* wscdc - \"Constatación de Comprobantes\" (Ověření faktur)\n"
+"\n"
+"Informace o exportu naleznete na adrese http://www.afip.gob.ar/fe/documentos/WSBFEv1%20-%20Manual%20para%20el%20desarrollador.pdf\n"
+"\n"
 
 #. module: base
 #: model:ir.module.module,description:base.module_l10n_latam_invoice_document
@@ -8904,6 +8973,8 @@ msgstr ""
 msgid ""
 "<code>UserError</code>: Warning Exception to use with <code>raise</code>"
 msgstr ""
+"<code>Chyba uživatele</code>: Varování Výjimka pro použití "
+"<code>zvýšit</code>"
 
 #. module: base
 #: model_terms:ir.ui.view,arch_db:base.view_model_fields_form
@@ -8920,7 +8991,7 @@ msgstr "<code>dateutil</code> (Python modul)"
 #. module: base
 #: model_terms:ir.ui.view,arch_db:base.view_server_action_form
 msgid "<code>env</code>: Odoo Environment on which the action is triggered"
-msgstr ""
+msgstr "<code>env</code>: Odoo prostředí, ve kterém je spuštěná akce"
 
 #. module: base
 #: model_terms:ir.ui.view,arch_db:base.view_server_action_form
@@ -9097,6 +9168,10 @@ msgid ""
 "                                <span colspan=\"2\">Month: %(month)s</span>\n"
 "                                <span colspan=\"2\">Day: %(day)s</span>"
 msgstr ""
+"<span colspan=\"2\">Aktuální rok (4 místa): %(year)s</span>\n"
+"                                <span colspan=\"2\">Aktuální rok (2 místa): %(y)s</span>\n"
+"                                <span colspan=\"2\">Měsíc: %(month)s</span>\n"
+"                                <span colspan=\"2\">Den: %(day)s</span>"
 
 #. module: base
 #: model_terms:ir.ui.view,arch_db:base.sequence_view
@@ -10232,6 +10307,9 @@ msgid ""
 "    notably for selling mouse traps. With that trick he cut\n"
 "    IT budget by almost half within the last 2 years."
 msgstr ""
+"Tomáš Kocourek pracuje v IT sektoru <b>již 10 let</b>. Je znám\n"
+"    především prodejem myších pastiček. Tímto trikem snížil \n"
+"    během dvou let rozpočet IT téměř o polovinu."
 
 #. module: base
 #: code:addons/base/models/ir_qweb_fields.py:0
@@ -11808,6 +11886,9 @@ msgid ""
 "                notably for selling mouse traps. With that trick he cut\n"
 "                IT budget by almost half within the last 2 years."
 msgstr ""
+"Petr pracuje v IT sektoru <b>již 10 let</b>. Je znám\n"
+"    především prodejem myších pastiček. Tímto trikem snížil \n"
+"    během dvou let rozpočet IT téměř o polovinu."
 
 #. module: base
 #: model:res.country,name:base.br
@@ -12523,6 +12604,9 @@ msgid ""
 "                notably for selling mouse traps. With that trick he cut\n"
 "                IT budget by almost half within the last 2 years."
 msgstr ""
+"Františka Raná pracuje v IT sektoru <b>již 10 let</b>. Je známa\n"
+"    především prodejem myších pastiček. Tímto trikem snížil \n"
+"    během dvou let rozpočet IT téměř o polovinu."
 
 #. module: base
 #: model:res.country,name:base.co
@@ -12776,6 +12860,12 @@ msgstr "Kompletní jméno"
 #: model:ir.model.fields,field_description:base.field_ir_model_fields__compute
 msgid "Compute"
 msgstr "Vypočítat"
+
+#. module: base
+#: code:addons/base/models/ir_model.py:0
+#, python-format
+msgid "Compute method cannot depend on field 'id'"
+msgstr "Výpočetní metoda nemůže být závisla na poli 'id'"
 
 #. module: base
 #: model:ir.module.module,summary:base.module_website_crm_score
@@ -14717,6 +14807,9 @@ msgid ""
 "    notably for selling mouse traps. With that trick he cut\n"
 "    IT budget by almost half within the last 2 years."
 msgstr ""
+"Františe Vopršálek pracuje v IT sektoru <b>již 10 let</b>. Je znám\n"
+"    především prodejem myších pastiček. Tímto trikem snížil \n"
+"    během dvou let rozpočet IT téměř o polovinu."
 
 #. module: base
 #: model:res.partner.title,shortcut:base.res_partner_title_doctor
@@ -15182,6 +15275,18 @@ msgstr "Chyba"
 #: model:ir.model.fields,help:base.field_ir_model_constraint__message
 msgid "Error message returned when the constraint is violated."
 msgstr "Chybová zpráva se zobrazí, když je omezení porušeno."
+
+#. module: base
+#: code:addons/translate.py:0
+#, python-format
+msgid ""
+"Error while parsing view:\n"
+"\n"
+"%s"
+msgstr ""
+"Chyba při parsování pohledu:\n"
+"\n"
+"%s"
 
 #. module: base
 #: code:addons/base/models/ir_ui_view.py:0
@@ -16166,6 +16271,9 @@ msgid ""
 "    notably for selling mouse traps. With that trick he cut\n"
 "    IT budget by almost half within the last 2 years."
 msgstr ""
+"Jiří Podavač pracuje v IT sektoru <b>již 10 let</b>. Je znám\n"
+"    především prodejem myších pastiček. Tímto trikem snížil \n"
+"    během dvou let rozpočet IT téměř o polovinu."
 
 #. module: base
 #: model:ir.model.fields.selection,name:base.selection__report_paperformat__format__folio
@@ -16718,6 +16826,10 @@ msgid ""
 "                IT budget by almost half within the last 2 years.\n"
 "                Famous Senior Consultant."
 msgstr ""
+"Martin Vypečený pracuje v IT sektoru <b>již 10 let</b>. Je znám\n"
+"    především prodejem myších pastiček. Tímto trikem snížil \n"
+"    během dvou let rozpočet IT téměř o polovinu.\n"
+"    Slavný seniorní konzultant."
 
 #. module: base
 #: model:ir.model.fields.selection,name:base.selection__ir_actions_act_window_view__view_mode__graph
@@ -18229,6 +18341,18 @@ msgid "Invalid 'group by' parameter"
 msgstr "Neplatný parametr 'skupina podle'"
 
 #. module: base
+#: code:addons/template_inheritance.py:0
+#, python-format
+msgid "Invalid Expression while parsing xpath %r"
+msgstr "Neplatný výraz při parsování xpath %r"
+
+#. module: base
+#: code:addons/base/models/ir_default.py:0
+#, python-format
+msgid "Invalid JSON format in Default Value field."
+msgstr "Neplatný JSON formát pro výchozí hodnotu pole."
+
+#. module: base
 #: code:addons/models.py:0
 #, python-format
 msgid "Invalid aggregation function %r."
@@ -18305,7 +18429,7 @@ msgstr "Neplatný název modelu% r v definici akce."
 #: code:addons/base/models/ir_actions.py:611
 #, python-format
 msgid "many2many fields cannot be evaluated by reference"
-msgstr ""
+msgstr "many2many pole nemohou být vyhodnoceny pomocí reference"
 
 #. module: base
 #: code:addons/template_inheritance.py:0
@@ -18685,8 +18809,8 @@ msgstr "LGPL verze 3"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_lt_reports
-msgid "LT - Accounting Reports"
-msgstr "LT - Účetní zprávy"
+msgid "Lithuania - Accounting Reports"
+msgstr ""
 
 #. module: base
 #: code:addons/base/models/ir_ui_view.py:0
@@ -20911,6 +21035,8 @@ msgid ""
 "Nicole is <b>author of several books</b>, including Amazon best seller\n"
 "                \"How Azure and Odoo will change the business world!\"."
 msgstr ""
+"Nikola je <b>autorkou řady knih</b>, včetně best selleru Amazonu\n"
+"                \"Jak Azure a Odoo změní svět businessu!\"."
 
 #. module: base
 #: model_terms:res.partner,website_description:base.res_partner_address_16
@@ -20921,6 +21047,11 @@ msgid ""
 "                from 1 to 55 employees mostly by reselling services on\n"
 "                Odoo."
 msgstr ""
+"Nikola pracuje v IT sektoru <b>již 20 let</b>. \n"
+"                Vyvýjí software pomáhající s tvorbou webových stránek.  Svou první\n"
+"                společnost prodala, když jí bylo 30, řídila růst Azure Interior\n"
+"                z 1 na 55 zaměstnanců, především přeprodejem služeb\n"
+"                pomocí Odoo."
 
 #. module: base
 #: model:res.country,name:base.ne
@@ -20989,6 +21120,9 @@ msgid ""
 "'%%(field)s' and the following error was encountered when we attempted to "
 "create one: %(error_message)s"
 msgstr ""
+"Žádné odpovídající záznamy pro %(field_type)s '%(value)s' v poli "
+"'%%(field)s' a následující chyba se vyskytla při pokuse vytvořit záznam: "
+"%(error_message)s"
 
 #. module: base
 #: model_terms:ir.actions.act_window,help:base.open_module_tree
@@ -23712,6 +23846,8 @@ msgid ""
 "Other features are accessible through <code>self</code>, like\n"
 "                                                <code>self.env</code>, etc."
 msgstr ""
+"Jiné funkce jsou dostupné přes <code>vlastní</code>, stejně jako\n"
+"                                                 <code>vlastní.env</code>, atd."
 
 #. module: base
 #: model_terms:ir.ui.view,arch_db:base.view_model_fields_form
@@ -23719,6 +23855,8 @@ msgid ""
 "Other features are accessible through <code>self</code>, like\n"
 "                                    <code>self.env</code>, etc."
 msgstr ""
+"Jiné funkce jsou dostupné přes <code>vlastní</code>, stejně jako\n"
+"<code>vlastní.env</code>, atd."
 
 #. module: base
 #: model_terms:ir.ui.view,arch_db:base.view_ir_mail_server_search
@@ -26335,6 +26473,17 @@ msgstr "Zasílejte své zásilky prostřednictvím Fedexu a sledujte je online"
 
 #. module: base
 #: model:ir.module.module,description:base.module_delivery_ups
+msgid ""
+"This is the legacy integration with UPS that is no longer supported. Please "
+"install the new \"UPS Shipping\" module and uninstall this one as soon as "
+"possible. This integration will stop working in 2024."
+msgstr ""
+"Toto je starší integrace s UPS, která již není podporována. Nainstalujte "
+"prosím nový modul „Přeprava UPS“ a odinstalujte jej co nejdříve. Tato "
+"integrace přestane fungovat v roce 2024."
+
+#. module: base
+#: model:ir.module.module,summary:base.module_delivery_ups_rest
 msgid "Send your shippings through UPS and track them online"
 msgstr "Pošlete své zásilky prostřednictvím UPS a sledujte je online"
 
@@ -27698,8 +27847,8 @@ msgstr "Modul `%s` není momentálně dostupný, zkuste to prosím znovu pozděj
 #. module: base
 #: code:addons/base/models/ir_module.py:0
 #, python-format
-msgid "The `base` module cannot be uninstalled"
-msgstr "Modul `base' nelze odinstalovat"
+msgid "Those modules cannot be uninstalled: %s"
+msgstr "Tyto moduly nemohly být odinstalovány: %s"
 
 #. module: base
 #: model:ir.model.fields,help:base.field_res_partner_category__active
@@ -27791,6 +27940,10 @@ msgid ""
 "                                                the field must be assigned to each record with a dictionary-like\n"
 "                                                assignment."
 msgstr ""
+"Pole <strong>Vypočítat</strong> je kód Pythonu\n"
+"                                                k výpočtu hodnoty pole na sadě záznamů. Hodnota\n"
+"                                                pole musí být každému záznamu přiřazeno jako položka\n"
+"                                                ve slovníku."
 
 #. module: base
 #: model_terms:ir.ui.view,arch_db:base.view_model_fields_form
@@ -27813,6 +27966,12 @@ msgid ""
 "                                                fields accessible through other relational fields, for instance\n"
 "                                                <code>partner_id.company_id.name</code>."
 msgstr ""
+"Pole <strong>Dependencies</strong> vyjmenovává pole, na kterých\n"
+"                                                je aktuální pole závislé. Je to seznam názvů polí oddělencýh \n"
+"                                                čárkou, jako <code>name, size</code>. Na tato pole se můžete \n"
+"odkazovat \n"
+"                                                také pomocí dalších relačních polí, například \n"
+"                                                <code>partner_id.company_id.name</code>."
 
 #. module: base
 #: model_terms:ir.ui.view,arch_db:base.view_model_fields_form
@@ -27823,6 +27982,11 @@ msgid ""
 "                                    fields accessible through other relational fields, for instance\n"
 "                                    <code>partner_id.company_id.name</code>."
 msgstr ""
+"Pole <strong>Dependencies</strong> vyjmenovává pole, na kterých\n"
+"                                                je aktuální pole závislé. Je to seznam názvů polí oddělencýh \n"
+"                                                čárkou, jako <code>name, size</code>. Na tato pole se můžete \n"
+"                                                odkazovat pomocí dalších relačních polí, například \n"
+"                                                <code>partner_id.company_id.name</code>."
 
 #. module: base
 #: model_terms:ir.ui.view,arch_db:base.view_base_module_uninstall
@@ -28028,6 +28192,13 @@ msgid ""
 "Fields:\n"
 "%(fields_list)s"
 msgstr ""
+"Požadovanou operaci nelze dokončit kvůli bezpečnostním omezením.\n"
+"\n"
+"Typ dokumentu: %(document_kind)s (%(document_model)s)\n"
+"Operace: %(operation)s\n"
+"Uživatel: %(user)s\n"
+"Pole:\n"
+"%(fields_list)s"
 
 #. module: base
 #: model:ir.model.constraint,message:base.constraint_res_currency_rounding_gt_zero
@@ -28701,6 +28872,10 @@ msgid ""
 "                IT budget by almost half within the last 2 years.\n"
 "                Famous Managing Partner."
 msgstr ""
+"Toník Rudný pracuje v IT sektoru <b>již 10 let</b>. Je znám\n"
+"    především prodejem myších pastiček. Tímto trikem snížil \n"
+"    během dvou let rozpočet IT téměř o polovinu.\n"
+"    Slavný výkonný partner."
 
 #. module: base
 #: code:addons/base/models/res_users.py:0
@@ -29058,6 +29233,11 @@ msgstr "Kódy produktů UNSPSC"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_delivery_ups
+msgid "UPS Shipping (Legacy)"
+msgstr "Přeprava UPS (starší)"
+
+#. module: base
+#: model:ir.module.module,shortdesc:base.module_delivery_ups_rest
 msgid "UPS Shipping"
 msgstr "Odeslání UPS"
 
@@ -29276,7 +29456,7 @@ msgstr "Neznámá chyba při importu:"
 #: code:addons/base/models/ir_ui_view.py:0
 #, python-format
 msgid "Unknown field \"%(field)s\" in \"group_by\" value in %(attribute)s=%(value)r"
-msgstr ""
+msgstr "Neznámé pole \"%(field)s\" v hodnotě \"group_by\" v %(attribute)s=%(value)r"
 
 #. module: base
 #: code:addons/base/models/ir_ui_view.py:0
@@ -30299,6 +30479,8 @@ msgid ""
 "When subsequences per date range are used, you can prefix variables with 'range_'\n"
 "                                to use the beginning of the range instead of the current date, e.g. %(range_year)s instead of %(year)s."
 msgstr ""
+"Pokud jsou použity podsekvence podle časového období, můžete přidat k proměnné předponu \"range_\"\n"
+"pro použití začátku období místo aktuálního datumu, např. %(range_year)s místo %(year)s."
 
 #. module: base
 #: model:ir.model.fields,help:base.field_ir_model_fields__copied
@@ -30375,12 +30557,14 @@ msgid ""
 "Wkhtmltopdf failed (error code: %s). Memory limit too low or maximum file "
 "number of subprocess reached. Message : %s"
 msgstr ""
+"Wkhtmltopdf selhal (chybový kód: %s). Příliš nízký limit paměti nebo dosažen"
+" maximální počet souborů podprocesu. Zpráva : %s"
 
 #. module: base
 #: code:addons/base/models/ir_actions_report.py:0
 #, python-format
 msgid "Wkhtmltopdf failed (error code: %s). Message: %s"
-msgstr ""
+msgstr "Wkhtmltopdf selhal (kód chyby: %s). Zpráva: %s"
 
 #. module: base
 #: model:res.partner,website_short_description:base.res_partner_1
@@ -30617,6 +30801,12 @@ msgid "You cannot deactivate the user you're currently logged in as."
 msgstr "Nemůžete deaktivovat uživatele, na který jste aktuálně přihlášeni."
 
 #. module: base
+#: code:addons/base/models/ir_config_parameter.py:0
+#, python-format
+msgid "You cannot delete the %s record."
+msgstr "Nemůžete smazat %s záznam."
+
+#. module: base
 #: code:addons/base/models/res_lang.py:0
 #, python-format
 msgid ""
@@ -30637,6 +30827,12 @@ msgstr "Nemůžete smazat jazyk, který je preferovaným jazykem uživatele."
 #, python-format
 msgid "You cannot merge a contact with one of his parent."
 msgstr "Nemůžete sloučit kontakt s jedním z jeho nadřazených kontaktů."
+
+#. module: base
+#: code:addons/base/models/ir_config_parameter.py:0
+#, python-format
+msgid "You cannot rename config parameters with keys %s"
+msgstr "Nemůžete přejmenovat konfigurační parametry pomocí klíčů %s"
 
 #. module: base
 #: code:addons/models.py:0
@@ -31323,3 +31519,9 @@ msgstr "ano"
 #: model:res.country,name:base.ax
 msgid "Åland Islands"
 msgstr "Ålandské ostrovy"
+
+#. module: base
+#: code:addons/base/models/res_currency.py:0
+#, python-format
+msgid "This currency is set on a company and therefore must be active."
+msgstr ""

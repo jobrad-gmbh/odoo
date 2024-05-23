@@ -9,8 +9,7 @@
 # roye w <159820@qq.com>, 2020
 # snow wang <147156565@qq.com>, 2020
 # 226408 台北 <226408@so8d.com>, 2020
-# 湘子 南 <1360857908@qq.com>, 2020
-# 开源智造OSCG-老杨 <yangxunbo@163.com>, 2020
+# yangxunbo <yangxunbo@163.com>, 2020
 # Dong <dong@freshoo.cn>, 2020
 # Shiping Lv <lvshiping@sina.com>, 2020
 # as co02 <asco02@163.com>, 2020
@@ -22,7 +21,7 @@
 # Jerry Pan <panjianyu@inspur.com>, 2020
 # Manga Tsang <mts@odoo.com>, 2020
 # Felix Yang <felixyangsh@aliyun.com>, 2020
-# GritLuo <dooms21day@163.com>, 2020
+# Grit233 <grit233@163.com>, 2020
 # zilin wu <binggue@qq.com>, 2020
 # keecome <7017511@qq.com>, 2020
 # 敬雲 林 <chingyun@yuanchih-consult.com>, 2020
@@ -33,17 +32,20 @@
 # Felix Yuen <fyu@odoo.com>, 2021
 # inspur qiuguodong <qiuguodong@inspur.com>, 2021
 # Benson <Benson.Dr@Gmail.com>, 2021
-# Martin Trigaux, 2022
 # 山西清水欧度(QQ:54773801) <54773801@qq.com>, 2022
+# Martin Trigaux, 2023
+# Wil Odoo, 2023
+# Chloe Wang, 2023
+# 湘子 南 <1360857908@qq.com>, 2024
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-09 16:49+0000\n"
+"POT-Creation-Date: 2023-08-06 08:36+0000\n"
 "PO-Revision-Date: 2020-09-07 08:16+0000\n"
-"Last-Translator: 山西清水欧度(QQ:54773801) <54773801@qq.com>, 2022\n"
-"Language-Team: Chinese (China) (https://www.transifex.com/odoo/teams/41243/zh_CN/)\n"
+"Last-Translator: 湘子 南 <1360857908@qq.com>, 2024\n"
+"Language-Team: Chinese (China) (https://app.transifex.com/odoo/teams/41243/zh_CN/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
@@ -1719,6 +1721,13 @@ msgid "Do not have access, skip this data for user's digest email"
 msgstr "没有权限，用户EMail中忽略此数据"
 
 #. module: point_of_sale
+#. openerp-web
+#: code:addons/point_of_sale/static/src/js/Misc/AbstractReceiptScreen.js:0
+#, python-format
+msgid "Do you want to print using the web printer?"
+msgstr "您想使用网络打印机打印吗？"
+
+#. module: point_of_sale
 #: model_terms:ir.ui.view,arch_db:point_of_sale.res_config_settings_view_form
 msgid "Documentation"
 msgstr "文档"
@@ -1949,6 +1958,7 @@ msgstr "税科目调整"
 
 #. module: point_of_sale
 #. openerp-web
+#: code:addons/point_of_sale/static/src/js/custom_hooks.js:0
 #: code:addons/point_of_sale/static/src/js/custom_hooks.js:0
 #, python-format
 msgid "Fiscal data module error"
@@ -2908,6 +2918,12 @@ msgid "Ongoing"
 msgstr "正在进行"
 
 #. module: point_of_sale
+#: code:addons/point_of_sale/models/pos_config.py:0
+#, python-format
+msgid "Only administrators can edit receipt headers and footers"
+msgstr "只有管理员可以编辑收据页眉和页脚"
+
+#. module: point_of_sale
 #: model:ir.model.fields,field_description:point_of_sale.field_pos_config__only_round_cash_method
 msgid "Only apply rounding on cash"
 msgstr "仅对现金使用四舍五入"
@@ -3379,8 +3395,11 @@ msgid "Picking POS"
 msgstr "拣货POS"
 
 #. module: point_of_sale
+#: code:addons/point_of_sale/models/pos_order.py:0
+#: code:addons/point_of_sale/models/pos_session.py:0
 #: model_terms:ir.ui.view,arch_db:point_of_sale.view_pos_pos_form
 #: model_terms:ir.ui.view,arch_db:point_of_sale.view_pos_session_form
+#, python-format
 msgid "Pickings"
 msgstr "拣货"
 
@@ -4875,6 +4894,14 @@ msgid "The default pricelist must be included in the available pricelists."
 msgstr "默认价目表必须包括在可用价目表中。"
 
 #. module: point_of_sale
+#: code:addons/point_of_sale/models/pos_config.py:0
+#, python-format
+msgid ""
+"The default pricelist must belong to no company or the company of the point "
+"of sale."
+msgstr "默认价格表必须属于没有公司或者门店所属的公司。"
+
+#. module: point_of_sale
 #. openerp-web
 #: code:addons/point_of_sale/static/src/js/custom_hooks.js:0
 #, python-format
@@ -5201,6 +5228,15 @@ msgstr "此操作将永久销毁来自本地存储的所有付费订单数据切
 #, python-format
 msgid "This order is empty"
 msgstr "订单为空"
+
+#. module: point_of_sale
+#. openerp-web
+#: code:addons/point_of_sale/static/src/js/Screens/ReceiptScreen/ReceiptScreen.js:0
+#, python-format
+msgid ""
+"This order is not yet synced to server. Make sure it is synced then try "
+"again."
+msgstr "这个订单还没有同步到服务器。请确认它已被同步，然后再试。"
 
 #. module: point_of_sale
 #: model:ir.model.fields,help:point_of_sale.field_pos_config__tip_product_id
@@ -5539,6 +5575,13 @@ msgid "Unsupported File Format"
 msgstr "不支持的文件格式"
 
 #. module: point_of_sale
+#. openerp-web
+#: code:addons/point_of_sale/static/src/js/Screens/ReceiptScreen/ReceiptScreen.js:0
+#, python-format
+msgid "Unsynced order"
+msgstr "未同步的订单"
+
+#. module: point_of_sale
 #: model_terms:ir.ui.view,arch_db:point_of_sale.view_pos_pos_form
 msgid "UoM"
 msgstr "计量单位"
@@ -5750,6 +5793,17 @@ msgid ""
 "You can't validate a bank statement that is used in an opened Session of a "
 "Point of Sale."
 msgstr "您无法验证在营业点的营业点中使用的银行对帐单."
+
+#. module: point_of_sale
+#: code:addons/point_of_sale/models/pos_order.py:0
+#, python-format
+msgid ""
+"You can't: create a pos order from the backend interface, or unset the "
+"pricelist, or create a pos.order in a python test with Form tool, or edit "
+"the form view in studio if no PoS order exist"
+msgstr ""
+"您不能：从后端界面创建 pos 订单，或取消设置价目表，或使用表单工具在 python 测试中创建 "
+"pos.order，或者在工作室中编辑表单视图（如果不存在 PoS 订单）"
 
 #. module: point_of_sale
 #: code:addons/point_of_sale/models/pos_session.py:0

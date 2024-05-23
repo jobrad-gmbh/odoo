@@ -46,7 +46,7 @@ class SequenceMixin(models.AbstractModel):
                 ))
 
     def __init__(self, pool, cr):
-        api.constrains(self._sequence_field, self._sequence_date_field)(type(self)._constrains_date_sequence)
+        api.constrains(self._sequence_field, self._sequence_date_field)(pool[self._name]._constrains_date_sequence)
         return super().__init__(pool, cr)
 
     def _constrains_date_sequence(self):
@@ -156,9 +156,9 @@ class SequenceMixin(models.AbstractModel):
         if self._sequence_field not in self._fields or not self._fields[self._sequence_field].store:
             raise ValidationError(_('%s is not a stored field', self._sequence_field))
         where_string, param = self._get_last_sequence_domain(relaxed)
-        if self.id or self.id.origin:
+        if self._origin.id:
             where_string += " AND id != %(id)s "
-            param['id'] = self.id or self.id.origin
+            param['id'] = self._origin.id
 
         query = f"""
                 SELECT {{field}} FROM {self._table}

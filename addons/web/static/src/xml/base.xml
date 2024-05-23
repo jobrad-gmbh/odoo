@@ -134,6 +134,7 @@
             t-ref="input"
             t-on-change="_onInputChange"
             t-on-click="_onInputClick"
+            autocomplete="off"
         />
         <span t-if="props.warn_future and state.warning" class="fa fa-exclamation-triangle o_tz_warning o_datepicker_warning">
             <t>This date is on the future. Make sure it is what you expected.</t>
@@ -391,7 +392,7 @@
                         t-attf-title="Number using {{ DECIMAL_POINT }} as decimal separator."
                         t-attf-pattern="[0-9]+([\\{{ DECIMAL_POINT }}][0-9]+)?"
                         t-att-value="condition.displayedValue"
-                        t-on-input="_onValueInput(condition)"
+                        t-on-change="_onValueInput(condition)"
                     />
                     <input t-elif="['integer', 'id'].includes(fieldType)"
                         class="o_input"

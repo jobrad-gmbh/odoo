@@ -6,18 +6,19 @@
 # e2f <projects@e2f.com>, 2020
 # Martin Trigaux, 2020
 # Luis M. Ontalba <luis.martinez@tecnativa.com>, 2020
-# gabriumaa <gabriel.umana@delfixcr.com>, 2020
+# Gabriel Umaña <gabriel.umana@delfixcr.com>, 2020
 # Antonio Trueba, 2020
 # Jon Perez <jop@odoo.com>, 2020
 # Juan Pablo Mora <jpm@odoo.com>, 2020
 # Mariana Santos Romo <msn@odoo.com>, 2020
 # Jesse Garza <jga@odoo.com>, 2020
-# anderson buitron <andersonbuitron@unicauca.edu.co>, 2020
 # Osiris Anael Roman Eras <osiris.roman@yachaytech.edu.ec>, 2020
 # Jesús Alan Ramos Rodríguez <alan.ramos@jarsa.com.mx>, 2020
 # José Cabrera Lozano <jose.cabrera@edukative.es>, 2021
 # Jonatan Gk, 2022
 # marcescu, 2022
+# Leonardo J. Caballero G. <leonardocaballero@gmail.com>, 2022
+# Pedro M. Baeza <pedro.baeza@tecnativa.com>, 2024
 # 
 msgid ""
 msgstr ""
@@ -25,13 +26,13 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-11-16 13:33+0000\n"
 "PO-Revision-Date: 2020-09-07 08:21+0000\n"
-"Last-Translator: marcescu, 2022\n"
-"Language-Team: Spanish (https://www.transifex.com/odoo/teams/41243/es/)\n"
+"Last-Translator: Pedro M. Baeza <pedro.baeza@tecnativa.com>, 2024\n"
+"Language-Team: Spanish (https://app.transifex.com/odoo/teams/41243/es/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Language: es\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;\n"
 
 #. module: website_event_track_exhibitor
 #. openerp-web
@@ -65,6 +66,8 @@ msgid ""
 "<i class=\"fa fa-folder-open\"/>\n"
 "                By Sponsorship"
 msgstr ""
+"<i class=\"fa fa-folder-open\"/>\n"
+"                por patrocinio"
 
 #. module: website_event_track_exhibitor
 #: model_terms:ir.ui.view,arch_db:website_event_track_exhibitor.event_sponsor_view_form
@@ -72,8 +75,8 @@ msgid ""
 "<i class=\"fa fa-long-arrow-right mx-2\" aria-label=\"Arrow icon\" "
 "title=\"Arrow\"/>"
 msgstr ""
-"<i class=\"fa fa-long-arrow-right mx-2\" aria-label=\"Arrow icon\" "
-"title=\"Arrow\"/>"
+"<i class=\"fa fa-long-arrow-right mx-2\" aria-label=\"Icono de flecha\" "
+"title=\"Flecha\"/>"
 
 #. module: website_event_track_exhibitor
 #: model_terms:ir.ui.view,arch_db:website_event_track_exhibitor.exhibitor_aside
@@ -117,7 +120,7 @@ msgstr "Todos los países"
 #. module: website_event_track_exhibitor
 #: model_terms:ir.ui.view,arch_db:website_event_track_exhibitor.exhibitors_topbar_sponsorship
 msgid "All Sponsorships"
-msgstr ""
+msgstr "Todos los patrocinios"
 
 #. module: website_event_track_exhibitor
 #: model:ir.model.fields,field_description:website_event_track_exhibitor.field_event_sponsor__can_publish
@@ -219,7 +222,7 @@ msgstr "Expositor"
 #. module: website_event_track_exhibitor
 #: model:ir.model.fields,field_description:website_event_track_exhibitor.field_event_sponsor__is_exhibitor
 msgid "Exhibitor's Chat"
-msgstr ""
+msgstr "Chat de expositor"
 
 #. module: website_event_track_exhibitor
 #: code:addons/website_event_track_exhibitor/models/event_event.py:0
@@ -330,7 +333,7 @@ msgstr "Participantes pico"
 #. module: website_event_track_exhibitor
 #: model_terms:ir.ui.view,arch_db:website_event_track_exhibitor.exhibitor_card
 msgid "Register"
-msgstr "Registro"
+msgstr "Inscribirse"
 
 #. module: website_event_track_exhibitor
 #: model:ir.model.fields,field_description:website_event_track_exhibitor.field_event_sponsor__room_is_full
@@ -359,6 +362,8 @@ msgid ""
 "Sponsors might be advertised on your event pages footer.<br>\n"
 "    Exhibitors might have a dedicated page with chat room for people to connect with them."
 msgstr ""
+"Los patrocinadores pueden anunciarse en el pie de página de su evento.<br>\n"
+"    Los expositores pueden tener una página dedicada con una sala de chat para que la gente se ponga en contacto con ellos."
 
 #. module: website_event_track_exhibitor
 #: code:addons/website_event_track_exhibitor/controllers/website_event_main.py:0
@@ -408,7 +413,7 @@ msgstr "Dentro del horario de atención"
 #. module: website_event_track_exhibitor
 #: model_terms:ir.ui.view,arch_db:website_event_track_exhibitor.event_sponsor_view_form
 msgid "e.g. : Your best choice for your home"
-msgstr ""
+msgstr "Por ejemplo: La mejor opción para su hogar"
 
 #. module: website_event_track_exhibitor
 #. openerp-web

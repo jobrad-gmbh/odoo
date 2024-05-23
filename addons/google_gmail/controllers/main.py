@@ -30,7 +30,7 @@ class GoogleGmailController(http.Controller):
             raise Forbidden()
 
         if error:
-            return _('An error occur during the authentication process: %s.') % error
+            return _('An error occur during the authentication process.')
 
         try:
             state = json.loads(state)
@@ -43,7 +43,7 @@ class GoogleGmailController(http.Controller):
 
         model = request.env[model_name]
 
-        if not issubclass(type(model), request.env.registry['google.gmail.mixin']):
+        if not isinstance(model, request.env.registry['google.gmail.mixin']):
             # The model must inherits from the "google.gmail.mixin" mixin
             raise Forbidden()
 
@@ -57,8 +57,8 @@ class GoogleGmailController(http.Controller):
 
         try:
             refresh_token, access_token, expiration = record._fetch_gmail_refresh_token(code)
-        except UserError as e:
-            return _('An error occur during the authentication process: %s.') % str(e.name)
+        except UserError:
+            return _('An error occur during the authentication process.')
 
         record.write({
             'google_gmail_access_token': access_token,

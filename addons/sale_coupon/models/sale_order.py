@@ -44,10 +44,13 @@ class SaleOrder(models.Model):
         return order
 
     def action_confirm(self):
-        self.generated_coupon_ids.write({'state': 'new'})
+        res = super().action_confirm()
+        valid_coupon_ids = self.generated_coupon_ids.filtered(lambda coupon: coupon.state not in ['expired', 'cancel'])
+        valid_coupon_ids.write({'state': 'new', 'partner_id': self.partner_id})
+        (self.generated_coupon_ids - valid_coupon_ids).write({'state': 'cancel', 'partner_id': self.partner_id})
         self.applied_coupon_ids.write({'state': 'used'})
         self._send_reward_coupon_mail()
-        return super(SaleOrder, self).action_confirm()
+        return res
 
     def _action_cancel(self):
         res = super()._action_cancel()
@@ -86,15 +89,25 @@ class SaleOrder(models.Model):
         total_qty = sum(self.order_line.filtered(lambda x: x.product_id == program.reward_product_id).mapped('product_uom_qty'))
         # Remove needed quantity from reward quantity if same reward and rule product
         if program._get_valid_products(program.reward_product_id):
-            # number of times the program should be applied
-            program_in_order = max_product_qty // (program.rule_min_quantity + program.reward_product_quantity)
-            # multipled by the reward qty
-            reward_product_qty = program.reward_product_quantity * program_in_order
+            # number of times the program could be applied by quantity
+            nbr_program_by_qtt = (
+                max_product_qty // (program.rule_min_quantity + program.reward_product_quantity)
+            )
             # do not give more free reward than products
-            reward_product_qty = min(reward_product_qty, total_qty)
+            nbr_program_less_than_products = total_qty // program.reward_product_quantity
+            program_in_order = min(nbr_program_by_qtt, nbr_program_less_than_products)
             if program.rule_minimum_amount:
-                order_total = sum(order_lines.mapped('price_total')) - (program.reward_product_quantity * program.reward_product_id.lst_price)
-                reward_product_qty = min(reward_product_qty, order_total // program.rule_minimum_amount)
+                # Ensure the minimum amount for the reward is met
+                min_amount_with_reward = (
+                    program.rule_minimum_amount
+                    + program.reward_product_quantity * program.reward_product_id.lst_price
+                )
+                nbr_program_by_amount = (
+                    sum(order_lines.mapped('price_total')) // min_amount_with_reward
+                )
+                program_in_order = min(program_in_order, nbr_program_by_amount)
+            # multiplied by the reward qty
+            reward_product_qty = program_in_order * program.reward_product_quantity
         else:
             program_in_order = max_product_qty // program.rule_min_quantity
             reward_product_qty = min(program.reward_product_quantity * program_in_order, total_qty)
@@ -154,6 +167,10 @@ class SaleOrder(models.Model):
         # This allow manual overwrite of taxes for promotion.
         if program.discount_line_product_id.taxes_id:
             line_taxes = self.fiscal_position_id.map_tax(program.discount_line_product_id.taxes_id) if self.fiscal_position_id else program.discount_line_product_id.taxes_id
+            lines = self._get_base_order_lines(program)
+            discount_amount = min(
+                sum(lines.mapped(lambda l: l.price_reduce * l.product_uom_qty)), discount_amount
+            )
             return [{
                 'name': _("Discount: %s", program.name),
                 'product_id': program.discount_line_product_id.id,
@@ -188,14 +205,12 @@ class SaleOrder(models.Model):
 
             discount_amount -= discount_line_amount_price * lines_total / lines_price
 
-            tax_name = ""
-            if len(tax_ids) == 1:
-                tax_name = " - " + _("On product with following tax: ") + ', '.join(tax_ids.mapped('name'))
-            elif len(tax_ids) > 1:
-                tax_name = " - " + _("On product with following taxes: ") + ', '.join(tax_ids.mapped('name'))
-
             reward_lines[tax_ids] = {
-                'name': _("Discount: ") + program.name + tax_name,
+                'name': _(
+                    "Discount: %(program)s - On product with following taxes: %(taxes)s",
+                    program=program.name,
+                    taxes=", ".join(tax_ids.mapped('name')),
+                ),
                 'product_id': program.discount_line_product_id.id,
                 'price_unit': -discount_line_amount_price,
                 'product_uom_qty': 1.0,
@@ -290,10 +305,15 @@ class SaleOrder(models.Model):
         self.ensure_one()
         self = self.with_context(lang=self.partner_id.lang)
         program = program.with_context(lang=self.partner_id.lang)
+        values = []
         if program.reward_type == 'discount':
-            return self._get_reward_values_discount(program)
+            values = self._get_reward_values_discount(program)
         elif program.reward_type == 'product':
-            return [self._get_reward_values_product(program)]
+            values = [self._get_reward_values_product(program)]
+        seq = max(self.order_line.mapped('sequence'), default=10) + 1
+        for value in values:
+            value['sequence'] = seq
+        return values
 
     def _create_reward_line(self, program):
         self.write({'order_line': [(0, False, value) for value in self._get_reward_line_values(program)]})
@@ -324,7 +344,7 @@ class SaleOrder(models.Model):
         template = self.env.ref('coupon.mail_template_sale_coupon', raise_if_not_found=False)
         if template:
             for order in self:
-                for coupon in order.generated_coupon_ids:
+                for coupon in order.generated_coupon_ids.filtered(lambda coupon: coupon.state == 'new'):
                     order.message_post_with_template(
                         template.id, composition_mode='comment',
                         model='coupon.coupon', res_id=coupon.id,
@@ -395,6 +415,9 @@ class SaleOrder(models.Model):
         def update_line(order, lines, values):
             '''Update the lines and return them if they should be deleted'''
             lines_to_remove = self.env['sale.order.line']
+            # move coupons to the end of the SO
+            values['sequence'] = max(order.order_line.mapped('sequence')) + 1
+
             # Check commit 6bb42904a03 for next if/else
             # Remove reward line if price or qty equal to 0
             if values['product_uom_qty'] and values['price_unit']:
