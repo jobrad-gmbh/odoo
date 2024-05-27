@@ -21,7 +21,7 @@ ENV LC_ALL en_US.UTF-8
 RUN apt-get update -qq \
     && apt-get install -y --no-install-recommends python3 python3-pip python3-dev libjpeg-dev libsasl2-dev libxslt-dev libxml2-dev ca-certificates \
     curl file xfonts-75dpi xfonts-base unzip build-essential fontconfig libfontconfig1 libpng16-16 \
-    libldap2-dev libssl-dev poppler-utils fonts-dejavu cabextract libfreetype6 python3-magic git libffi-dev libc6 \
+    libldap2-dev libssl-dev poppler-utils fonts-dejavu cabextract libfreetype6 git libffi-dev libc6 \
     libstdc++6 lib32z1 libpoppler-cpp-dev pkg-config librdkafka-dev python3-cairocffi node-less libpq-dev wkhtmltopdf \
     libbz2-dev libreadline-dev libsqlite3-dev liblzma-dev \
     && rm -rf /var/lib/apt/lists/*
@@ -64,7 +64,7 @@ RUN git clone --depth 1 -b v2.4.1 https://github.com/pyenv/pyenv.git "${PYENV_RO
 COPY requirements.txt /tmp/requirements.txt
 RUN pip3 install --no-cache-dir setuptools --upgrade \
     && pip3 install --no-cache-dir --upgrade pip \
-    && pip3 install --no-cache-dir -r /tmp/requirements.txt \
+    && pip3 install --no-cache-dir python-magic==0.4.27 -r /tmp/requirements.txt \
     && rm -rf /tmp/requirements.txt
 
 RUN apt-get purge -y build-essential
