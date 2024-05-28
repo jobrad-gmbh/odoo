@@ -22,9 +22,15 @@ RUN apt-get update -qq \
     && apt-get install -y --no-install-recommends python3 python3-pip python3-dev libjpeg-dev libsasl2-dev libxslt-dev libxml2-dev ca-certificates tzdata \
     curl file xfonts-75dpi xfonts-base unzip build-essential fontconfig libfontconfig1 libpng16-16 \
     libldap2-dev libssl-dev poppler-utils fonts-dejavu cabextract libfreetype6 git libffi-dev libc6 \
-    libstdc++6 lib32z1 libpoppler-cpp-dev pkg-config librdkafka-dev python3-cairocffi node-less libpq-dev wkhtmltopdf \
+    libstdc++6 lib32z1 libpoppler-cpp-dev pkg-config librdkafka-dev python3-cairocffi node-less libpq-dev \
     libbz2-dev libreadline-dev libsqlite3-dev liblzma-dev \
     && rm -rf /var/lib/apt/lists/*
+
+# wkhtmltopdf
+RUN curl -sL -o /tmp/wkhtmltox.deb https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6.1-2/wkhtmltox_0.12.6.1-2.jammy_amd64.deb \
+    && echo '800eb1c699d07238fee77bf9df1556964f00ffcf /tmp/wkhtmltox.deb' | sha1sum -c - \
+    && apt-get install -y --no-install-recommends /tmp/wkhtmltox.deb \
+    && rm -rf /tmp/wkhtmltox.deb
 
 # ghostscript
 COPY docker/ghostscript_cmap_copyfix.diff /tmp/ghostscript_cmap_copyfix.diff
