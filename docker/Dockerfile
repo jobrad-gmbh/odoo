@@ -47,7 +47,7 @@ RUN if [ "$TARGETARCH" = "arm64" ]; then \
     && dpkg -i /tmp/wkhtmltox.deb \
     && rm -rf /tmp/wkhtmltox.deb \
     else \
-    RUN curl -sL -o /tmp/wkhtmltox.deb https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.focal_amd64.deb \
+    curl -sL -o /tmp/wkhtmltox.deb https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.focal_amd64.deb \
     && echo '4a974456d6271908c46aa38fc177f99d6cd3b39a /tmp/wkhtmltox.deb' | sha1sum -c - \
     && apt-get install -y --no-install-recommends /tmp/wkhtmltox.deb \
     && rm -rf /tmp/wkhtmltox.deb \
