@@ -51,10 +51,9 @@ jobs:
         platforms: linux/amd64,linux/arm64
         push: true
         build-args:
-          - ODOO_BASE_IMAGE_TAG=${BRANCH_NAME}
+          ODOO_BASE_IMAGE_TAG=${{env.BRANCH_NAME}}
         tags: |
           ${{GHCR_IMAGE_NAME}}:${{SHORT_REV}}
           ${{GHCR_IMAGE_NAME}}:${{BRANCH_NAME}}
           ${{ARTIFACTORY_IMAGE_NAME}}:${{SHORT_REV}}
           ${{ARTIFACTORY_IMAGE_NAME}}:${{BRANCH_NAME}}
-          
