@@ -5,6 +5,13 @@ RUN cd /tmp && git clone https://github.com/edenhill/librdkafka.git && \
     cd librdkafka && git checkout tags/v1.7.0 && \
     ./configure && make && make install
 
+FROM ubuntu:18.04 AS wkhtmltopdf
+USER root
+RUN apt update && apt install -y git wget software-properties-common lsb-release gcc make python3 python3-pip python3-dev libsasl2-modules-gssapi-mit
+RUN cd /tmp && git clone https://github.com/wkhtmltopdf/wkhtmltopdf.git && \
+    cd librdkafka && git checkout tags/v1.7.0 && \
+    ./configure && make && make install
+
 FROM ubuntu:20.04
 
 # variables & locales
