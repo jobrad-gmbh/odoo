@@ -57,4 +57,3 @@ jobs:
           ${{env.GHCR_IMAGE_NAME}}:${{env.BRANCH_NAME}}
           ${{env.ARTIFACTORY_IMAGE_NAME}}:${{env.SHORT_REV}}
           ${{env.ARTIFACTORY_IMAGE_NAME}}:${{env.BRANCH_NAME}}
-          
