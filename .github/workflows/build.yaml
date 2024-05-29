@@ -9,14 +9,13 @@ on:
 
 jobs:
 
-  build-docker:
-    runs-on: [self-hosted, short]
+  build-docker-amd64:
+    runs-on: self-hosted
     permissions:
       contents: read
       packages: write
     env:
       GHCR_IMAGE_NAME: ghcr.io/jobrad-gmbh/odoo
-      ARTIFACTORY_IMAGE_NAME: artifactory.service.jobrad.org/jra_docker_registry/odoo
     steps:
     - uses: actions/checkout@v3
 
@@ -33,31 +32,88 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Login to artifactory registry
-      uses: docker/login-action@v2
-      with:
-        registry: artifactory.service.jobrad.org
-        username: github_runner
-        password: ${{ secrets.ARTIFACTORY_TOKEN }}
-
-    - name: Build the Docker image
+    - name: Build and push Docker image (AMD64)
       shell: bash
       run: |
-        if docker pull "${GHCR_IMAGE_NAME}:${SHORT_REV}"; then
-          docker image tag "${GHCR_IMAGE_NAME}:${SHORT_REV}" "${GHCR_IMAGE_NAME}:${BRANCH_NAME}"
-        else
-          echo "Docker image tag ${SHORT_REV} doesn't exist yet"
-          docker build . -f docker/Dockerfile -t "${GHCR_IMAGE_NAME}:${BRANCH_NAME}" -t "${GHCR_IMAGE_NAME}:${SHORT_REV}" --pull
-        fi
+        IMAGE="${GHCR_IMAGE_NAME}:${SHORT_REV}-amd64"
+        docker build . --platform linux/amd64 -f docker/Dockerfile -t "${IMAGE}" --pull
+        docker push "${IMAGE}"
 
-    - name: Push Image to ghcr
-      run: |
-        docker push "${GHCR_IMAGE_NAME}:${SHORT_REV}"
-        docker push "${GHCR_IMAGE_NAME}:${BRANCH_NAME}"
+  build-docker-arm64:
+    runs-on: self-hosted
+    permissions:
+      contents: read
+      packages: write
+    env:
+      GHCR_IMAGE_NAME: ghcr.io/jobrad-gmbh/odoo
+    steps:
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
 
-    - name: Push Image to artifactory
+    - uses: actions/checkout@v3
+
+    - name: Create variables
+      shell: bash
       run: |
-        docker tag "${GHCR_IMAGE_NAME}:${SHORT_REV}" "${ARTIFACTORY_IMAGE_NAME}:${SHORT_REV}"
-        docker tag "${GHCR_IMAGE_NAME}:${BRANCH_NAME}" "${ARTIFACTORY_IMAGE_NAME}:${BRANCH_NAME}"
-        docker push "${ARTIFACTORY_IMAGE_NAME}:${SHORT_REV}"
-        docker push "${ARTIFACTORY_IMAGE_NAME}:${BRANCH_NAME}"
+        echo "BRANCH_NAME=$(echo ${GITHUB_REF} | sed 's/refs\/heads\///'  | sed 's/refs\/tags\///' | sed 's/\//_/g')" >> $GITHUB_ENV
+        echo "SHORT_REV=$(echo ${{ github.sha }})" >> $GITHUB_ENV
+
+    - name: Login to ghcr registry
+      uses: docker/login-action@v2
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Build and push Docker image (ARM64)
+      shell: bash
+      run: |
+        IMAGE="${GHCR_IMAGE_NAME}:${SHORT_REV}-arm64"
+        docker buildx build . --platform linux/arm64 -f docker/Dockerfile -t "${IMAGE}" --pull --load
+        docker push "${IMAGE}"
+
+  combine-docker:
+    runs-on: [self-hosted, short]
+    needs: [build-docker-amd64, build-docker-arm64]
+    permissions:
+      contents: read
+      packages: write
+    env:
+      GHCR_IMAGE_NAME: ghcr.io/jobrad-gmbh/odoo
+    steps:
+      - name: Create variables
+        shell: bash
+        run: |
+          echo "BRANCH_NAME=$(echo ${GITHUB_REF} | sed 's/refs\/heads\///'  | sed 's/refs\/tags\///' | sed 's/\//_/g')" >> $GITHUB_ENV
+          echo "SHORT_REV=$(echo ${{ github.sha }})" >> $GITHUB_ENV
+
+      - name: Login to ghcr registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Login to artifactory registry
+        uses: docker/login-action@v2
+        with:
+          registry: artifactory.service.jobrad.org
+          username: github_runner
+          password: ${{ secrets.ARTIFACTORY_TOKEN }}
+
+      - name: Combine Docker images into a single multi-architecture image
+        shell: bash
+        run: |
+          IMAGE_AMD64="${GHCR_IMAGE_NAME}:${SHORT_REV}-amd64"
+          IMAGE_ARM64="${GHCR_IMAGE_NAME}:${SHORT_REV}-arm64"
+          IMAGE_BRANCH="${GHCR_IMAGE_NAME}:${BRANCH_NAME}"
+          IMAGE_REV="${GHCR_IMAGE_NAME}:${SHORT_REV}"
+          docker pull "${IMAGE_AMD64}"
+          docker pull "${IMAGE_ARM64}"
+          docker manifest rm "${IMAGE_BRANCH}" || true
+          docker manifest rm "${IMAGE_REV}" || true
+          docker manifest create "${IMAGE_BRANCH}" "${IMAGE_AMD64}" "${IMAGE_ARM64}"
+          docker manifest create "${IMAGE_REV}" "${IMAGE_AMD64}" "${IMAGE_ARM64}"
+          docker manifest push "${IMAGE_BRANCH}"
+          docker manifest push "${IMAGE_REV}"
+          # TODO Push to artifactory
