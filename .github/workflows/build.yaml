@@ -53,7 +53,8 @@ jobs:
         build-args:
           ODOO_BASE_IMAGE_TAG=${{env.BRANCH_NAME}}
         tags: |
-          ${{GHCR_IMAGE_NAME}}:${{SHORT_REV}}
-          ${{GHCR_IMAGE_NAME}}:${{BRANCH_NAME}}
-          ${{ARTIFACTORY_IMAGE_NAME}}:${{SHORT_REV}}
-          ${{ARTIFACTORY_IMAGE_NAME}}:${{BRANCH_NAME}}
+          ${{env.GHCR_IMAGE_NAME}}:${{env.SHORT_REV}}
+          ${{env.GHCR_IMAGE_NAME}}:${{env.BRANCH_NAME}}
+          ${{env.ARTIFACTORY_IMAGE_NAME}}:${{env.SHORT_REV}}
+          ${{env.ARTIFACTORY_IMAGE_NAME}}:${{env.BRANCH_NAME}}
+          
