@@ -63,7 +63,7 @@ ARG PYTHON_VERSION=3.8.10
 ENV PYENV_ROOT="$HOME/.pyenv"
 ENV PATH="${PYENV_ROOT}/shims:${PYENV_ROOT}/bin:${PATH}"
 RUN git clone --depth 1 -b v2.4.1 https://github.com/pyenv/pyenv.git "${PYENV_ROOT}" \
-    && pyenv install ${PYTHON_VERSION} \
+    && pyenv install --verbose ${PYTHON_VERSION} \
     && pyenv global ${PYTHON_VERSION}
 
 # pip dependencies
