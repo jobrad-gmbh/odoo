@@ -43,7 +43,7 @@ ARG TARGETARCH
 
 RUN if [ "$TARGETARCH" = "arm64" ]; then \
     RUN wget -O /tmp/wkhtmltox.deb https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.focal_arm64.deb \
-    && echo '134f986d2094491c37b9b53e9433ef2c393a298a /tmp/wkhtmltox.deb' | sha1sum -c - \\
+    && echo '134f986d2094491c37b9b53e9433ef2c393a298a /tmp/wkhtmltox.deb' | sha1sum -c - \
     && dpkg -i /tmp/wkhtmltox.deb \
     && rm -rf /tmp/wkhtmltox.deb \
     else \
