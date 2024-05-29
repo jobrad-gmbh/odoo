@@ -52,10 +52,6 @@ RUN if [ "$TARGETARCH" = "arm64" ]; then \
     && apt-get install -y --no-install-recommends /tmp/wkhtmltox.deb \
     && rm -rf /tmp/wkhtmltox.deb; \
 fi
-# wkhtmltopdf
-RUN wget -O /tmp/wkhtmltox.deb https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.focal_arm64.deb \
-    && dpkg -i /tmp/wkhtmltox.deb \
-    && rm -rf /tmp/wkhtmltox.deb
 
 # ghostscript
 COPY docker/ghostscript_cmap_copyfix.diff /tmp/ghostscript_cmap_copyfix.diff
