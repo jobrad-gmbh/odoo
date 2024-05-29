@@ -23,7 +23,7 @@ RUN apt-get update -qq \
     curl file xfonts-75dpi xfonts-base unzip build-essential fontconfig libfontconfig1 libpng16-16 \
     libldap2-dev libssl-dev poppler-utils fonts-dejavu cabextract libfreetype6 git libffi-dev libc6 \
     libstdc++6 lib32z1 libpoppler-cpp-dev pkg-config librdkafka-dev node-less libpq-dev \
-    libbz2-dev libreadline-dev libsqlite3-dev liblzma-dev \
+    libbz2-dev libreadline-dev libsqlite3-dev liblzma-dev zlib1g-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # wkhtmltopdf
