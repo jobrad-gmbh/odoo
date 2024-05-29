@@ -50,4 +50,4 @@ jobs:
     - name: Build the Docker image
       shell: bash
       run: |
-        docker buildx build --platform linux/amd64,linux/arm64 --push -f docker/odoo/Dockerfile --build-arg ODOO_BASE_IMAGE_TAG=${BRANCH_NAME} -t ${GHCR_IMAGE_NAME}:${SHORT_REV} -t ${GHCR_IMAGE_NAME}:${BRANCH_NAME} -t ${ARTIFACTORY_IMAGE_NAME}:${SHORT_REV} -t ${ARTIFACTORY_IMAGE_NAME}:${BRANCH_NAME} .
+        docker buildx build --platform linux/amd64,linux/arm64 --push -f docker/Dockerfile --build-arg ODOO_BASE_IMAGE_TAG=${BRANCH_NAME} -t ${GHCR_IMAGE_NAME}:${SHORT_REV} -t ${GHCR_IMAGE_NAME}:${BRANCH_NAME} -t ${ARTIFACTORY_IMAGE_NAME}:${SHORT_REV} -t ${ARTIFACTORY_IMAGE_NAME}:${BRANCH_NAME} .
