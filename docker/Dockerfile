@@ -19,7 +19,7 @@ ENV LC_ALL en_US.UTF-8
 
 # dependencies for odoo or python packages
 RUN apt-get update -qq \
-    && apt-get install -y --no-install-recommends python3 python3-pip python3-dev libjpeg-dev libsasl2-dev libxslt-dev libxml2-dev ca-certificates tzdata \
+    && apt-get install -y --no-install-recommends libjpeg-dev libsasl2-dev libxslt-dev libxml2-dev ca-certificates tzdata \
     curl file xfonts-75dpi xfonts-base unzip build-essential fontconfig libfontconfig1 libpng16-16 \
     libldap2-dev libssl-dev poppler-utils fonts-dejavu cabextract libfreetype6 git libffi-dev libc6 \
     libstdc++6 lib32z1 libpoppler-cpp-dev pkg-config librdkafka-dev node-less libpq-dev \
