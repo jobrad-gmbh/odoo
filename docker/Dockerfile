@@ -1,18 +1,16 @@
-FROM ubuntu:18.04 AS python_kafka
-USER root
+FROM ubuntu:20.04 AS librdkafka
+ENV TZ=Europe/Berlin
+ENV DEBIAN_FRONTEND noninteractive
 RUN apt update && apt install -y git wget software-properties-common lsb-release gcc make python3 python3-pip python3-dev libsasl2-modules-gssapi-mit
-RUN cd /tmp && git clone https://github.com/edenhill/librdkafka.git && \
-    cd librdkafka && git checkout tags/v1.7.0 && \
-    ./configure && make && make install
-
-FROM ubuntu:18.04 AS wkhtmltopdf
-USER root
-RUN apt update && apt install -y git wget software-properties-common lsb-release gcc make python3 python3-pip python3-dev libsasl2-modules-gssapi-mit
-RUN cd /tmp && git clone https://github.com/wkhtmltopdf/wkhtmltopdf.git && \
-    cd librdkafka && git checkout tags/v1.7.0 && \
+RUN cd /tmp && git clone --depth 1 -b v1.7.0 https://github.com/edenhill/librdkafka.git && \
+    cd librdkafka && \
     ./configure && make && make install
 
 FROM ubuntu:20.04
+
+COPY --from=librdkafka /usr/local/lib /usr/local/lib
+COPY --from=librdkafka /usr/local/include /usr/local/include
+COPY --from=librdkafka /usr/local/share/doc/librdkafka /usr/local/share/doc/librdkafka
 
 # variables & locales
 ENV TZ=Europe/Berlin
@@ -34,17 +32,16 @@ ENV LC_ALL en_US.UTF-8
 # dependencies for odoo or python packages
 RUN apt-get update -qq \
     && apt-get install -y --no-install-recommends python3 python3-pip python3-dev libjpeg-dev libsasl2-dev libxslt-dev libxml2-dev ca-certificates \
-    curl file xfonts-75dpi xfonts-base unzip wget build-essential fontconfig libfontconfig1 libpng16-16 \
+    curl file xfonts-75dpi xfonts-base unzip build-essential fontconfig libfontconfig1 libpng16-16 \
     libldap2-dev libssl-dev poppler-utils ttf-dejavu cabextract libfreetype6 python3-magic git libffi-dev libc6 \
     libstdc++6 zlib1g libpoppler-cpp-dev pkg-config python3-cairocffi node-less libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
 ARG TARGETARCH
-
 RUN if [ "$TARGETARCH" = "arm64" ]; then \
-    wget -O /tmp/wkhtmltox.deb https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.focal_arm64.deb \
+    curl -sL -o /tmp/wkhtmltox.deb https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.focal_arm64.deb \
     && echo '134f986d2094491c37b9b53e9433ef2c393a298a /tmp/wkhtmltox.deb' | sha1sum -c - \
-    && dpkg -i /tmp/wkhtmltox.deb \
+    && apt-get install -y --no-install-recommends /tmp/wkhtmltox.deb \
     && rm -rf /tmp/wkhtmltox.deb; \
     else \
     curl -sL -o /tmp/wkhtmltox.deb https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.focal_amd64.deb \
@@ -68,7 +65,7 @@ RUN GHOSTSCRIPT_VERSION=10020 \
     && ln -s /usr/local/bin/gs /usr/local/bin/ghostscript \
     && rm -rf /tmp/${GHOSTSCRIPT_FILE_NAME} /tmp/${GHOSTSCRIPT_BASE_NAME}
 
-    # odoo directories
+# odoo directories
 RUN useradd -s /usr/bin/nologin --create-home --password odoo odoo \
   && mkdir /home/odoo/.local \
   && chown odoo:odoo /home/odoo/.local \
@@ -78,14 +75,6 @@ RUN useradd -s /usr/bin/nologin --create-home --password odoo odoo \
 # msfonts
 COPY docker/msfonts.sh /tmp/msfonts.sh
 RUN chmod +x /tmp/msfonts.sh; sync; /tmp/msfonts.sh; rm -rf /tmp/msfonts.sh
-
-COPY --from=python_kafka /usr/local/lib /usr/local/lib
-COPY --from=python_kafka /usr/local/include /usr/local/include
-COPY --from=python_kafka /usr/local/share/doc/librdkafka /usr/local/share/doc/librdkafka
-
-# ldconfig
-RUN ldconfig
-
 
 # pip dependencies
 COPY requirements.txt /tmp/requirements.txt
