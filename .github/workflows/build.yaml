@@ -69,7 +69,7 @@ jobs:
       shell: bash
       run: |
         IMAGE="${GHCR_IMAGE_NAME}:${SHORT_REV}-arm64"
-        docker build . --platform linux/arm64 -f docker/Dockerfile -t "${IMAGE}" --pull
+        docker buildx build . --platform linux/arm64 -f docker/Dockerfile -t "${IMAGE}" --pull --load
         docker push "${IMAGE}"
 
   combine-docker:
