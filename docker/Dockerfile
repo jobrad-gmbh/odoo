@@ -4,7 +4,7 @@ ENV DEBIAN_FRONTEND noninteractive
 RUN apt update && apt install -y git wget software-properties-common lsb-release gcc make python3 python3-pip python3-dev libsasl2-modules-gssapi-mit
 RUN cd /tmp && git clone --depth 1 -b v1.7.0 https://github.com/edenhill/librdkafka.git && \
     cd librdkafka && \
-    ./configure && make && make install
+    ./configure && make -j$(( $(nproc) / 2 )) && make install
 
 FROM ubuntu:20.04
 
@@ -60,7 +60,7 @@ RUN GHOSTSCRIPT_VERSION=10020 \
     && cd /tmp/${GHOSTSCRIPT_BASE_NAME}/ \
     && patch -p1 < /tmp/ghostscript_cmap_copyfix.diff \
     && ./configure \
-    && make \
+    && make -j$(( $(nproc) / 2 )) \
     && make install \
     && ln -s /usr/local/bin/gs /usr/local/bin/ghostscript \
     && rm -rf /tmp/${GHOSTSCRIPT_FILE_NAME} /tmp/${GHOSTSCRIPT_BASE_NAME}
