@@ -1,16 +1,4 @@
-FROM ubuntu:20.04 AS librdkafka
-ENV TZ=Europe/Berlin
-ENV DEBIAN_FRONTEND noninteractive
-RUN apt update && apt install -y git wget software-properties-common lsb-release gcc make python3 python3-pip python3-dev libsasl2-modules-gssapi-mit
-RUN cd /tmp && git clone --depth 1 -b v1.7.0 https://github.com/edenhill/librdkafka.git && \
-    cd librdkafka && \
-    ./configure && make -j$(( $(nproc) / 2 )) && make install
-
 FROM ubuntu:20.04
-
-COPY --from=librdkafka /usr/local/lib /usr/local/lib
-COPY --from=librdkafka /usr/local/include /usr/local/include
-COPY --from=librdkafka /usr/local/share/doc/librdkafka /usr/local/share/doc/librdkafka
 
 # variables & locales
 ENV TZ=Europe/Berlin
@@ -34,7 +22,7 @@ RUN apt-get update -qq \
     && apt-get install -y --no-install-recommends python3 python3-pip python3-dev libjpeg-dev libsasl2-dev libxslt-dev libxml2-dev ca-certificates \
     curl file xfonts-75dpi xfonts-base unzip build-essential fontconfig libfontconfig1 libpng16-16 \
     libldap2-dev libssl-dev poppler-utils ttf-dejavu cabextract libfreetype6 python3-magic git libffi-dev libc6 \
-    libstdc++6 zlib1g libpoppler-cpp-dev pkg-config python3-cairocffi libpq-dev \
+    libstdc++6 zlib1g libpoppler-cpp-dev pkg-config librdkafka-dev python3-cairocffi libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
 ARG TARGETARCH
