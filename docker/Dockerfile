@@ -73,7 +73,7 @@ RUN GHOSTSCRIPT_VERSION=10020 \
     && rm -rf /tmp/${GHOSTSCRIPT_FILE_NAME} /tmp/${GHOSTSCRIPT_BASE_NAME}
 
 # odoo directories
-RUN useradd -s /usr/bin/nologin --create-home --password odoo odoo \
+RUN useradd -s /usr/sbin/nologin --create-home --password odoo odoo \
   && mkdir /home/odoo/.local \
   && chown odoo:odoo /home/odoo/.local \
   && mkdir --parents /opt/odoo/tests \
