@@ -110,6 +110,8 @@ jobs:
           IMAGE_REV="${GHCR_IMAGE_NAME}:${SHORT_REV}"
           docker pull "${IMAGE_AMD64}"
           docker pull "${IMAGE_ARM64}"
+          docker manifest rm "${IMAGE_BRANCH}" || true
+          docker manifest rm "${IMAGE_REV}" || true
           docker manifest create "${IMAGE_BRANCH}" "${IMAGE_AMD64}" "${IMAGE_ARM64}"
           docker manifest create "${IMAGE_REV}" "${IMAGE_AMD64}" "${IMAGE_ARM64}"
           docker manifest push "${IMAGE_BRANCH}"
