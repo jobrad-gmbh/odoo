@@ -67,7 +67,7 @@ RUN GHOSTSCRIPT_VERSION=10020 \
     && cd /tmp/${GHOSTSCRIPT_BASE_NAME}/ \
     && patch -p1 < /tmp/ghostscript_cmap_copyfix.diff \
     && ./configure \
-    && make -j$(( $(nproc) / 2 )) \
+    && make -j$(nproc) \
     && make install \
     && ln -s /usr/local/bin/gs /usr/local/bin/ghostscript \
     && rm -rf /tmp/${GHOSTSCRIPT_FILE_NAME} /tmp/${GHOSTSCRIPT_BASE_NAME}
