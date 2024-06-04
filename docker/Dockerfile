@@ -70,7 +70,7 @@ RUN git clone --depth 1 -b v2.4.1 https://github.com/pyenv/pyenv.git "${PYENV_RO
 COPY requirements.txt /tmp/requirements.txt
 RUN pip3 install --no-cache-dir setuptools --upgrade \
     && pip3 install --no-cache-dir --upgrade pip \
-    && pip3 install --no-cache-dir python-magic==0.4.27 cairocffi==0.9.0 -r /tmp/requirements.txt \
+    && pip3 install --no-cache-dir -r /tmp/requirements.txt \
     && rm -rf /tmp/requirements.txt
 
 RUN apt-get purge -y build-essential
