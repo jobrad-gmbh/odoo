@@ -22,15 +22,41 @@ RUN apt-get update -qq \
     && apt-get install -y --no-install-recommends libjpeg-dev libsasl2-dev libxslt-dev libxml2-dev ca-certificates tzdata \
     curl file xfonts-75dpi xfonts-base unzip build-essential fontconfig libfontconfig1 libpng16-16 \
     libldap2-dev libssl-dev poppler-utils fonts-dejavu cabextract libfreetype6 git libffi-dev libc6 \
-    libstdc++6 lib32z1 libpoppler-cpp-dev pkg-config librdkafka-dev node-less libpq-dev \
+    libstdc++6 libpoppler-cpp-dev pkg-config librdkafka-dev libpq-dev \
     libbz2-dev libreadline-dev libsqlite3-dev liblzma-dev zlib1g-dev \
     && rm -rf /var/lib/apt/lists/*
 
+ARG TARGETARCH
+
 # wkhtmltopdf
-RUN curl -sL -o /tmp/wkhtmltox.deb https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6.1-2/wkhtmltox_0.12.6.1-2.jammy_amd64.deb \
+RUN if [ "$TARGETARCH" = "arm64" ]; then \
+    curl -sL -o /tmp/wkhtmltox.deb https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6.1-2/wkhtmltox_0.12.6.1-2.jammy_arm64.deb \
+    && echo '0edcc573e8bbd7ba12885671e75cee8efe3ae11d /tmp/wkhtmltox.deb' | sha1sum -c - \
+    && apt-get install -y --no-install-recommends /tmp/wkhtmltox.deb \
+    && rm -rf /tmp/wkhtmltox.deb; \
+    else \
+    curl -sL -o /tmp/wkhtmltox.deb https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6.1-2/wkhtmltox_0.12.6.1-2.jammy_amd64.deb \
     && echo '800eb1c699d07238fee77bf9df1556964f00ffcf /tmp/wkhtmltox.deb' | sha1sum -c - \
     && apt-get install -y --no-install-recommends /tmp/wkhtmltox.deb \
-    && rm -rf /tmp/wkhtmltox.deb
+    && rm -rf /tmp/wkhtmltox.deb; \
+fi
+
+# lessc
+ENV PATH="${PATH}:/opt/node/bin"
+RUN if [ "$TARGETARCH" = "arm64" ]; then \
+    curl -sL -o /tmp/node.tar.xz https://nodejs.org/dist/v18.20.3/node-v18.20.3-linux-arm64.tar.xz \
+    && echo '3c497c19ddbf75bab7fecb36ddf1738622f0ba244aa1e0aebc70e46daf1a0794 /tmp/node.tar.xz' | sha256sum -c - \
+    && tar -xf /tmp/node.tar.xz \
+    && mv node-v18.20.3-linux-arm64 /opt/node \
+    && rm -rf /tmp/node.tar.xz; \
+    else \
+    curl -sL -o /tmp/node.tar.xz https://nodejs.org/dist/v18.20.3/node-v18.20.3-linux-x64.tar.xz \
+    && echo 'ffd6147c263b81016742dc1e72dc68885a3ca9b441d9744f9b76cad362d0cc5f /tmp/node.tar.xz' | sha256sum -c - \
+    && tar -xf /tmp/node.tar.xz \
+    && mv node-v18.20.3-linux-x64 /opt/node \
+    && rm -rf /tmp/node.tar.xz; \
+fi
+RUN npm install -g less@4.2.0
 
 # ghostscript
 COPY docker/ghostscript_cmap_copyfix.diff /tmp/ghostscript_cmap_copyfix.diff
@@ -42,7 +68,7 @@ RUN GHOSTSCRIPT_VERSION=10020 \
     && cd /tmp/${GHOSTSCRIPT_BASE_NAME}/ \
     && patch -p1 < /tmp/ghostscript_cmap_copyfix.diff \
     && ./configure \
-    && make \
+    && make -j$(nproc) \
     && make install \
     && ln -s /usr/local/bin/gs /usr/local/bin/ghostscript \
     && rm -rf /tmp/${GHOSTSCRIPT_FILE_NAME} /tmp/${GHOSTSCRIPT_BASE_NAME}
