@@ -1,4 +1,4 @@
-FROM ubuntu:20.04
+FROM ubuntu:22.04
 
 # variables & locales
 ENV TZ=Europe/Berlin
@@ -19,23 +19,24 @@ ENV LC_ALL en_US.UTF-8
 
 # dependencies for odoo or python packages
 RUN apt-get update -qq \
-    && apt-get install -y --no-install-recommends python3 python3-pip python3-dev libjpeg-dev libsasl2-dev libxslt-dev libxml2-dev ca-certificates \
+    && apt-get install -y --no-install-recommends libjpeg-dev libsasl2-dev libxslt-dev libxml2-dev ca-certificates tzdata \
     curl file xfonts-75dpi xfonts-base unzip build-essential fontconfig libfontconfig1 libpng16-16 \
-    libldap2-dev libssl-dev poppler-utils ttf-dejavu cabextract libfreetype6 python3-magic git libffi-dev libc6 \
-    libstdc++6 zlib1g libpoppler-cpp-dev pkg-config librdkafka-dev python3-cairocffi libpq-dev \
+    libldap2-dev libssl-dev poppler-utils fonts-dejavu cabextract libfreetype6 git libffi-dev libc6 \
+    libstdc++6 libpoppler-cpp-dev pkg-config librdkafka-dev libpq-dev \
+    libbz2-dev libreadline-dev libsqlite3-dev liblzma-dev zlib1g-dev \
     && rm -rf /var/lib/apt/lists/*
 
 ARG TARGETARCH
 
 # wkhtmltopdf
 RUN if [ "$TARGETARCH" = "arm64" ]; then \
-    curl -sL -o /tmp/wkhtmltox.deb https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.focal_arm64.deb \
-    && echo '134f986d2094491c37b9b53e9433ef2c393a298a /tmp/wkhtmltox.deb' | sha1sum -c - \
+    curl -sL -o /tmp/wkhtmltox.deb https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6.1-2/wkhtmltox_0.12.6.1-2.jammy_arm64.deb \
+    && echo '0edcc573e8bbd7ba12885671e75cee8efe3ae11d /tmp/wkhtmltox.deb' | sha1sum -c - \
     && apt-get install -y --no-install-recommends /tmp/wkhtmltox.deb \
     && rm -rf /tmp/wkhtmltox.deb; \
     else \
-    curl -sL -o /tmp/wkhtmltox.deb https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.focal_amd64.deb \
-    && echo '4a974456d6271908c46aa38fc177f99d6cd3b39a /tmp/wkhtmltox.deb' | sha1sum -c - \
+    curl -sL -o /tmp/wkhtmltox.deb https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6.1-2/wkhtmltox_0.12.6.1-2.jammy_amd64.deb \
+    && echo '800eb1c699d07238fee77bf9df1556964f00ffcf /tmp/wkhtmltox.deb' | sha1sum -c - \
     && apt-get install -y --no-install-recommends /tmp/wkhtmltox.deb \
     && rm -rf /tmp/wkhtmltox.deb; \
 fi
@@ -82,6 +83,14 @@ RUN useradd -s /usr/sbin/nologin --create-home --password odoo odoo \
 # msfonts
 COPY docker/msfonts.sh /tmp/msfonts.sh
 RUN chmod +x /tmp/msfonts.sh; sync; /tmp/msfonts.sh; rm -rf /tmp/msfonts.sh
+
+# Python
+ARG PYTHON_VERSION=3.8.10
+ENV PYENV_ROOT="$HOME/.pyenv"
+ENV PATH="${PYENV_ROOT}/shims:${PYENV_ROOT}/bin:${PATH}"
+RUN git clone --depth 1 -b v2.4.1 https://github.com/pyenv/pyenv.git "${PYENV_ROOT}" \
+    && pyenv install --verbose ${PYTHON_VERSION} \
+    && pyenv global ${PYTHON_VERSION}
 
 # pip dependencies
 COPY requirements.txt /tmp/requirements.txt
