@@ -1,6 +1,9 @@
 name: Build Docker Image
 
 on:
+  pull_request:
+    branches:
+      - '**'
   push:
     branches:
       - 'jobrad-**'
