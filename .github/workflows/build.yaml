@@ -56,13 +56,6 @@ jobs:
           docker-amd64-jobrad-14.0-
           docker-amd64-
 
-#    - name: Build and push Docker image (AMD64)
-#      shell: bash
-#      run: |
-#        IMAGE="${GHCR_IMAGE_NAME}:${SHORT_REV}-amd64"
-#        docker build . --platform linux/amd64 -f docker/Dockerfile -t "${IMAGE}" --pull
-#        docker push "${IMAGE}"
-
     - name: Build and push Docker image (AMD64)
       uses: docker/build-push-action@v6
       with:
@@ -128,13 +121,6 @@ jobs:
           docker-arm64-${{ env.BRANCH_NAME }}-
           docker-arm64-jobrad-14.0-
           docker-arm64-
-
-#    - name: Build and push Docker image (ARM64)
-#      shell: bash
-#      run: |
-#        IMAGE="${GHCR_IMAGE_NAME}:${SHORT_REV}-arm64"
-#        docker buildx build . --platform linux/arm64 -f docker/Dockerfile -t "${IMAGE}" --pull --load
-#        docker push "${IMAGE}"
 
     - name: Build and push Docker image (ARM64)
       uses: docker/build-push-action@v6
