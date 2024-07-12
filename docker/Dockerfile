@@ -1,10 +1,10 @@
 FROM ubuntu:22.04
 
 # variables & locales
-ENV TZ Europe/Berlin
+ENV TZ=Europe/Berlin
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-ENV DEBIAN_FRONTEND noninteractive
+ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update -qq \
     && apt-get upgrade -y\
     && apt-get install -y locales -qq \
@@ -13,9 +13,9 @@ RUN apt-get update -qq \
     && dpkg-reconfigure locales \
     && /usr/sbin/update-locale LANG=en_US.UTF-8 \
     && rm -rf /var/lib/apt/lists/*
-ENV LANG en_US.UTF-8
-ENV LANGUAGE en_US.UTF-8
-ENV LC_ALL en_US.UTF-8
+ENV LANG=en_US.UTF-8
+ENV LANGUAGE=en_US.UTF-8
+ENV LC_ALL=en_US.UTF-8
 
 # dependencies for odoo or python packages
 RUN apt-get update -qq \
@@ -42,7 +42,7 @@ RUN if [ "$TARGETARCH" = "arm64" ]; then \
 fi
 
 # lessc
-ENV PATH "${PATH}:/opt/node/bin"
+ENV PATH="${PATH}:/opt/node/bin"
 RUN if [ "$TARGETARCH" = "arm64" ]; then \
     curl -sL -o /tmp/node.tar.xz https://nodejs.org/dist/v18.20.3/node-v18.20.3-linux-arm64.tar.xz \
     && echo '3c497c19ddbf75bab7fecb36ddf1738622f0ba244aa1e0aebc70e46daf1a0794 /tmp/node.tar.xz' | sha256sum -c - \
@@ -84,8 +84,8 @@ RUN chmod +x /tmp/msfonts.sh; sync; /tmp/msfonts.sh; rm -rf /tmp/msfonts.sh
 
 # Python
 ARG PYTHON_VERSION=3.8.10
-ENV PYENV_ROOT "/.pyenv"
-ENV PATH "${PYENV_ROOT}/shims:${PYENV_ROOT}/bin:${PATH}"
+ENV PYENV_ROOT="/.pyenv"
+ENV PATH="${PYENV_ROOT}/shims:${PYENV_ROOT}/bin:${PATH}"
 RUN git clone --depth 1 -b v2.4.1 https://github.com/pyenv/pyenv.git "${PYENV_ROOT}" \
     && pyenv install --verbose ${PYTHON_VERSION} \
     && pyenv global ${PYTHON_VERSION}
