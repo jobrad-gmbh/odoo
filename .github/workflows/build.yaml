@@ -16,7 +16,6 @@ jobs:
       packages: write
     env:
       GHCR_IMAGE_NAME: ghcr.io/jobrad-gmbh/odoo
-      DOCKER_CACHE_PATH: /tmp/docker-cache
     steps:
     - uses: actions/checkout@v3
 
@@ -40,17 +39,6 @@ jobs:
         driver-opts: |
           image=moby/buildkit:buildx-stable-1
           network=host
-
-    - name: Cache Docker layers
-      uses: actions/cache@v4
-      with:
-        path: |
-          ${{ env.DOCKER_CACHE_PATH }}
-        key: docker-amd64-${{ env.BRANCH_NAME }}-${{ env.SHORT_REV }}
-        restore-keys: |
-          docker-amd64-${{ env.BRANCH_NAME }}-
-          docker-amd64-jobrad-14.0-
-          docker-amd64-
 
     - name: Build and push Docker image (AMD64)
       uses: docker/build-push-action@v6
@@ -62,9 +50,9 @@ jobs:
         tags: |
           ${{ env.GHCR_IMAGE_NAME }}:${{ env.SHORT_REV }}-amd64
         cache-from: |
-          type=local,src=${{ env.DOCKER_CACHE_PATH }}
+          type=gha,scope=image-amd64
         cache-to: |
-          type=local,dest=${{ env.DOCKER_CACHE_PATH }}
+          type=gha,scope=image-amd64,mode=max
         provenance: false
 
   build-docker-arm64:
@@ -74,7 +62,6 @@ jobs:
       packages: write
     env:
       GHCR_IMAGE_NAME: ghcr.io/jobrad-gmbh/odoo
-      DOCKER_CACHE_PATH: /tmp/docker-cache
     steps:
     - uses: actions/checkout@v3
 
@@ -99,17 +86,6 @@ jobs:
           image=moby/buildkit:buildx-stable-1
           network=host
 
-    - name: Cache Docker layers
-      uses: actions/cache@v4
-      with:
-        path: |
-          ${{ env.DOCKER_CACHE_PATH }}
-        key: docker-arm64-${{ env.BRANCH_NAME }}-${{ env.SHORT_REV }}
-        restore-keys: |
-          docker-arm64-${{ env.BRANCH_NAME }}-
-          docker-arm64-jobrad-14.0-
-          docker-arm64-
-
     - name: Build and push Docker image (ARM64)
       uses: docker/build-push-action@v6
       with:
@@ -120,9 +96,9 @@ jobs:
         tags: |
           ${{ env.GHCR_IMAGE_NAME }}:${{ env.SHORT_REV }}-arm64
         cache-from: |
-          type=local,src=${{ env.DOCKER_CACHE_PATH }}
+          type=gha,scope=image-arm64
         cache-to: |
-          type=local,dest=${{ env.DOCKER_CACHE_PATH }}
+          type=gha,scope=image-arm64,mode=max
         provenance: false
 
   combine-docker:
