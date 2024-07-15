@@ -19,7 +19,7 @@ jobs:
       packages: write
     env:
       GHCR_IMAGE_NAME: ghcr.io/jobrad-gmbh/odoo
-      DOCKER_CACHE: /tmp/docker-cache
+      DOCKER_CACHE_PATH: /tmp/docker-cache
     steps:
     - uses: actions/checkout@v3
 
@@ -48,7 +48,7 @@ jobs:
       uses: actions/cache@v4
       with:
         path: |
-          ${{ env.DOCKER_CACHE }}
+          ${{ env.DOCKER_CACHE_PATH }}
         key: docker-amd64-${{ env.BRANCH_NAME }}-${{ env.SHORT_REV }}
         restore-keys: |
           docker-amd64-${{ env.BRANCH_NAME }}-
@@ -65,9 +65,9 @@ jobs:
         tags: |
           ${{ env.GHCR_IMAGE_NAME }}:${{ env.SHORT_REV }}-amd64
         cache-from: |
-          type=local,src=${{ env.DOCKER_CACHE }}
+          type=local,src=${{ env.DOCKER_CACHE_PATH }}
         cache-to: |
-          type=local,dest=${{ env.DOCKER_CACHE }}
+          type=local,dest=${{ env.DOCKER_CACHE_PATH }}
         provenance: false
 
   build-docker-arm64:
@@ -77,7 +77,7 @@ jobs:
       packages: write
     env:
       GHCR_IMAGE_NAME: ghcr.io/jobrad-gmbh/odoo
-      DOCKER_CACHE: /tmp/docker-cache
+      DOCKER_CACHE_PATH: /tmp/docker-cache
     steps:
     - uses: actions/checkout@v3
 
@@ -106,7 +106,7 @@ jobs:
       uses: actions/cache@v4
       with:
         path: |
-          ${{ env.DOCKER_CACHE }}
+          ${{ env.DOCKER_CACHE_PATH }}
         key: docker-arm64-${{ env.BRANCH_NAME }}-${{ env.SHORT_REV }}
         restore-keys: |
           docker-arm64-${{ env.BRANCH_NAME }}-
@@ -123,9 +123,9 @@ jobs:
         tags: |
           ${{ env.GHCR_IMAGE_NAME }}:${{ env.SHORT_REV }}-arm64
         cache-from: |
-          type=local,src=${{ env.DOCKER_CACHE }}
+          type=local,src=${{ env.DOCKER_CACHE_PATH }}
         cache-to: |
-          type=local,dest=${{ env.DOCKER_CACHE }}
+          type=local,dest=${{ env.DOCKER_CACHE_PATH }}
         provenance: false
 
   combine-docker:
