@@ -32,12 +32,28 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
 
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+      with:
+        platforms: linux/amd64
+        driver-opts: |
+          image=moby/buildkit:buildx-stable-1
+          network=host
+
     - name: Build and push Docker image (AMD64)
-      shell: bash
-      run: |
-        IMAGE="${GHCR_IMAGE_NAME}:${SHORT_REV}-amd64"
-        docker build . --platform linux/amd64 -f docker/Dockerfile -t "${IMAGE}" --pull
-        docker push "${IMAGE}"
+      uses: docker/build-push-action@v6
+      with:
+        context: .
+        file: docker/Dockerfile
+        platforms: linux/amd64
+        push: true
+        tags: |
+          ${{ env.GHCR_IMAGE_NAME }}:${{ env.SHORT_REV }}-amd64
+        cache-from: |
+          type=gha,scope=image-amd64
+        cache-to: |
+          type=gha,scope=image-amd64,mode=max
+        provenance: false
 
   build-docker-arm64:
     runs-on: self-hosted
@@ -47,9 +63,6 @@ jobs:
     env:
       GHCR_IMAGE_NAME: ghcr.io/jobrad-gmbh/odoo
     steps:
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v3
-
     - uses: actions/checkout@v3
 
     - name: Create variables
@@ -65,12 +78,28 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
 
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+      with:
+        platforms: linux/arm64
+        driver-opts: |
+          image=moby/buildkit:buildx-stable-1
+          network=host
+
     - name: Build and push Docker image (ARM64)
-      shell: bash
-      run: |
-        IMAGE="${GHCR_IMAGE_NAME}:${SHORT_REV}-arm64"
-        docker buildx build . --platform linux/arm64 -f docker/Dockerfile -t "${IMAGE}" --pull --load
-        docker push "${IMAGE}"
+      uses: docker/build-push-action@v6
+      with:
+        context: .
+        file: docker/Dockerfile
+        platforms: linux/arm64
+        push: true
+        tags: |
+          ${{ env.GHCR_IMAGE_NAME }}:${{ env.SHORT_REV }}-arm64
+        cache-from: |
+          type=gha,scope=image-arm64
+        cache-to: |
+          type=gha,scope=image-arm64,mode=max
+        provenance: false
 
   combine-docker:
     runs-on: [self-hosted, short]
