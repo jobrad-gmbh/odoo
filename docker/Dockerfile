@@ -58,16 +58,23 @@ fi
 RUN npm install -g less@4.2.0
 
 # ghostscript
+COPY docker/0001-pdfwrite-undo-commit-4dcfae36bb4dcbc4ef3b5e5afc98bcd.patch /tmp/0001-pdfwrite-undo-commit-4dcfae36bb4dcbc4ef3b5e5afc98bcd.patch
 RUN GHOSTSCRIPT_VERSION=10031 \
     && GHOSTSCRIPT_FILE_NAME=ghostscript-10.03.1.tar.gz \
     && GHOSTSCRIPT_BASE_NAME=$(basename ${GHOSTSCRIPT_FILE_NAME} .tar.gz) \
     && curl -sL -o /tmp/${GHOSTSCRIPT_FILE_NAME} https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs${GHOSTSCRIPT_VERSION}/${GHOSTSCRIPT_FILE_NAME} \
     && tar -xzf /tmp/${GHOSTSCRIPT_FILE_NAME} -C /tmp \
     && cd /tmp/${GHOSTSCRIPT_BASE_NAME}/ \
+    && patch -p1 < /tmp/0001-pdfwrite-undo-commit-4dcfae36bb4dcbc4ef3b5e5afc98bcd.patch \
     && ./configure \
     && make -j$(nproc) \
     && make install \
     && ln -s /usr/local/bin/gs /usr/local/bin/ghostscript \
+    && mkdir /etc/odoo \
+    && sed -e 's^srgb.icc^/etc/odoo/default_rgb.icc^' \
+           -e 's^/OutputConditionIdentifier (sRGB)^/OutputConditionIdentifier (RGB)^' \
+           lib/PDFA_def.ps > /etc/odoo/PDFA_def.ps \
+    && cp iccprofiles/default_rgb.icc /etc/odoo/default_rgb.icc \
     && rm -rf /tmp/${GHOSTSCRIPT_FILE_NAME} /tmp/${GHOSTSCRIPT_BASE_NAME}
 
 # odoo directories
