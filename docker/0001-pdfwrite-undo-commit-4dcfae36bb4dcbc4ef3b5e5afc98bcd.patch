@@ -1,0 +1,52 @@
+From 5e69c48f4633163207b8174c51f6ff5987d0562e Mon Sep 17 00:00:00 2001
+From: Ken Sharp <Ken.Sharp@artifex.com>
+Date: Tue, 4 Jun 2024 14:26:01 +0100
+Subject: [PATCH] pdfwrite - undo commit 
+ 4dcfae36bb4dcbc4ef3b5e5afc98bcde0d6b9ddc
+
+Commit 4dcfae36bb4dcbc4ef3b5e5afc98bcde0d6b9ddc added detection for an
+SMask when producing PDF/A-2 with ColorConversionStrategy set to a
+device space other than DeviceGray. This was because the version of
+veraPDF at the time gave an error on the SMask data.
+
+It appears the current version of veraPDF does not do so, and nor does
+the Preflight in the current version of Acrobat. I still cannot find any
+authoritative source for whether this is permitted or not. In my opinion
+it should be because the SMask is used as an alpha channel, we do not
+actually draw anything in DeviceGray.
+
+In the absence of any specific documentation, and given that standard
+conformance checkers no longer complain, I'v put the code back the way
+it was before so that we will carry the SMask through in DeviceGray. The
+resulting PDF is conformant according to Acrobat Professional of this
+date (2024.001.20604) and veraPDF 1.24.3.
+---
+ devices/vector/gdevpdfi.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/devices/vector/gdevpdfi.c b/devices/vector/gdevpdfi.c
+index f1e244cf5..b6d18bc68 100644
+--- a/devices/vector/gdevpdfi.c
++++ b/devices/vector/gdevpdfi.c
+@@ -1412,6 +1412,10 @@ pdf_begin_typed_image(gx_device_pdf *pdev, const gs_gstate * pgs,
+ 
+     /* We don't want to change the colour space of a mask, or an SMask (both of which are Gray) */
+     if (!is_mask) {
++#if 1
++        if (image[0].pixel.ColorSpace != NULL && !(context == PDF_IMAGE_TYPE3_MASK))
++           convert_to_process_colors = setup_image_colorspace(pdev, &image[0], pcs, &pcs_orig, names, &cs_value);
++#else
+         if (image[0].pixel.ColorSpace != NULL) {
+             if (context != PDF_IMAGE_TYPE3_MASK)
+                 convert_to_process_colors = setup_image_colorspace(pdev, &image[0], pcs, &pcs_orig, names, &cs_value);
+@@ -1428,6 +1432,7 @@ pdf_begin_typed_image(gx_device_pdf *pdev, const gs_gstate * pgs,
+                 }
+             }
+         }
++#endif
+ 
+         if (pim->BitsPerComponent > 8 && convert_to_process_colors) {
+             use_fallback = 1;
+-- 
+2.34.1
+
