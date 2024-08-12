@@ -488,14 +488,14 @@ class IrAttachment(models.Model):
             args.insert(0, ('res_field', '=', False))
 
         ids = super(IrAttachment, self)._search(args, offset=offset, limit=limit, order=order,
-                                                count=False, access_rights_uid=access_rights_uid)
+                                                count=count, access_rights_uid=access_rights_uid)
 
-        if self.env.is_superuser():
+        if count or self.env.is_superuser():
             # rules do not apply for the superuser
-            return len(ids) if count else ids
+            return ids
 
         if not ids:
-            return 0 if count else []
+            return []
 
         # Work with a set, as list.remove() is prohibitive for large lists of documents
         # (takes 20+ seconds on a db with 100k docs during search_count()!)
@@ -552,7 +552,7 @@ class IrAttachment(models.Model):
                                        limit=limit, order=order, count=count,
                                        access_rights_uid=access_rights_uid)[:limit - len(result)])
 
-        return len(result) if count else list(result)
+        return list(result)
 
     def _read(self, fields):
         self.check('read')
