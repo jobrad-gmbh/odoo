@@ -97,18 +97,25 @@ RUN git clone --depth 1 -b v2.4.1 https://github.com/pyenv/pyenv.git "${PYENV_RO
     && pyenv install --verbose ${PYTHON_VERSION} \
     && pyenv global ${PYTHON_VERSION}
 
-# pip dependencies
-COPY requirements.txt /tmp/requirements.txt
-RUN pip3 install --no-cache-dir setuptools==70.3.0 \
-    && pip3 install --no-cache-dir --upgrade pip \
-    && pip3 install --no-cache-dir -r /tmp/requirements.txt \
-    && rm -rf /tmp/requirements.txt
+# Poetry
+RUN pip install --no-cache-dir poetry==1.8.3
 
-RUN apt-get purge -y build-essential
-
+USER odoo
 WORKDIR /opt/odoo
+
+# Dependencies
+ENV PATH="/opt/odoo/.venv/bin:${PATH}"
+COPY pyproject.toml .
+COPY poetry.lock .
+RUN poetry config virtualenvs.prefer-active-python true && \
+    poetry config virtualenvs.in-project true && \
+    poetry install --no-root --no-interaction --no-cache
+
 COPY --chown=odoo:odoo . .
 
-EXPOSE 8069 8072
+USER root
+RUN mv pyproject.toml poetry.lock /etc/odoo
 USER odoo
+
+EXPOSE 8069 8072
 VOLUME ["/home/odoo/.local"]
