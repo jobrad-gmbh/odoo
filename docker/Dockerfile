@@ -99,7 +99,7 @@ RUN git clone --depth 1 -b v2.4.1 https://github.com/pyenv/pyenv.git "${PYENV_RO
 
 # pip dependencies
 COPY requirements.txt /tmp/requirements.txt
-RUN pip3 install --no-cache-dir setuptools --upgrade \
+RUN pip3 install --no-cache-dir setuptools==70.3.0 \
     && pip3 install --no-cache-dir --upgrade pip \
     && pip3 install --no-cache-dir -r /tmp/requirements.txt \
     && rm -rf /tmp/requirements.txt
