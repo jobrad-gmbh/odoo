@@ -90,25 +90,30 @@ COPY docker/msfonts.sh /tmp/msfonts.sh
 RUN chmod +x /tmp/msfonts.sh; sync; /tmp/msfonts.sh; rm -rf /tmp/msfonts.sh
 
 # Python
-ARG PYTHON_VERSION=3.8.10
 ENV PYENV_ROOT="/.pyenv"
 ENV PATH="${PYENV_ROOT}/shims:${PYENV_ROOT}/bin:${PATH}"
-RUN git clone --depth 1 -b v2.4.1 https://github.com/pyenv/pyenv.git "${PYENV_ROOT}" \
+COPY .python-version .
+RUN PYTHON_VERSION="$(cat .python-version)" \
+    && git clone --depth 1 -b v2.4.1 https://github.com/pyenv/pyenv.git "${PYENV_ROOT}" \
     && pyenv install --verbose ${PYTHON_VERSION} \
-    && pyenv global ${PYTHON_VERSION}
+    && pyenv global ${PYTHON_VERSION} \
+    && rm .python-version
 
-# pip dependencies
-COPY requirements.txt /tmp/requirements.txt
-RUN pip3 install --no-cache-dir setuptools==70.3.0 \
-    && pip3 install --no-cache-dir --upgrade pip \
-    && pip3 install --no-cache-dir -r /tmp/requirements.txt \
-    && rm -rf /tmp/requirements.txt
+# Poetry
+RUN pip install --no-cache-dir poetry==1.8.3
 
-RUN apt-get purge -y build-essential
-
+USER odoo
 WORKDIR /opt/odoo
+
+# Dependencies
+ENV PATH="/opt/odoo/.venv/bin:${PATH}"
+COPY pyproject.toml .
+COPY poetry.lock .
+RUN poetry config virtualenvs.prefer-active-python true && \
+    poetry config virtualenvs.in-project true && \
+    poetry install --no-root --no-interaction --no-cache
+
 COPY --chown=odoo:odoo . .
 
 EXPOSE 8069 8072
-USER odoo
 VOLUME ["/home/odoo/.local"]

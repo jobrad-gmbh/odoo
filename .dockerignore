@@ -6,6 +6,8 @@
 !odoo
 
 !odoo-bin
-!requirements.txt
+!pyproject.toml
+!poetry.lock
+!.python-version
 
 *.pyc
