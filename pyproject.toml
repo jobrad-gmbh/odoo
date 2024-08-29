@@ -45,7 +45,7 @@ werkzeug = {version = "0.16.1", markers = "python_version <= \"3.9\""}
 xlsxwriter = "1.1.2"
 xlwt = "==1.3.*"
 xlrd = {version = "1.2.0", markers = "python_version >= \"3.8\""}
-python-magic = "0.4.27"
+python-magic = {version = "0.4.27", markers = "python_version >= \"3.8\""}
 cairocffi = "0.9.0"
 
 [build-system]
