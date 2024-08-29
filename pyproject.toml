@@ -8,6 +8,8 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "3.8.10"
+
+[tool.poetry.group.odoo.dependencies]
 babel = {version = "2.6.0", markers = "python_version <= \"3.9\""}
 chardet = "3.0.4"
 decorator = "4.3.0"
