@@ -111,13 +111,10 @@ COPY pyproject.toml .
 COPY poetry.lock .
 RUN poetry config virtualenvs.prefer-active-python true && \
     poetry config virtualenvs.in-project true && \
-    poetry install --no-root --no-interaction --no-cache
+    poetry install --no-root --no-interaction --no-cache && \
+    rm pyproject.toml poetry.lock
 
 COPY --chown=odoo:odoo . .
-
-USER root
-RUN mv pyproject.toml poetry.lock /etc/odoo
-USER odoo
 
 EXPOSE 8069 8072
 VOLUME ["/home/odoo/.local"]
