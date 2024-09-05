@@ -111,9 +111,7 @@ COPY pyproject.toml .
 COPY poetry.lock .
 RUN poetry config virtualenvs.prefer-active-python true && \
     poetry config virtualenvs.in-project true && \
-    poetry install --no-root --no-interaction --no-cache && \
-    mv pyproject.toml pyproject-odoo.toml && \
-    mv poetry.lock poetry-odoo.lock
+    poetry install --no-root --no-interaction --no-cache
 
 COPY --chown=odoo:odoo . .
 
