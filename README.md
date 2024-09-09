@@ -45,7 +45,7 @@ together, their `pyproject.toml` files have to be in sync.
 The process of updating
 [`jobrad-gmbh/odoo-addons-jobrad/pyproject.toml`](https://github.com/jobrad-gmbh/odoo-addons-jobrad/blob/develop/pyproject.toml)
 has been automated through
-[`scripts/python_environment/update-pyproject-toml.py`](https://github.com/jobrad-gmbh/odoo-addons-jobrad/blob/develop/scripts/python_environment/update-pyproject-toml.py).
+[`scripts/python_environment/sync-odoo-deps-in-pyproject-toml.py`](https://github.com/jobrad-gmbh/odoo-addons-jobrad/blob/develop/scripts/python_environment/sync-odoo-deps-in-pyproject-toml.py).
 In order to run the script, you need to have Python and Poetry installed. The script updates
 `[tool.poetry.group.odoo.dependencies]` group and runs `poetry lock` for you. If you want to see how the new
 `pyproject.toml` will look like without actually updating it, you can specify `--dry-run` flag.
