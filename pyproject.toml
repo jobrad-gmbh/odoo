@@ -1,13 +1,8 @@
 [tool.poetry]
 package-mode = false
-name = "odoo"
-version = "14.0.14.2"
-description = "Odoo"
-authors = []
-readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "~=3.8"
+python = "^3.8"
 
 [tool.poetry.group.odoo.dependencies]
 babel = {version = "2.6.0", markers = "python_version <= \"3.9\""}
