@@ -49,3 +49,5 @@ has been automated through
 In order to run the script, you need to have Python and Poetry installed. The script updates
 `[tool.poetry.group.odoo.dependencies]` group and runs `poetry lock` for you. If you want to see how the new
 `pyproject.toml` will look like without actually updating it, you can specify `--dry-run` flag.
+
+For more information, read [this](https://github.com/jobrad-gmbh/odoo-addons-jobrad/blob/develop/docs/development.md).
