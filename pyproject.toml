@@ -28,7 +28,7 @@ psutil = "5.6.6"
 psycopg2 = {version = "2.8.5", markers = "sys_platform == \"win32\" or python_version >= \"3.8\""}
 pydot = "1.4.1"
 python-ldap = "3.4.4"
-pypdf2 = "1.28.6"
+pypdf2 = "1.27.12"
 pyserial = "3.4"
 python-dateutil = "2.7.3"
 pytz = "^2024.1"

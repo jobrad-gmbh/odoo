@@ -944,13 +944,13 @@ diagrams = ["jinja2", "railroad-diagrams"]
 
 [[package]]
 name = "pypdf2"
-version = "1.28.6"
+version = "1.27.12"
 description = "A pure-python PDF library capable of splitting, merging, cropping, and transforming PDF files"
 optional = false
 python-versions = ">=2.7"
 files = [
-    {file = "PyPDF2-1.28.6-py3-none-any.whl", hash = "sha256:d7118f0187153257b1f906dcfcd8236608f4987b6a9999b7c5ad49114706a1ad"},
-    {file = "PyPDF2-1.28.6.tar.gz", hash = "sha256:c0840835d18357b077da05bdad1423f5e29419f318135b6a6542895930dc4905"},
+    {file = "PyPDF2-1.27.12-py3-none-any.whl", hash = "sha256:9416c347b4c03391caf7562486bec0fd129bbb6a3359eefe4a0b758d0e3dc20c"},
+    {file = "PyPDF2-1.27.12.tar.gz", hash = "sha256:20929fad10a3b4890862f65f3a46f563cfdf53132faae5193b54e18658467a60"},
 ]
 
 [[package]]
@@ -1378,4 +1378,4 @@ testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "b908b1f62e28778c91210a9308deea1e433f0269a9ac8f70511d7b00bf6101d8"
+content-hash = "af792059401ff7fcbd6768bd9bf2d62ea95cfb38ea7c9809350e4855f1f75a69"
