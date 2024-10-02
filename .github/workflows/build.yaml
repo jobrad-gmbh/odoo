@@ -56,7 +56,7 @@ jobs:
         provenance: false
 
   build-docker-arm64:
-    runs-on: self-hosted
+    runs-on: Linux-ARM64-2C-8GB
     permissions:
       contents: read
       packages: write
