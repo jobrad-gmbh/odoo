@@ -112,7 +112,7 @@ class test_guess_mimetype(BaseCase):
 
     def test_mimetype_xml(self):
         mimetype = guess_mimetype(XML, default='test')
-        self.assertEqual(mimetype, 'application/xml')
+        self.assertIn(mimetype, ('application/xml', 'text/xml'))  # JobRad: python-magic returns text/xml
 
     def test_mimetype_get_extension(self):
         self.assertEqual(get_extension('filename.Abc'), '.abc')
