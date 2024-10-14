@@ -204,13 +204,13 @@ class TestFormatLangDate(TransactionCase):
         self.assertEqual(misc.format_date(self.env, False), '')
         self.assertEqual(misc.format_date(self.env, None), '')
 
-        self.assertEqual(misc.format_datetime(self.env, date_datetime), 'Jan 31, 2017, 1:00:00 PM')
-        self.assertEqual(misc.format_datetime(self.env, datetime_str), 'Jan 31, 2017, 1:00:00 PM')
+        self.assertEqual(misc.format_datetime(self.env, date_datetime), 'Jan 31, 2017, 1:00:00\u202fPM')  # JobRad: Babel upgrade
+        self.assertEqual(misc.format_datetime(self.env, datetime_str), 'Jan 31, 2017, 1:00:00\u202fPM')  # JobRad: Babel upgrade
         self.assertEqual(misc.format_datetime(self.env, ''), '')
         self.assertEqual(misc.format_datetime(self.env, False), '')
         self.assertEqual(misc.format_datetime(self.env, None), '')
 
-        self.assertEqual(misc.format_time(self.env, time_part), '4:30:22 PM')
+        self.assertEqual(misc.format_time(self.env, time_part), '4:30:22\u202fPM')  # JobRad: Babel upgrade
         self.assertEqual(misc.format_time(self.env, ''), '')
         self.assertEqual(misc.format_time(self.env, False), '')
         self.assertEqual(misc.format_time(self.env, None), '')
@@ -241,34 +241,34 @@ class TestFormatLangDate(TransactionCase):
         datetime_str = '2017-01-31 10:33:00'
 
         # Change languages and timezones
-        self.assertEqual(misc.format_datetime(lang.with_context(lang='fr_FR').env, datetime_str, tz='Europe/Brussels'), '31 janv. 2017 à 11:33:00')
-        self.assertEqual(misc.format_datetime(lang.with_context(lang='zh_CN').env, datetime_str, tz='America/New_York'), '2017\u5E741\u670831\u65E5 \u4E0A\u53485:33:00')  # '2017年1月31日 上午5:33:00'
+        self.assertEqual(misc.format_datetime(lang.with_context(lang='fr_FR').env, datetime_str, tz='Europe/Brussels'), '31 janv. 2017, 11:33:00')  # JobRad: Babel upgrade
+        self.assertEqual(misc.format_datetime(lang.with_context(lang='zh_CN').env, datetime_str, tz='America/New_York'), '2017\u5E741\u670831\u65E5 05:33:00')  # JobRad: Babel upgrade
 
         # Change language, timezone and format
         self.assertEqual(misc.format_datetime(lang.with_context(lang='fr_FR').env, datetime_str, tz='America/New_York', dt_format='short'), '31/01/2017 05:33')
         self.assertEqual(misc.format_datetime(lang.with_context(lang='en_US').env, datetime_str, tz='Europe/Brussels', dt_format='MMM d, y'), 'Jan 31, 2017')
 
         # Check given `lang_code` overwites context lang
-        self.assertEqual(misc.format_datetime(lang.env, datetime_str, tz='Europe/Brussels', dt_format='long', lang_code='fr_FR'), '31 janvier 2017 à 11:33:00 +0100')
-        self.assertEqual(misc.format_datetime(lang.with_context(lang='zh_CN').env, datetime_str, tz='Europe/Brussels', dt_format='long', lang_code='en_US'), 'January 31, 2017 at 11:33:00 AM +0100')
+        self.assertEqual(misc.format_datetime(lang.env, datetime_str, tz='Europe/Brussels', dt_format='long', lang_code='fr_FR'), '31 janvier 2017, 11:33:00 +0100')  # JobRad: Babel upgrade
+        self.assertEqual(misc.format_datetime(lang.with_context(lang='zh_CN').env, datetime_str, tz='Europe/Brussels', dt_format='long', lang_code='en_US'), 'January 31, 2017, 11:33:00\u202fAM +0100')  # JobRad: Babel upgrade
 
         # -- test `time`
         time_part = datetime.time(16, 30, 22)
         time_part_tz = datetime.time(16, 30, 22, tzinfo=pytz.timezone('US/Eastern'))  # 4:30 PM timezoned
 
         self.assertEqual(misc.format_time(lang.with_context(lang='fr_FR').env, time_part), '16:30:22')
-        self.assertEqual(misc.format_time(lang.with_context(lang='zh_CN').env, time_part), '\u4e0b\u53484:30:22')
+        self.assertEqual(misc.format_time(lang.with_context(lang='zh_CN').env, time_part), '16:30:22')  # JobRad: Babel upgrade
 
         # Check format in different languages
         self.assertEqual(misc.format_time(lang.with_context(lang='fr_FR').env, time_part, time_format='short'), '16:30')
-        self.assertEqual(misc.format_time(lang.with_context(lang='zh_CN').env, time_part, time_format='short'), '\u4e0b\u53484:30')
+        self.assertEqual(misc.format_time(lang.with_context(lang='zh_CN').env, time_part, time_format='short'), '16:30')  # JobRad: Babel upgrade
 
         # Check timezoned time part
         self.assertIn(misc.format_time(lang.with_context(lang='fr_FR').env, time_part_tz, time_format='long'), ['16:30:22 -0504', '16:30:22 HNE'])
-        self.assertEqual(misc.format_time(lang.with_context(lang='zh_CN').env, time_part_tz, time_format='full'), '\u5317\u7f8e\u4e1c\u90e8\u6807\u51c6\u65f6\u95f4\u0020\u4e0b\u53484:30:22')
+        self.assertEqual(misc.format_time(lang.with_context(lang='zh_CN').env, time_part_tz, time_format='full'), '\u5317\u7f8e\u4e1c\u90e8\u6807\u51c6\u65f6\u95f4\u002016:30:22')  # JobRad: Babel upgrade
 
         # Check given `lang_code` overwites context lang
-        self.assertEqual(misc.format_time(lang.with_context(lang='fr_FR').env, time_part, time_format='short', lang_code='zh_CN'), '\u4e0b\u53484:30')
+        self.assertEqual(misc.format_time(lang.with_context(lang='fr_FR').env, time_part, time_format='short', lang_code='zh_CN'), '16:30')  # JobRad: Babel upgrade
         self.assertEqual(misc.format_time(lang.with_context(lang='zh_CN').env, time_part, time_format='medium', lang_code='fr_FR'), '16:30:22')
 
 
