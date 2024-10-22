@@ -52,8 +52,8 @@ class testAttachmentAccess(TransactionCase):
 
         # As user, ensure the attachment itself cannot be read
         attachment.invalidate_cache()
-        with self.assertRaises(AccessError):
-            attachment.with_user(self.user).datas
+        # with self.assertRaises(AccessError):       # JobRad: We have temporarily deactivated the access check
+        attachment.with_user(self.user).datas        # JobRad: on attachments without res_fields.
         # But, as user, the content of the attachment can be read through the letter
         self.assertEqual(base64.b64decode(letter.with_user(self.user).attachment_datas), b'foo')
 
@@ -64,8 +64,9 @@ class testAttachmentAccess(TransactionCase):
 
         # As user ensure the attachment itself cannot be read
         attachment.invalidate_cache()
-        with self.assertRaises(AccessError):
-            self.assertEqual(base64.b64decode(attachment.with_user(self.user).datas), b'bar')
+        # JobRad: We have temporarily deactivated the access check on attachments without res_fields.
+        # with self.assertRaises(AccessError):    # JobRad
+        self.assertEqual(base64.b64decode(attachment.with_user(self.user).datas), b'bar')  # JobRad
         # But, as user, the content of the attachment can be read through the letter
         self.assertEqual(base64.b64decode(letter.with_user(self.user).attachment_datas), b'bar')
 
