@@ -167,7 +167,7 @@ jobs:
       - name: Run base Odoo tests
         run: |
           export ODOO_IMAGE=${{ needs.combine-docker.outputs.IMAGE_REV }}
-          ./tests/run_tests.sh
+          ./tests/run_tests.sh tests/modules
 
       - name: Cleanup
         if: always()
