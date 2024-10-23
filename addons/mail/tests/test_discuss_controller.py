@@ -208,6 +208,7 @@ class TestDiscussController(HttpCaseWithUserDemo):
                 },
             ),
         )
-        self.assertNotIn(
+        # JobRad: We have temporarily deactivated the access check on attachments without res_ids.
+        self.assertIn(
             "arguments_for_firing_marc_demo", response.text
         )  # demo should not be able to see the name of the document
