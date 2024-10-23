@@ -167,7 +167,7 @@ jobs:
       - name: Run base Odoo tests
         run: |
           export ODOO_IMAGE=${{ needs.combine-docker.outputs.IMAGE_REV }}
-          docker compose -f tests/docker-compose.yml run --rm --remove-orphans odoo ./odoo-bin -d test --test-enable --stop
+          ./tests/run_tests.sh tests/modules
 
       - name: Cleanup
         if: always()
