@@ -17,7 +17,17 @@ jobs:
     env:
       GHCR_IMAGE_NAME: ghcr.io/jobrad-gmbh/odoo
     steps:
-    - uses: actions/checkout@v3
+    - name: Clone
+      uses: actions/checkout@v3
+
+    - name: Clone enterprise addons
+      uses: actions/checkout@v3
+      with:
+        repository: jobrad-gmbh/odoo-addons-enterprise
+        ref: 15.0.1
+        token: ${{ secrets.ODOO_REPO_TOKEN }}
+        path: addons_enterprise
+        fetch-depth: 1
 
     - name: Create variables
       shell: bash

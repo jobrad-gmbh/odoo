@@ -1,6 +1,7 @@
 *
 
 !addons
+!addons_enterprise
 !config/grunt
 !docker
 !odoo
