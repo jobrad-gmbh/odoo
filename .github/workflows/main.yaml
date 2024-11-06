@@ -6,6 +6,9 @@ on:
       - 'jobrad-**'
     tags:
       - 'jobrad-**'
+  pull_request:
+    branches:
+      - '**'
 
 jobs:
 
