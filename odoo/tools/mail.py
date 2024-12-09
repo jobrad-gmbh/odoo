@@ -3,6 +3,7 @@
 
 import base64
 import collections
+import functools
 import logging
 from lxml.html import clean
 import random
@@ -11,6 +12,7 @@ import socket
 import threading
 import time
 
+import email.utils
 from email.utils import getaddresses
 from lxml import etree
 from werkzeug import urls
@@ -21,6 +23,14 @@ from odoo.loglevels import ustr
 from odoo.tools import misc
 
 _logger = logging.getLogger(__name__)
+
+# JobRad: Upgrade to Python 3.9
+# Keep the old behavior of getaddresses by specifying strict=False:
+# https://docs.python.org/3.9/whatsnew/3.9.html#email
+# Note that this is not needed from Odoo 15 onwards:
+# https://github.com/jobrad-gmbh/odoo/blob/d7c0516e8c5fdda9661a74099a4085374595f758/odoo/tools/mail.py#L29
+if getattr(email.utils, 'supports_strict_parsing', False):
+    getaddresses = functools.partial(getaddresses, strict=False)
 
 #----------------------------------------------------------
 # HTML Sanitizer
