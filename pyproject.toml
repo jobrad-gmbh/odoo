@@ -1,6 +1,7 @@
 [tool.poetry]
 name = "odoo"
 package-mode = false
+version = "14.0.13"
 
 [tool.poetry.dependencies]
 python = "^3.8"
