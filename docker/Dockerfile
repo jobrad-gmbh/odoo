@@ -98,7 +98,7 @@ RUN PYTHON_VERSION="$(cat .python-version)" \
     && rm .python-version
 
 # Poetry
-RUN pip install --no-cache-dir poetry==1.8.3
+RUN pip install --no-cache-dir poetry==2.0.1
 
 USER odoo
 WORKDIR /opt/odoo
@@ -107,8 +107,7 @@ WORKDIR /opt/odoo
 ENV PATH="/opt/odoo/.venv/bin:${PATH}"
 COPY pyproject.toml .
 COPY poetry.lock .
-RUN poetry config virtualenvs.prefer-active-python true && \
-    poetry config virtualenvs.in-project true && \
+RUN poetry config virtualenvs.in-project true && \
     poetry install --no-root --no-interaction --no-cache
 
 COPY --chown=odoo:odoo . .
