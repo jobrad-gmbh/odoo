@@ -3,7 +3,7 @@ name = "odoo"
 package-mode = false
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.9"
 
 [tool.poetry.group.odoo.dependencies]
 babel = "2.16.0"
