@@ -390,6 +390,17 @@ files = [
 ]
 
 [[package]]
+name = "docopt"
+version = "0.6.2"
+description = "Pythonic argument parser, that will make you smile"
+optional = false
+python-versions = "*"
+groups = ["odoo"]
+files = [
+    {file = "docopt-0.6.2.tar.gz", hash = "sha256:49b3a825280bd66b3aa83585ef59c4a8c82f2c8a522dbe754a8bc8d08c85c491"},
+]
+
+[[package]]
 name = "docutils"
 version = "0.16"
 description = "Docutils -- Python Documentation Utilities"
@@ -773,15 +784,18 @@ files = [
 
 [[package]]
 name = "num2words"
-version = "0.5.6"
+version = "0.5.14"
 description = "Modules to convert numbers to words. Easily extensible."
 optional = false
 python-versions = "*"
 groups = ["odoo"]
 files = [
-    {file = "num2words-0.5.6-py2.py3-none-any.whl", hash = "sha256:529017394eef84daf63bb57e837fe2fb81363d1b06f6114e86608dae7ceb11ee"},
-    {file = "num2words-0.5.6.tar.gz", hash = "sha256:aea26c2d11d636f0e9da094f2bf55ac94cb1c380ff1f86e8db22c210e5a6a05f"},
+    {file = "num2words-0.5.14-py3-none-any.whl", hash = "sha256:1c8e5b00142fc2966fd8d685001e36c4a9911e070d1b120e1beb721fa1edb33d"},
+    {file = "num2words-0.5.14.tar.gz", hash = "sha256:b066ec18e56b6616a3b38086b5747daafbaa8868b226a36127e0451c0cf379c6"},
 ]
+
+[package.dependencies]
+docopt = ">=0.6.2"
 
 [[package]]
 name = "ofxparse"
@@ -1550,4 +1564,4 @@ testing = ["coverage[toml]", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.9"
-content-hash = "47d5b58abde3944e2489cf273e5957a9c7045eaba70234e359c4d170fdd2b9a6"
+content-hash = "2f3e0c458d55966cb89fd7873bfbddf611d80d2bd3c932bfc6bdfc72c014bad4"
