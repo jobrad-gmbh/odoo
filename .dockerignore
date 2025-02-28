@@ -6,5 +6,7 @@
 !addons_enterprise
 !odoo-bin
 !.python-version
+!pyproject.toml
+!poetry.lock
 
 *.pyc
