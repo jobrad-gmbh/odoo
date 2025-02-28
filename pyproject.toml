@@ -3,6 +3,7 @@ name = "odoo"
 version = "14.0.19.0"
 readme = "README.md"
 requires-python = "^3.9"
+dynamic = ["dependencies"]
 
 [tool.poetry.group.odoo.dependencies]
 babel = "2.16.0"
