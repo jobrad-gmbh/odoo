@@ -105,12 +105,8 @@ WORKDIR /opt/odoo
 
 # Dependencies
 ENV PATH="/opt/odoo/.venv/bin:${PATH}"
-COPY pyproject.toml .
-COPY poetry.lock .
-RUN poetry config virtualenvs.in-project true && \
-    poetry install --no-root --no-interaction --no-cache
+RUN poetry config virtualenvs.in-project true
 
 COPY --chown=odoo:odoo . .
 
 EXPOSE 8069 8072
-VOLUME ["/home/odoo/.local"]
