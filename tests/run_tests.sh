@@ -21,13 +21,13 @@ docker compose -f tests/docker-compose.yml up -d
 docker compose -f tests/docker-compose.yml exec odoo poetry install --only testing --no-interaction --no-cache
 
 echo "---*** Running Odoo tests at_install ***---"
-docker compose -f tests/docker-compose.yml exec odoo ./odoo-bin -d test --addons-path=addons,odoo/addons \
+docker compose -f tests/docker-compose.yml exec odoo ./odoo-bin -d test \
   -i $(awk '{if (NR > 1) { printf "," } printf "%s", $1}' ${MODULES_FILE}) \
   --test-enable --test-tags=-post_install \
   --stop-after-init
 
 echo "---*** Running Odoo tests post_install ***---"
-docker compose -f tests/docker-compose.yml exec odoo ./odoo-bin -d test --addons-path=addons,odoo/addons \
+docker compose -f tests/docker-compose.yml exec odoo ./odoo-bin -d test \
   --test-enable --test-tags=$(awk '{if (NR > 1) { printf "," } printf "/%s", $1}' ${MODULES_FILE}),-at_install \
   --stop-after-init
 docker compose -f tests/docker-compose.yml down -v
