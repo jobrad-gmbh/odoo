@@ -4,6 +4,7 @@
 
 !addons
 !addons_enterprise
+!odoo
 !odoo-bin
 !.python-version
 !pyproject.toml

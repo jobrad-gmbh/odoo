@@ -78,10 +78,10 @@ RUN GHOSTSCRIPT_VERSION=10040 \
 
 # odoo directories
 RUN useradd -s /usr/sbin/nologin --create-home --password odoo odoo \
-  && mkdir /home/odoo/.local \
-  && chown odoo:odoo /home/odoo/.local \
-  && mkdir --parents /opt/odoo/tests \
-  && chown --recursive odoo:odoo /opt/odoo
+    && mkdir /home/odoo/.local \
+    && chown odoo:odoo /home/odoo/.local \
+    && mkdir --parents /opt/odoo/ \
+    && chown --recursive odoo:odoo /opt/odoo
 
 # msfonts
 COPY docker/msfonts.sh /tmp/msfonts.sh
@@ -105,13 +105,14 @@ WORKDIR /opt/odoo
 
 # Dependencies
 ENV PATH="/opt/odoo/.venv/bin:${PATH}"
-COPY pyproject.toml .
-COPY poetry.lock .
-COPY README.md .
+COPY --chown=odoo:odoo pyproject.toml .
+COPY --chown=odoo:odoo poetry.lock .
+COPY --chown=odoo:odoo README.md .
+COPY --chown=odoo:odoo odoo /opt/odoo/odoo
 RUN poetry config virtualenvs.in-project true && \
     poetry install --no-interaction --no-cache
 
-COPY --chown=odoo:odoo addons /opt/odoo/.venv/lib/python3.9/site-packages/odoo/addons/
-COPY --chown=odoo:odoo addons_enterprise /opt/odoo/.venv/lib/python3.9/site-packages/odoo/addons/
+COPY --chown=odoo:odoo addons /opt/odoo/odoo/addons
+COPY --chown=odoo:odoo addons_enterprise /opt/odoo/odoo/addons
 
 EXPOSE 8069 8072
