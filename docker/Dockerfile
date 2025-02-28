@@ -112,6 +112,7 @@ COPY --chown=odoo:odoo odoo /opt/odoo/odoo
 RUN poetry config virtualenvs.in-project true && \
     poetry install --no-interaction --no-cache
 
+COPY --chown=odoo:odoo odoo-bin .
 COPY --chown=odoo:odoo addons /opt/odoo/odoo/addons
 COPY --chown=odoo:odoo addons_enterprise /opt/odoo/odoo/addons
 
