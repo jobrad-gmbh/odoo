@@ -6,7 +6,7 @@ version = "1.4.4"
 description = "A small Python module for determining appropriate platform-specific dirs, e.g. a \"user data dir\"."
 optional = false
 python-versions = "*"
-groups = ["odoo"]
+groups = ["main"]
 files = [
     {file = "appdirs-1.4.4-py2.py3-none-any.whl", hash = "sha256:a841dacd6b99318a741b166adb07e19ee71a274450e68237b4650ca1055ab128"},
     {file = "appdirs-1.4.4.tar.gz", hash = "sha256:7d5d0167b2b1ba821647616af46a749d1c653740dd0d2415100fe26e27afdf41"},
@@ -18,7 +18,7 @@ version = "25.1.0"
 description = "Classes Without Boilerplate"
 optional = false
 python-versions = ">=3.8"
-groups = ["odoo"]
+groups = ["main"]
 files = [
     {file = "attrs-25.1.0-py3-none-any.whl", hash = "sha256:c75a69e28a550a7e93789579c22aa26b0f5b83b75dc4e08fe092980051e1090a"},
     {file = "attrs-25.1.0.tar.gz", hash = "sha256:1c97078a80c814273a76b2a298a932eb681c87415c11dee0a6921de7f1b02c3e"},
@@ -38,7 +38,7 @@ version = "2.16.0"
 description = "Internationalization utilities"
 optional = false
 python-versions = ">=3.8"
-groups = ["odoo"]
+groups = ["main"]
 files = [
     {file = "babel-2.16.0-py3-none-any.whl", hash = "sha256:368b5b98b37c06b7daf6696391c3240c938b37767d4584413e8438c5c435fa8b"},
     {file = "babel-2.16.0.tar.gz", hash = "sha256:d1f3554ca26605fe173f3de0c65f750f5a42f924499bf134de6423582298e316"},
@@ -53,7 +53,7 @@ version = "4.13.3"
 description = "Screen-scraping library"
 optional = false
 python-versions = ">=3.7.0"
-groups = ["odoo"]
+groups = ["main"]
 markers = "python_version <= \"3.9\""
 files = [
     {file = "beautifulsoup4-4.13.3-py3-none-any.whl", hash = "sha256:99045d7d3f08f91f0d656bc9b7efbae189426cd913d830294a15eefa0ea4df16"},
@@ -77,7 +77,7 @@ version = "2.0.1"
 description = "A decorator for caching properties in classes."
 optional = false
 python-versions = ">=3.8"
-groups = ["odoo"]
+groups = ["main"]
 files = [
     {file = "cached_property-2.0.1-py3-none-any.whl", hash = "sha256:f617d70ab1100b7bcf6e42228f9ddcb78c676ffa167278d9f730d1c2fba69ccb"},
     {file = "cached_property-2.0.1.tar.gz", hash = "sha256:484d617105e3ee0e4f1f58725e72a8ef9e93deee462222dbd51cd91230897641"},
@@ -89,7 +89,7 @@ version = "0.9.0"
 description = "cffi-based cairo bindings for Python"
 optional = false
 python-versions = "*"
-groups = ["odoo"]
+groups = ["main"]
 files = [
     {file = "cairocffi-0.9.0.tar.gz", hash = "sha256:15386c3a9e08823d6826c4491eaccc7b7254b1dc587a3b9ce60c350c3f990337"},
 ]
@@ -107,7 +107,7 @@ version = "2025.1.31"
 description = "Python package for providing Mozilla's CA Bundle."
 optional = false
 python-versions = ">=3.6"
-groups = ["odoo"]
+groups = ["main"]
 files = [
     {file = "certifi-2025.1.31-py3-none-any.whl", hash = "sha256:ca78db4565a652026a4db2bcdf68f2fb589ea80d0be70e03929ed730746b84fe"},
     {file = "certifi-2025.1.31.tar.gz", hash = "sha256:3d5da6925056f6f18f119200434a4780a94263f10d1c21d032a6f6b2baa20651"},
@@ -119,7 +119,7 @@ version = "1.17.1"
 description = "Foreign Function Interface for Python calling C code."
 optional = false
 python-versions = ">=3.8"
-groups = ["odoo"]
+groups = ["main"]
 files = [
     {file = "cffi-1.17.1-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:df8b1c11f177bc2313ec4b2d46baec87a5f3e71fc8b45dab2ee7cae86d9aba14"},
     {file = "cffi-1.17.1-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:8f2cdc858323644ab277e9bb925ad72ae0e67f69e804f4898c070998d50b1a67"},
@@ -199,7 +199,7 @@ version = "3.0.4"
 description = "Universal encoding detector for Python 2 and 3"
 optional = false
 python-versions = "*"
-groups = ["odoo"]
+groups = ["main"]
 files = [
     {file = "chardet-3.0.4-py2.py3-none-any.whl", hash = "sha256:fc323ffcaeaed0e0a02bf4d117757b98aed530d9ed4531e3e15460124c106691"},
     {file = "chardet-3.0.4.tar.gz", hash = "sha256:84ab92ed1c4d4f16916e05906b6b75a6c0fb5db821cc65e70cbd64a3e2a5eaae"},
@@ -211,7 +211,7 @@ version = "3.4.1"
 description = "The Real First Universal Charset Detector. Open, modern and actively maintained alternative to Chardet."
 optional = false
 python-versions = ">=3.7"
-groups = ["odoo"]
+groups = ["main"]
 files = [
     {file = "charset_normalizer-3.4.1-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:91b36a978b5ae0ee86c394f5a54d6ef44db1de0815eb43de826d41d21e4af3de"},
     {file = "charset_normalizer-3.4.1-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:7461baadb4dc00fd9e0acbe254e3d7d2112e7f92ced2adc96e54ef6501c5f176"},
@@ -313,7 +313,7 @@ version = "0.4.6"
 description = "Cross-platform colored terminal text."
 optional = false
 python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,!=3.5.*,!=3.6.*,>=2.7"
-groups = ["odoo"]
+groups = ["main"]
 markers = "platform_system == \"Windows\""
 files = [
     {file = "colorama-0.4.6-py2.py3-none-any.whl", hash = "sha256:4f1d9991f5acc0ca119f9d443620b77f9d6b33703e51011c16baf57afb285fc6"},
@@ -326,7 +326,7 @@ version = "4.3.0"
 description = "Better living through Python with decorators"
 optional = false
 python-versions = "*"
-groups = ["odoo"]
+groups = ["main"]
 files = [
     {file = "decorator-4.3.0-py2.py3-none-any.whl", hash = "sha256:2c51dff8ef3c447388fe5e4453d24a2bf128d3a4c32af3fabef1f01c6851ab82"},
     {file = "decorator-4.3.0.tar.gz", hash = "sha256:c39efa13fbdeb4506c476c9b3babf6a718da943dab7811c206005a4a956c080c"},
@@ -338,7 +338,7 @@ version = "0.7.1"
 description = "XML bomb protection for Python stdlib modules"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
-groups = ["odoo"]
+groups = ["main"]
 files = [
     {file = "defusedxml-0.7.1-py2.py3-none-any.whl", hash = "sha256:a352e7e428770286cc899e2542b6cdaedb2b4953ff269a210103ec58f6198a61"},
     {file = "defusedxml-0.7.1.tar.gz", hash = "sha256:1bb3032db185915b62d7c6209c5a8792be6a32ab2fedacc84e01b52c51aa3e69"},
@@ -350,7 +350,7 @@ version = "0.6.2"
 description = "Pythonic argument parser, that will make you smile"
 optional = false
 python-versions = "*"
-groups = ["odoo"]
+groups = ["main"]
 files = [
     {file = "docopt-0.6.2.tar.gz", hash = "sha256:49b3a825280bd66b3aa83585ef59c4a8c82f2c8a522dbe754a8bc8d08c85c491"},
 ]
@@ -361,7 +361,7 @@ version = "0.14"
 description = "Docutils -- Python Documentation Utilities"
 optional = false
 python-versions = "*"
-groups = ["odoo"]
+groups = ["main"]
 files = [
     {file = "docutils-0.14-py2-none-any.whl", hash = "sha256:7a4bd47eaf6596e1295ecb11361139febe29b084a87bf005bf899f9a42edc3c6"},
     {file = "docutils-0.14-py3-none-any.whl", hash = "sha256:02aec4bd92ab067f6ff27a38a38a41173bf01bed8f89157768c1573f53e474a6"},
@@ -374,7 +374,7 @@ version = "2.1.5"
 description = "eBay SDK for Python"
 optional = false
 python-versions = "*"
-groups = ["odoo"]
+groups = ["main"]
 files = [
     {file = "ebaysdk-2.1.5.tar.gz", hash = "sha256:78458e1ea4a0fc7d693c26de363069696393767e4aa9689fd38efbfb08409acd"},
 ]
@@ -389,7 +389,7 @@ version = "0.3.15"
 description = "Let your Python tests travel through time"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
-groups = ["odoo"]
+groups = ["main"]
 files = [
     {file = "freezegun-0.3.15-py2.py3-none-any.whl", hash = "sha256:82c757a05b7c7ca3e176bfebd7d6779fd9139c7cb4ef969c38a28d74deef89b2"},
     {file = "freezegun-0.3.15.tar.gz", hash = "sha256:e2062f2c7f95cc276a834c22f1a17179467176b624cc6f936e8bc3be5535ad1b"},
@@ -405,7 +405,7 @@ version = "23.9.1"
 description = "Coroutine-based network library"
 optional = false
 python-versions = ">=3.8"
-groups = ["odoo"]
+groups = ["main"]
 files = [
     {file = "gevent-23.9.1-cp310-cp310-macosx_11_0_universal2.whl", hash = "sha256:a3c5e9b1f766a7a64833334a18539a362fb563f6c4682f9634dea72cbe24f771"},
     {file = "gevent-23.9.1-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:b101086f109168b23fa3586fccd1133494bdb97f86920a24dc0b23984dc30b69"},
@@ -471,7 +471,7 @@ version = "3.1.0"
 description = "Lightweight in-process concurrent programming"
 optional = false
 python-versions = ">=3.7"
-groups = ["odoo"]
+groups = ["main"]
 files = [
     {file = "greenlet-3.1.0-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:a814dc3100e8a046ff48faeaa909e80cdb358411a3d6dd5293158425c684eda8"},
     {file = "greenlet-3.1.0-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:a771dc64fa44ebe58d65768d869fcfb9060169d203446c1d446e844b62bdfdca"},
@@ -551,7 +551,7 @@ version = "2.6"
 description = "Internationalized Domain Names in Applications (IDNA)"
 optional = false
 python-versions = "*"
-groups = ["odoo"]
+groups = ["main"]
 files = [
     {file = "idna-2.6-py2.py3-none-any.whl", hash = "sha256:8c7309c718f94b3a625cb648ace320157ad16ff131ae0af362c9f21b80ef6ec4"},
     {file = "idna-2.6.tar.gz", hash = "sha256:2c6a5de3089009e3da7c5dde64a141dbc8551d5b7f6cf4ed7c2568d0cc520a8f"},
@@ -563,7 +563,7 @@ version = "0.7.2"
 description = "An ISO 8601 date/time/duration parser and formatter"
 optional = false
 python-versions = ">=3.7"
-groups = ["odoo"]
+groups = ["main"]
 files = [
     {file = "isodate-0.7.2-py3-none-any.whl", hash = "sha256:28009937d8031054830160fce6d409ed342816b543597cece116d966c6d99e15"},
     {file = "isodate-0.7.2.tar.gz", hash = "sha256:4cd1aa0f43ca76f4a6c6c0292a85f40b35ec2e43e315b59f06e6d32171a953e6"},
@@ -575,7 +575,7 @@ version = "2.11.3"
 description = "A very fast and expressive template engine."
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
-groups = ["odoo"]
+groups = ["main"]
 files = [
     {file = "Jinja2-2.11.3-py2.py3-none-any.whl", hash = "sha256:03e47ad063331dd6a3f04a43eddca8a966a26ba0c5b7207a9a9e4e08f1b29419"},
     {file = "Jinja2-2.11.3.tar.gz", hash = "sha256:a6d58433de0ae800347cab1fa3043cebbabe8baa9d29e668f1c768cb87a333c6"},
@@ -593,7 +593,7 @@ version = "0.17.0"
 description = "Sass for Python: A straightforward binding of libsass for Python."
 optional = false
 python-versions = "*"
-groups = ["odoo"]
+groups = ["main"]
 files = [
     {file = "libsass-0.17.0-cp27-cp27m-macosx_10_14_intel.whl", hash = "sha256:bf6b7ad08f287695338f050c80f79d258a405e5c349cdaeb9be5d5376c09e37a"},
     {file = "libsass-0.17.0-cp27-cp27m-win32.whl", hash = "sha256:411833c623288138744865d882f5226f6db52afce1e19f42722c416df9d308dc"},
@@ -625,7 +625,7 @@ version = "4.9.4"
 description = "Powerful and Pythonic XML processing library combining libxml2/libxslt with the ElementTree API."
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, != 3.4.*"
-groups = ["odoo"]
+groups = ["main"]
 files = [
     {file = "lxml-4.9.4-cp27-cp27m-manylinux_2_5_i686.manylinux1_i686.whl", hash = "sha256:e214025e23db238805a600f1f37bf9f9a15413c7bf5f9d6ae194f84980c78722"},
     {file = "lxml-4.9.4-cp27-cp27m-manylinux_2_5_x86_64.manylinux1_x86_64.whl", hash = "sha256:ec53a09aee61d45e7dbe7e91252ff0491b6b5fee3d85b2d45b173d8ab453efc1"},
@@ -734,7 +734,7 @@ version = "1.3.5"
 description = "A super-fast templating language that borrows the best ideas from the existing templating languages."
 optional = false
 python-versions = ">=3.8"
-groups = ["odoo"]
+groups = ["main"]
 files = [
     {file = "Mako-1.3.5-py3-none-any.whl", hash = "sha256:260f1dbc3a519453a9c856dedfe4beb4e50bd5a26d96386cb6c80856556bb91a"},
     {file = "Mako-1.3.5.tar.gz", hash = "sha256:48dbc20568c1d276a2698b36d968fa76161bf127194907ea6fc594fa81f943bc"},
@@ -754,7 +754,7 @@ version = "1.1.0"
 description = "Safely add untrusted strings to HTML/XML markup."
 optional = false
 python-versions = ">=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*"
-groups = ["odoo"]
+groups = ["main"]
 files = [
     {file = "MarkupSafe-1.1.0-cp27-cp27m-macosx_10_6_intel.whl", hash = "sha256:efdc45ef1afc238db84cb4963aa689c0408912a0239b0721cb172b4016eb31d6"},
     {file = "MarkupSafe-1.1.0-cp27-cp27m-manylinux1_i686.whl", hash = "sha256:52ccb45e77a1085ec5461cde794e1aa037df79f473cbc69b974e73940655c8d7"},
@@ -792,7 +792,7 @@ version = "0.5.14"
 description = "Modules to convert numbers to words. Easily extensible."
 optional = false
 python-versions = "*"
-groups = ["odoo"]
+groups = ["main"]
 files = [
     {file = "num2words-0.5.14-py3-none-any.whl", hash = "sha256:1c8e5b00142fc2966fd8d685001e36c4a9911e070d1b120e1beb721fa1edb33d"},
     {file = "num2words-0.5.14.tar.gz", hash = "sha256:b066ec18e56b6616a3b38086b5747daafbaa8868b226a36127e0451c0cf379c6"},
@@ -807,7 +807,7 @@ version = "0.19"
 description = "Tools for working with the OFX (Open Financial Exchange) file format"
 optional = false
 python-versions = "*"
-groups = ["odoo"]
+groups = ["main"]
 markers = "python_version <= \"3.9\""
 files = [
     {file = "ofxparse-0.19.tar.gz", hash = "sha256:d8c81fd5089332106da1a2e8919c412c7c677f08af04d557ca767701a04e0918"},
@@ -824,7 +824,7 @@ version = "1.7.1"
 description = "comprehensive password hashing framework supporting over 30 schemes"
 optional = false
 python-versions = "*"
-groups = ["odoo"]
+groups = ["main"]
 files = [
     {file = "passlib-1.7.1-py2.py3-none-any.whl", hash = "sha256:43526aea08fa32c6b6dbbbe9963c4c767285b78147b7437597f992812f69d280"},
     {file = "passlib-1.7.1.tar.gz", hash = "sha256:3d948f64138c25633613f303bcc471126eae67c04d5e3f6b7b8ce6242f8653e0"},
@@ -853,7 +853,7 @@ version = "10.4.0"
 description = "Python Imaging Library (Fork)"
 optional = false
 python-versions = ">=3.8"
-groups = ["odoo"]
+groups = ["main"]
 files = [
     {file = "pillow-10.4.0-cp310-cp310-macosx_10_10_x86_64.whl", hash = "sha256:4d9667937cfa347525b319ae34375c37b9ee6b525440f3ef48542fcf66f2731e"},
     {file = "pillow-10.4.0-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:543f3dc61c18dafb755773efc89aae60d06b6596a63914107f75459cf984164d"},
@@ -951,7 +951,7 @@ version = "1.1.0"
 description = "A library to manipulate gettext files (po and mo files)."
 optional = false
 python-versions = "*"
-groups = ["odoo"]
+groups = ["main"]
 files = [
     {file = "polib-1.1.0-py2.py3-none-any.whl", hash = "sha256:93b730477c16380c9a96726c54016822ff81acfa553977fdd131f2b90ba858d7"},
     {file = "polib-1.1.0.tar.gz", hash = "sha256:fad87d13696127ffb27ea0882d6182f1a9cf8a5e2b37a587751166c51e5a332a"},
@@ -963,7 +963,7 @@ version = "5.6.6"
 description = "Cross-platform lib for process and system monitoring in Python."
 optional = false
 python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
-groups = ["odoo"]
+groups = ["main"]
 files = [
     {file = "psutil-5.6.6-cp27-none-win32.whl", hash = "sha256:06660136ab88762309775fd47290d7da14094422d915f0466e0adf8e4b22214e"},
     {file = "psutil-5.6.6-cp27-none-win_amd64.whl", hash = "sha256:f21a7bb4b207e4e7c60b3c40ffa89d790997619f04bbecec9db8e3696122bc78"},
@@ -987,7 +987,7 @@ version = "2.8.5"
 description = "psycopg2 - Python-PostgreSQL Database Adapter"
 optional = false
 python-versions = ">=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*"
-groups = ["odoo"]
+groups = ["main"]
 files = [
     {file = "psycopg2-2.8.5-cp27-cp27m-win32.whl", hash = "sha256:a0984ff49e176062fcdc8a5a2a670c9bb1704a2f69548bce8f8a7bad41c661bf"},
     {file = "psycopg2-2.8.5-cp27-cp27m-win_amd64.whl", hash = "sha256:acf56d564e443e3dea152efe972b1434058244298a94348fc518d6dd6a9fb0bb"},
@@ -1010,7 +1010,7 @@ version = "0.6.1"
 description = "Pure-Python implementation of ASN.1 types and DER/BER/CER codecs (X.208)"
 optional = false
 python-versions = ">=3.8"
-groups = ["odoo"]
+groups = ["main"]
 files = [
     {file = "pyasn1-0.6.1-py3-none-any.whl", hash = "sha256:0d632f46f2ba09143da3a8afe9e33fb6f92fa2320ab7e886e2d0f7672af84629"},
     {file = "pyasn1-0.6.1.tar.gz", hash = "sha256:6f580d2bdd84365380830acf45550f2511469f673cb4a5ae3857a3170128b034"},
@@ -1022,7 +1022,7 @@ version = "0.4.1"
 description = "A collection of ASN.1-based protocols modules"
 optional = false
 python-versions = ">=3.8"
-groups = ["odoo"]
+groups = ["main"]
 files = [
     {file = "pyasn1_modules-0.4.1-py3-none-any.whl", hash = "sha256:49bfa96b45a292b711e986f222502c1c9a5e1f4e568fc30e2574a6c7d07838fd"},
     {file = "pyasn1_modules-0.4.1.tar.gz", hash = "sha256:c28e2dbf9c06ad61c71a075c7e0f9fd0f1b0bb2d2ad4377f240d33ac2ab60a7c"},
@@ -1037,7 +1037,7 @@ version = "2.22"
 description = "C parser in Python"
 optional = false
 python-versions = ">=3.8"
-groups = ["odoo"]
+groups = ["main"]
 files = [
     {file = "pycparser-2.22-py3-none-any.whl", hash = "sha256:c3702b6d3dd8c7abc1afa565d7e63d53a1d0bd86cdc24edd75470f4de499cfcc"},
     {file = "pycparser-2.22.tar.gz", hash = "sha256:491c8be9c040f5390f5bf44a5b07752bd07f56edf992381b05c701439eec10f6"},
@@ -1049,7 +1049,7 @@ version = "1.4.1"
 description = "Python interface to Graphviz's Dot"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
-groups = ["odoo"]
+groups = ["main"]
 files = [
     {file = "pydot-1.4.1-py2.py3-none-any.whl", hash = "sha256:67be714300c78fda5fd52f79ec994039e3f76f074948c67b5ff539b433ad354f"},
     {file = "pydot-1.4.1.tar.gz", hash = "sha256:d49c9d4dd1913beec2a997f831543c8cbd53e535b1a739e921642fe416235f01"},
@@ -1064,7 +1064,7 @@ version = "3.2.1"
 description = "pyparsing module - Classes and methods to define and execute parsing grammars"
 optional = false
 python-versions = ">=3.9"
-groups = ["odoo"]
+groups = ["main"]
 files = [
     {file = "pyparsing-3.2.1-py3-none-any.whl", hash = "sha256:506ff4f4386c4cec0590ec19e6302d3aedb992fdc02c761e90416f158dacf8e1"},
     {file = "pyparsing-3.2.1.tar.gz", hash = "sha256:61980854fd66de3a90028d679a954d5f2623e83144b5afe5ee86f43d762e5f0a"},
@@ -1079,7 +1079,7 @@ version = "1.27.12"
 description = "A pure-python PDF library capable of splitting, merging, cropping, and transforming PDF files"
 optional = false
 python-versions = ">=2.7"
-groups = ["odoo"]
+groups = ["main"]
 files = [
     {file = "PyPDF2-1.27.12-py3-none-any.whl", hash = "sha256:9416c347b4c03391caf7562486bec0fd129bbb6a3359eefe4a0b758d0e3dc20c"},
     {file = "PyPDF2-1.27.12.tar.gz", hash = "sha256:20929fad10a3b4890862f65f3a46f563cfdf53132faae5193b54e18658467a60"},
@@ -1091,7 +1091,7 @@ version = "3.4"
 description = "Python Serial Port Extension"
 optional = false
 python-versions = "*"
-groups = ["odoo"]
+groups = ["main"]
 files = [
     {file = "pyserial-3.4-py2.py3-none-any.whl", hash = "sha256:e0770fadba80c31013896c7e6ef703f72e7834965954a78e71a3049488d4d7d8"},
     {file = "pyserial-3.4.tar.gz", hash = "sha256:6e2d401fdee0eab996cf734e67773a0143b932772ca8b42451440cfed942c627"},
@@ -1103,7 +1103,7 @@ version = "2.7.3"
 description = "Extensions to the standard Python datetime module"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*"
-groups = ["odoo"]
+groups = ["main"]
 files = [
     {file = "python-dateutil-2.7.3.tar.gz", hash = "sha256:e27001de32f627c22380a688bcc43ce83504a7bc5da472209b4c70f02829f0b8"},
     {file = "python_dateutil-2.7.3-py2.py3-none-any.whl", hash = "sha256:1adb80e7a782c12e52ef9a8182bebeb73f1d7e24e374397af06fb4956c8dc5c0"},
@@ -1118,7 +1118,7 @@ version = "3.4.4"
 description = "Python modules for implementing LDAP clients"
 optional = false
 python-versions = ">=3.6"
-groups = ["odoo"]
+groups = ["main"]
 files = [
     {file = "python-ldap-3.4.4.tar.gz", hash = "sha256:7edb0accec4e037797705f3a05cbf36a9fde50d08c8f67f2aef99a2628fab828"},
 ]
@@ -1133,7 +1133,7 @@ version = "0.4.27"
 description = "File type identification using libmagic"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
-groups = ["odoo"]
+groups = ["main"]
 files = [
     {file = "python-magic-0.4.27.tar.gz", hash = "sha256:c1ba14b08e4a5f5c31a302b7721239695b2f0f058d125bd5ce1ee36b9d9d3c3b"},
     {file = "python_magic-0.4.27-py2.py3-none-any.whl", hash = "sha256:c212960ad306f700aa0d01e5d7a325d20548ff97eb9920dcd29513174f0294d3"},
@@ -1145,7 +1145,7 @@ version = "1.8"
 description = "Python module to handle standardized numbers and codes"
 optional = false
 python-versions = "*"
-groups = ["odoo"]
+groups = ["main"]
 files = [
     {file = "python-stdnum-1.8.tar.gz", hash = "sha256:3f42639cae75c0f6ba734eaa7391d411b7fdef868873503f7d2b2962fc3d71bd"},
 ]
@@ -1161,7 +1161,7 @@ version = "2024.2"
 description = "World timezone definitions, modern and historical"
 optional = false
 python-versions = "*"
-groups = ["odoo"]
+groups = ["main"]
 files = [
     {file = "pytz-2024.2-py2.py3-none-any.whl", hash = "sha256:31c7c1817eb7fae7ca4b8c7ee50c72f93aa2dd863de768e1ef4245d426aa0725"},
     {file = "pytz-2024.2.tar.gz", hash = "sha256:2aa355083c50a0f93fa581709deac0c9ad65cca8a9e9beac660adcbd493c798a"},
@@ -1173,7 +1173,7 @@ version = "1.0.2"
 description = "Python USB access module"
 optional = false
 python-versions = "*"
-groups = ["odoo"]
+groups = ["main"]
 files = [
     {file = "pyusb-1.0.2.tar.gz", hash = "sha256:4e9b72cc4a4205ca64fbf1f3fff39a335512166c151ad103e55c8223ac147362"},
 ]
@@ -1184,7 +1184,7 @@ version = "6.1"
 description = "QR Code image generator"
 optional = false
 python-versions = "*"
-groups = ["odoo"]
+groups = ["main"]
 files = [
     {file = "qrcode-6.1-py2.py3-none-any.whl", hash = "sha256:3996ee560fc39532910603704c82980ff6d4d5d629f9c3f25f34174ce8606cf5"},
     {file = "qrcode-6.1.tar.gz", hash = "sha256:505253854f607f2abf4d16092c61d4e9d511a3b4392e60bff957a68592b04369"},
@@ -1206,7 +1206,7 @@ version = "3.6.13"
 description = "The Reportlab Toolkit"
 optional = false
 python-versions = ">=3.7,<4"
-groups = ["odoo"]
+groups = ["main"]
 files = [
     {file = "reportlab-3.6.13-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:a0330322c6c8123745ac7667fcc6ae3e0de3b73c15bdfaa28c788a9eaa0f50da"},
     {file = "reportlab-3.6.13-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:753485bb2b18cbd11340e227e4aaf9bde3bb64f83406dfa011e92ad0231a42c9"},
@@ -1268,7 +1268,7 @@ version = "2.32.3"
 description = "Python HTTP for Humans."
 optional = false
 python-versions = ">=3.8"
-groups = ["odoo"]
+groups = ["main"]
 files = [
     {file = "requests-2.32.3-py3-none-any.whl", hash = "sha256:70761cfe03c773ceb22aa2f671b4757976145175cdfca038c02654d061d6dcc6"},
     {file = "requests-2.32.3.tar.gz", hash = "sha256:55365417734eb18255590a9ff9eb97e9e1da868d4ccd6402399eaf68af20a760"},
@@ -1290,7 +1290,7 @@ version = "1.0.0"
 description = "A utility belt for advanced users of python-requests"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
-groups = ["odoo"]
+groups = ["main"]
 files = [
     {file = "requests-toolbelt-1.0.0.tar.gz", hash = "sha256:7681a0a3d047012b5bdc0ee37d7f8f07ebe76ab08caeccfc3921ce23c88d5bc6"},
     {file = "requests_toolbelt-1.0.0-py2.py3-none-any.whl", hash = "sha256:cccfdd665f0a24fcf4726e690f65639d272bb0637b9b92dfd91a5568ccf6bd06"},
@@ -1305,7 +1305,7 @@ version = "75.8.2"
 description = "Easily download, build, install, upgrade, and uninstall Python packages"
 optional = false
 python-versions = ">=3.9"
-groups = ["odoo"]
+groups = ["main"]
 files = [
     {file = "setuptools-75.8.2-py3-none-any.whl", hash = "sha256:558e47c15f1811c1fa7adbd0096669bf76c1d3f433f58324df69f3f5ecac4e8f"},
     {file = "setuptools-75.8.2.tar.gz", hash = "sha256:4880473a969e5f23f2a2be3646b2dfd84af9028716d398e46192f84bc36900d2"},
@@ -1326,7 +1326,7 @@ version = "1.17.0"
 description = "Python 2 and 3 compatibility utilities"
 optional = false
 python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,>=2.7"
-groups = ["odoo"]
+groups = ["main"]
 files = [
     {file = "six-1.17.0-py2.py3-none-any.whl", hash = "sha256:4721f391ed90541fddacab5acf947aa0d3dc7d27b2e1e8eda2be8970586c3274"},
     {file = "six-1.17.0.tar.gz", hash = "sha256:ff70335d468e7eb6ec65b95b99d3a2836546063f63acc5171de367e834932a81"},
@@ -1338,7 +1338,7 @@ version = "2.6"
 description = "A modern CSS selector implementation for Beautiful Soup."
 optional = false
 python-versions = ">=3.8"
-groups = ["odoo"]
+groups = ["main"]
 markers = "python_version <= \"3.9\""
 files = [
     {file = "soupsieve-2.6-py3-none-any.whl", hash = "sha256:e72c4ff06e4fb6e4b5a9f0f55fe6e81514581fca1515028625d0f299c602ccc9"},
@@ -1351,7 +1351,7 @@ version = "4.12.2"
 description = "Backported and Experimental Type Hints for Python 3.8+"
 optional = false
 python-versions = ">=3.8"
-groups = ["odoo"]
+groups = ["main"]
 markers = "python_version <= \"3.9\""
 files = [
     {file = "typing_extensions-4.12.2-py3-none-any.whl", hash = "sha256:04e5ca0351e0f3f85c6853954072df659d0d13fac324d0072316b67d7794700d"},
@@ -1364,7 +1364,7 @@ version = "1.26.20"
 description = "HTTP library with thread-safe connection pooling, file post, and more."
 optional = false
 python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,!=3.5.*,>=2.7"
-groups = ["odoo"]
+groups = ["main"]
 files = [
     {file = "urllib3-1.26.20-py2.py3-none-any.whl", hash = "sha256:0ed14ccfbf1c30a9072c7ca157e4319b70d65f623e91e7b32fadb2853431016e"},
     {file = "urllib3-1.26.20.tar.gz", hash = "sha256:40c2dc0c681e47eb8f90e7e27bf6ff7df2e677421fd46756da1161c39ca70d32"},
@@ -1381,7 +1381,7 @@ version = "0.9.6.1"
 description = "A full-featured Python package for parsing and creating iCalendar and vCard files"
 optional = false
 python-versions = "*"
-groups = ["odoo"]
+groups = ["main"]
 files = [
     {file = "vobject-0.9.6.1.tar.gz", hash = "sha256:96512aec74b90abb71f6b53898dd7fe47300cc940104c4f79148f0671f790101"},
 ]
@@ -1395,7 +1395,7 @@ version = "0.16.1"
 description = "The comprehensive WSGI web application library."
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
-groups = ["odoo"]
+groups = ["main"]
 markers = "python_version <= \"3.9\""
 files = [
     {file = "Werkzeug-0.16.1-py2.py3-none-any.whl", hash = "sha256:1e0dedc2acb1f46827daa2e399c1485c8fa17c0d8e70b6b875b4e7f54bf408d2"},
@@ -1413,7 +1413,7 @@ version = "1.2.0"
 description = "Library for developers to extract data from Microsoft Excel (tm) spreadsheet files"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
-groups = ["odoo"]
+groups = ["main"]
 files = [
     {file = "xlrd-1.2.0-py2.py3-none-any.whl", hash = "sha256:e551fb498759fa3a5384a94ccd4c3c02eb7c00ea424426e212ac0c57be9dfbde"},
     {file = "xlrd-1.2.0.tar.gz", hash = "sha256:546eb36cee8db40c3eaa46c351e67ffee6eeb5fa2650b71bc4c758a29a1b29b2"},
@@ -1425,7 +1425,7 @@ version = "1.4.5"
 description = "A Python module for creating Excel XLSX files."
 optional = false
 python-versions = "*"
-groups = ["odoo"]
+groups = ["main"]
 files = [
     {file = "XlsxWriter-1.4.5-py2.py3-none-any.whl", hash = "sha256:f9335f1736e2c4fd80e940fe1b6d92d967bf454a1e5d639b0b7a4459ade790cc"},
     {file = "XlsxWriter-1.4.5.tar.gz", hash = "sha256:0956747859567ec01907e561a7d8413de18a7aae36860f979f9da52b9d58bc19"},
@@ -1437,7 +1437,7 @@ version = "1.3.0"
 description = "Library to create spreadsheet files compatible with MS Excel 97/2000/XP/2003 XLS files, on any platform, with Python 2.6, 2.7, 3.3+"
 optional = false
 python-versions = "*"
-groups = ["odoo"]
+groups = ["main"]
 files = [
     {file = "xlwt-1.3.0-py2.py3-none-any.whl", hash = "sha256:a082260524678ba48a297d922cc385f58278b8aa68741596a87de01a9c628b2e"},
     {file = "xlwt-1.3.0.tar.gz", hash = "sha256:c59912717a9b28f1a3c2a98fd60741014b06b043936dcecbc113eaaada156c88"},
@@ -1449,7 +1449,7 @@ version = "3.2.0"
 description = "A modern/fast Python SOAP client based on lxml / requests"
 optional = false
 python-versions = "*"
-groups = ["odoo"]
+groups = ["main"]
 files = [
     {file = "zeep-3.2.0-py2.py3-none-any.whl", hash = "sha256:c8a2f12228b18c5db1feec0814907048d3c77eb6bbed419d567fe87fd9f0e530"},
     {file = "zeep-3.2.0.tar.gz", hash = "sha256:e5feb8b261c7e271e20c191bd346d80705d53b90af3c1e6f214aa108876fd72d"},
@@ -1480,7 +1480,7 @@ version = "5.0"
 description = "Very basic event publishing system"
 optional = false
 python-versions = ">=3.7"
-groups = ["odoo"]
+groups = ["main"]
 files = [
     {file = "zope.event-5.0-py3-none-any.whl", hash = "sha256:2832e95014f4db26c47a13fdaef84cef2f4df37e66b59d8f1f4a8f319a632c26"},
     {file = "zope.event-5.0.tar.gz", hash = "sha256:bac440d8d9891b4068e2b5a2c5e2c9765a9df762944bda6955f96bb9b91e67cd"},
@@ -1499,7 +1499,7 @@ version = "7.2"
 description = "Interfaces for Python"
 optional = false
 python-versions = ">=3.8"
-groups = ["odoo"]
+groups = ["main"]
 files = [
     {file = "zope.interface-7.2-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:ce290e62229964715f1011c3dbeab7a4a1e4971fd6f31324c4519464473ef9f2"},
     {file = "zope.interface-7.2-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:05b910a5afe03256b58ab2ba6288960a2892dfeef01336dc4be6f1b9ed02ab0a"},
@@ -1551,4 +1551,4 @@ testing = ["coverage[toml]", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.9"
-content-hash = "fb18a45c4f487419a0d6e1d19a9505699d25616b60d4f334b3a41c21a4f174f3"
+content-hash = "48e6d342bb3b8ebab188b120e0966bcf705e147d65502fa7053433b05554cd53"

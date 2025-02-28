@@ -5,7 +5,7 @@ readme = "README.md"
 requires-python = "^3.9"
 dynamic = ["dependencies"]
 
-[tool.poetry.group.odoo.dependencies]
+[tool.poetry.dependencies]
 babel = "2.16.0"
 chardet = "3.0.4"
 decorator = "4.3.0"
