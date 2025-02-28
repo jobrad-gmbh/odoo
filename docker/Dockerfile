@@ -108,7 +108,7 @@ ENV PATH="/opt/odoo/.venv/bin:${PATH}"
 COPY pyproject.toml .
 COPY poetry.lock .
 RUN poetry config virtualenvs.in-project true && \
-    poetry install --no-root --no-interaction --no-cache
+    poetry install --no-interaction --no-cache
 
 COPY --chown=odoo:odoo addons /opt/odoo/.venv/lib/python3.9/site-packages/odoo/addons/
 COPY --chown=odoo:odoo addons_enterprise /opt/odoo/.venv/lib/python3.9/site-packages/odoo/addons/
