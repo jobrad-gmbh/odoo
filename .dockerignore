@@ -8,5 +8,6 @@
 !.python-version
 !pyproject.toml
 !poetry.lock
+!README.md
 
 *.pyc

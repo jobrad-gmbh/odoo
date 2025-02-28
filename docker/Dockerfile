@@ -107,6 +107,7 @@ WORKDIR /opt/odoo
 ENV PATH="/opt/odoo/.venv/bin:${PATH}"
 COPY pyproject.toml .
 COPY poetry.lock .
+COPY README.md .
 RUN poetry config virtualenvs.in-project true && \
     poetry install --no-interaction --no-cache
 
