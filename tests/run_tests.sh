@@ -18,7 +18,7 @@ fi
 MODULES_FILE=$1
 
 docker compose -f tests/docker-compose.yml up -d
-docker compose -f tests/docker-compose.yml exec odoo poetry install --only testing --no-interaction --no-cache
+docker compose -f tests/docker-compose.yml exec odoo poetry install --no-root --with testing --no-interaction --no-cache
 
 echo "---*** Running Odoo tests at_install ***---"
 docker compose -f tests/docker-compose.yml exec odoo ./odoo-bin -d test --addons-path=addons,odoo/addons \
