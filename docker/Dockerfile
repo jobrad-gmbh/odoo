@@ -56,7 +56,7 @@ RUN if [ "$TARGETARCH" = "arm64" ]; then \
     && mv node-v18.20.3-linux-x64 /opt/node \
     && rm -rf /tmp/node.tar.xz; \
     fi
-RUN npm install -g less@4.2.0
+RUN npm install -g less@4.2.2
 
 # ghostscript
 RUN GHOSTSCRIPT_VERSION=10050 \
