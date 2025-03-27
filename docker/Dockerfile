@@ -55,12 +55,12 @@ RUN if [ "$TARGETARCH" = "arm64" ]; then \
     && tar -xf /tmp/node.tar.xz \
     && mv node-v18.20.3-linux-x64 /opt/node \
     && rm -rf /tmp/node.tar.xz; \
-fi
+    fi
 RUN npm install -g less@4.2.0
 
 # ghostscript
-RUN GHOSTSCRIPT_VERSION=10040 \
-    && GHOSTSCRIPT_FILE_NAME=ghostscript-10.04.0.tar.gz \
+RUN GHOSTSCRIPT_VERSION=10050 \
+    && GHOSTSCRIPT_FILE_NAME=ghostscript-10.05.0.tar.gz \
     && GHOSTSCRIPT_BASE_NAME=$(basename ${GHOSTSCRIPT_FILE_NAME} .tar.gz) \
     && curl -sL -o /tmp/${GHOSTSCRIPT_FILE_NAME} https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs${GHOSTSCRIPT_VERSION}/${GHOSTSCRIPT_FILE_NAME} \
     && tar -xzf /tmp/${GHOSTSCRIPT_FILE_NAME} -C /tmp \
