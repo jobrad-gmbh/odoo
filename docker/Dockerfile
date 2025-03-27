@@ -44,16 +44,16 @@ fi
 # lessc
 ENV PATH="${PATH}:/opt/node/bin"
 RUN if [ "$TARGETARCH" = "arm64" ]; then \
-    curl -sL -o /tmp/node.tar.xz https://nodejs.org/dist/v18.20.3/node-v18.20.3-linux-arm64.tar.xz \
-    && echo '3c497c19ddbf75bab7fecb36ddf1738622f0ba244aa1e0aebc70e46daf1a0794 /tmp/node.tar.xz' | sha256sum -c - \
+    curl -sL -o /tmp/node.tar.xz https://nodejs.org/dist/v18.20.8/node-v18.20.8-linux-arm64.tar.xz \
+    && echo '224e569dbe7b0ea4628ce383d9d482494b57ee040566583f1c54072c86d1116b /tmp/node.tar.xz' | sha256sum -c - \
     && tar -xf /tmp/node.tar.xz \
-    && mv node-v18.20.3-linux-arm64 /opt/node \
+    && mv node-v18.20.8-linux-arm64 /opt/node \
     && rm -rf /tmp/node.tar.xz; \
     else \
-    curl -sL -o /tmp/node.tar.xz https://nodejs.org/dist/v18.20.3/node-v18.20.3-linux-x64.tar.xz \
-    && echo 'ffd6147c263b81016742dc1e72dc68885a3ca9b441d9744f9b76cad362d0cc5f /tmp/node.tar.xz' | sha256sum -c - \
+    curl -sL -o /tmp/node.tar.xz https://nodejs.org/dist/v18.20.8/node-v18.20.8-linux-x64.tar.xz \
+    && echo '5467ee62d6af1411d46b6a10e3fb5cacc92734dbcef465fea14e7b90993001c9 /tmp/node.tar.xz' | sha256sum -c - \
     && tar -xf /tmp/node.tar.xz \
-    && mv node-v18.20.3-linux-x64 /opt/node \
+    && mv node-v18.20.8-linux-x64 /opt/node \
     && rm -rf /tmp/node.tar.xz; \
     fi
 RUN npm install -g less@4.2.2
