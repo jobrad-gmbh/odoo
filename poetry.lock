@@ -1393,17 +1393,23 @@ socks = ["PySocks (>=1.5.6,!=1.5.7,<2.0)"]
 
 [[package]]
 name = "vobject"
-version = "0.9.6.1"
+version = "0.9.9"
 description = "A full-featured Python package for parsing and creating iCalendar and vCard files"
 optional = false
 python-versions = "*"
 groups = ["odoo"]
 files = [
-    {file = "vobject-0.9.6.1.tar.gz", hash = "sha256:96512aec74b90abb71f6b53898dd7fe47300cc940104c4f79148f0671f790101"},
+    {file = "vobject-0.9.9-py2.py3-none-any.whl", hash = "sha256:0fbdb982065cf4d1843a5d5950c88510041c6de026bda49c3502721de1c6ac3d"},
+    {file = "vobject-0.9.9.tar.gz", hash = "sha256:ac44e5d7e2079d84c1d52c50a615b9bec4b1ba958608c4c7fe40cbf33247b38e"},
 ]
 
 [package.dependencies]
-python-dateutil = ">=2.4.0"
+python-dateutil = [
+    {version = ">=2.5.0", markers = "python_version < \"3.10\""},
+    {version = ">=2.7.0", markers = "python_version >= \"3.10\""},
+]
+pytz = "*"
+six = "*"
 
 [[package]]
 name = "werkzeug"
@@ -1564,4 +1570,4 @@ testing = ["coverage[toml]", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.9"
-content-hash = "2f3e0c458d55966cb89fd7873bfbddf611d80d2bd3c932bfc6bdfc72c014bad4"
+content-hash = "eb2fefe613e2ad29fa2b59aad678eb1f80222b84f56c72f863e503243e79c931"
