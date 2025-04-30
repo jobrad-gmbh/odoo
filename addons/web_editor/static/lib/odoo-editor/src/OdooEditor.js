@@ -68,6 +68,7 @@ import {
     setCursorStart,
     paragraphRelatedElements,
     isUnbreakable,
+    buildLinkUrl,
 } from './utils/utils.js';
 import { editorCommands } from './commands/commands.js';
 import { Powerbox } from './powerbox/Powerbox.js';
@@ -3310,7 +3311,7 @@ export class OdooEditor extends EventTarget {
             const selectionIsInsideALink = !!closestElement(sel.anchorNode, 'a');
             if (splitAroundUrl.length === 3 && !splitAroundUrl[0] && !splitAroundUrl[2]) {
                 // Pasted content is a single URL.
-                const url = /^https?:\/\//i.test(text) ? text : 'https://' + text;
+                const url = buildLinkUrl(text);
                 const youtubeUrl = this.options.allowCommandVideo &&YOUTUBE_URL_GET_VIDEO_ID.exec(url);
                 const urlFileExtention = url.split('.').pop();
                 const isImageUrl = ['jpg', 'jpeg', 'png', 'gif', 'svg'].includes(urlFileExtention.toLowerCase());
@@ -3399,9 +3400,7 @@ export class OdooEditor extends EventTarget {
             } else {
                 this.historyPauseSteps();
                 for (let i = 0; i < splitAroundUrl.length; i++) {
-                    const url = /^https?:\/\//gi.test(splitAroundUrl[i])
-                        ? splitAroundUrl[i]
-                        : 'https://' + splitAroundUrl[i];
+                    const url = buildLinkUrl(splitAroundUrl[i]);
                     // Even indexes will always be plain text, and odd indexes will always be URL.
                     // only allow images emebed inside an existing link. No other url or video embed.
                     if (i % 2 && !selectionIsInsideALink) {
