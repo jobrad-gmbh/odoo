@@ -105,7 +105,9 @@ USER odoo
 WORKDIR /opt/odoo
 
 # Dependencies
-ENV PATH="/opt/odoo/.venv/bin:${PATH}"
+ENV VIRTUAL_ENV="/opt/odoo/.venv"
+ENV VIRTUAL_ENV_PROMPT="odoo"
+ENV PATH="${VIRTUAL_ENV}/bin:${PATH}"
 COPY pyproject.toml .
 COPY poetry.lock .
 RUN poetry config virtualenvs.in-project true && \
