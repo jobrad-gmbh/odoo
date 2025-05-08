@@ -1,4 +1,5 @@
-FROM ubuntu:22.04
+# Ubuntu 22.04
+FROM ubuntu:jammy-20250415.1
 
 # variables & locales
 ENV TZ=Europe/Berlin
@@ -56,13 +57,14 @@ RUN if [ "$TARGETARCH" = "arm64" ]; then \
     && mv node-v18.20.8-linux-x64 /opt/node \
     && rm -rf /tmp/node.tar.xz; \
     fi
-RUN npm install -g less@4.2.2
+RUN npm install -g less@4.3.0
 
 # ghostscript
 RUN GHOSTSCRIPT_VERSION=10051 \
     && GHOSTSCRIPT_FILE_NAME=ghostscript-10.05.1.tar.gz \
     && GHOSTSCRIPT_BASE_NAME=$(basename ${GHOSTSCRIPT_FILE_NAME} .tar.gz) \
     && curl -sL -o /tmp/${GHOSTSCRIPT_FILE_NAME} https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs${GHOSTSCRIPT_VERSION}/${GHOSTSCRIPT_FILE_NAME} \
+    && echo "121861b6d29b2461dec6575c9f3cab665b810bd408d4ec02c86719fa708b0a49 /tmp/${GHOSTSCRIPT_FILE_NAME}" | sha256sum -c - \
     && tar -xzf /tmp/${GHOSTSCRIPT_FILE_NAME} -C /tmp \
     && cd /tmp/${GHOSTSCRIPT_BASE_NAME}/ \
     && ./configure \
@@ -92,19 +94,21 @@ ENV PYENV_ROOT="/.pyenv"
 ENV PATH="${PYENV_ROOT}/shims:${PYENV_ROOT}/bin:${PATH}"
 COPY .python-version .
 RUN PYTHON_VERSION="$(cat .python-version)" \
-    && git clone --depth 1 -b v2.5.4 https://github.com/pyenv/pyenv.git "${PYENV_ROOT}" \
+    && git clone --depth 1 -b v2.5.5 https://github.com/pyenv/pyenv.git "${PYENV_ROOT}" \
     && pyenv install --verbose ${PYTHON_VERSION} \
     && pyenv global ${PYTHON_VERSION} \
     && rm .python-version
 
 # Poetry
-RUN pip install --no-cache-dir poetry==2.1.1
+RUN pip install --no-cache-dir poetry==2.1.3
 
 USER odoo
 WORKDIR /opt/odoo
 
 # Dependencies
-ENV PATH="/opt/odoo/.venv/bin:${PATH}"
+ENV VIRTUAL_ENV="/opt/odoo/.venv"
+ENV VIRTUAL_ENV_PROMPT="odoo"
+ENV PATH="${VIRTUAL_ENV}/bin:${PATH}"
 COPY pyproject.toml .
 COPY poetry.lock .
 RUN poetry config virtualenvs.in-project true && \

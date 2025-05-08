@@ -1,6 +1,6 @@
 services:
   postgres:
-    image: ghcr.io/jobrad-gmbh/postgis:13-3.4-alpine
+    image: postgres:15.10
     environment:
       POSTGRES_USER: &pguser odoo
       POSTGRES_PASSWORD: &pgpassword odoo
