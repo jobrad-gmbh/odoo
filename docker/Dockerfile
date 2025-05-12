@@ -42,21 +42,23 @@ RUN if [ "$TARGETARCH" = "arm64" ]; then \
     && rm -rf /tmp/wkhtmltox.deb; \
 fi
 
-# lessc
+# Node.js
 ENV PATH="${PATH}:/opt/node/bin"
-RUN if [ "$TARGETARCH" = "arm64" ]; then \
-    curl -sL -o /tmp/node.tar.xz https://nodejs.org/dist/v18.20.8/node-v18.20.8-linux-arm64.tar.xz \
-    && echo '224e569dbe7b0ea4628ce383d9d482494b57ee040566583f1c54072c86d1116b /tmp/node.tar.xz' | sha256sum -c - \
-    && tar -xf /tmp/node.tar.xz \
-    && mv node-v18.20.8-linux-arm64 /opt/node \
-    && rm -rf /tmp/node.tar.xz; \
+RUN NODE_VERSION=20.19.2 \
+    && if [ "$TARGETARCH" = "arm64" ]; then \
+        NODE_ARCH="arm64"; \
+        NODE_SHA256="0d0c4a1c3a5aa657b76873eaa962936c7dc7a45047bd3957322544967713dc72"; \
     else \
-    curl -sL -o /tmp/node.tar.xz https://nodejs.org/dist/v18.20.8/node-v18.20.8-linux-x64.tar.xz \
-    && echo '5467ee62d6af1411d46b6a10e3fb5cacc92734dbcef465fea14e7b90993001c9 /tmp/node.tar.xz' | sha256sum -c - \
+        NODE_ARCH="x64"; \
+        NODE_SHA256="cbe59620b21732313774df4428586f7222a84af29e556f848abf624ba41caf90"; \
+    fi \
+    && curl -sL -o /tmp/node.tar.xz https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-$NODE_ARCH.tar.xz \
+    && echo "$NODE_SHA256 /tmp/node.tar.xz" | sha256sum -c - \
     && tar -xf /tmp/node.tar.xz \
-    && mv node-v18.20.8-linux-x64 /opt/node \
-    && rm -rf /tmp/node.tar.xz; \
-    fi
+    && mv node-v$NODE_VERSION-linux-$NODE_ARCH /opt/node \
+    && rm -rf /tmp/node.tar.xz
+
+# lessc
 RUN npm install -g less@4.3.0
 
 # ghostscript
