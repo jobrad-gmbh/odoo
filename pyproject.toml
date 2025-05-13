@@ -13,7 +13,7 @@ decorator = "4.3.0"
 docutils = "0.14"
 ebaysdk = "2.1.5"
 freezegun = {version = "0.3.15", markers = "python_version >= \"3.8\""}
-gevent = "23.9.1"
+gevent = {git = "https://github.com/jobrad-gmbh/gevent.git", rev = "b911625b3d0958be9cd24946855b9d240c7b0969"}
 greenlet = "3.1.0"
 idna = "2.6"
 jinja2 = "2.11.3"
