@@ -32,7 +32,10 @@ jobs:
       contents: read
       packages: write
     env:
-      GHCR_IMAGE_NAME: ghcr.io/jobrad-gmbh/odoo
+      IMAGE_NAME: ghcr.io/jobrad-gmbh/odoo
+    outputs:
+      IMAGE: ${{ steps.set-env-docker.outputs.IMAGE }}
+      IMAGE_BRANCH: ${{ steps.set-env-docker.outputs.IMAGE_BRANCH }}
     steps:
     - name: Clone
       uses: actions/checkout@v4
@@ -46,11 +49,33 @@ jobs:
         path: addons_enterprise
         fetch-depth: 1
 
-    - name: Create variables
+    - name: Create variables (push or workflow dispatch)
+      id: set-env-push
+      if: ${{ github.event_name == 'push' || github.event_name == 'workflow_dispatch' }}
       shell: bash
       run: |
-        echo "BRANCH_NAME=$(echo ${GITHUB_REF} | sed 's/refs\/heads\///'  | sed 's/refs\/tags\///' | sed 's/\//_/g')" >> $GITHUB_ENV
-        echo "SHORT_REV=$(echo ${{ github.sha }})" >> $GITHUB_ENV
+        echo "BRANCH_NAME=$(echo ${GITHUB_REF_NAME} | sed 's/[^A-Za-z0-9.-]/_/g')" >> $GITHUB_OUTPUT
+        echo "SHORT_REV=${{ github.sha }}" >> $GITHUB_OUTPUT
+
+    - name: Create variables (pull-request)
+      id: set-env-pr
+      if: ${{ github.event_name == 'pull_request' }}
+      shell: bash
+      run: |
+        echo "BRANCH_NAME=$(echo ${GITHUB_HEAD_REF} | sed 's/[^A-Za-z0-9.-]/_/g')" >> $GITHUB_OUTPUT
+        echo "SHORT_REV=${{ github.event.pull_request.head.sha }}" >> $GITHUB_OUTPUT
+
+    - name: Create Docker variables
+      id: set-env-docker
+      run: |
+        SHORT_REV=${{ steps.set-env-push.outputs.SHORT_REV || steps.set-env-pr.outputs.SHORT_REV }}
+        BRANCH_NAME=${{ steps.set-env-push.outputs.BRANCH_NAME || steps.set-env-pr.outputs.BRANCH_NAME }}
+
+        IMAGE=${{ env.IMAGE_NAME }}:${SHORT_REV}
+        echo "IMAGE=$IMAGE" >> $GITHUB_OUTPUT
+
+        IMAGE_BRANCH=${{ env.IMAGE_NAME }}:${BRANCH_NAME}
+        echo "IMAGE_BRANCH=$IMAGE_BRANCH" >> $GITHUB_OUTPUT
 
     - name: Login to ghcr registry
       uses: docker/login-action@v3
@@ -75,7 +100,7 @@ jobs:
         platforms: ${{ matrix.platform }}
         push: true
         tags: |
-          ${{ env.GHCR_IMAGE_NAME }}:${{ env.SHORT_REV }}-${{ matrix.suffix }}
+          ${{ steps.set-env-docker.outputs.IMAGE }}-${{ matrix.suffix }}
         cache-from: |
           type=gha,scope=image-${{ matrix.suffix }}
         cache-to: |
@@ -88,17 +113,7 @@ jobs:
     permissions:
       contents: read
       packages: write
-    env:
-      GHCR_IMAGE_NAME: ghcr.io/jobrad-gmbh/odoo
-    outputs:
-      IMAGE_REV: ${{ steps.manifest.outputs.IMAGE_REV }}
     steps:
-      - name: Create variables
-        shell: bash
-        run: |
-          echo "BRANCH_NAME=$(echo ${GITHUB_REF} | sed 's/refs\/heads\///'  | sed 's/refs\/tags\///' | sed 's/\//_/g')" >> $GITHUB_ENV
-          echo "SHORT_REV=$(echo ${{ github.sha }})" >> $GITHUB_ENV
-
       - name: Login to ghcr registry
         uses: docker/login-action@v3
         with:
@@ -113,24 +128,17 @@ jobs:
           username: github_runner
           password: ${{ secrets.ARTIFACTORY_TOKEN }}
 
-      - name: Combine Docker images into a single multi-architecture image
-        id: manifest
-        shell: bash
-        run: |
-          IMAGE_AMD64="${GHCR_IMAGE_NAME}:${SHORT_REV}-amd64"
-          IMAGE_ARM64="${GHCR_IMAGE_NAME}:${SHORT_REV}-arm64"
-          IMAGE_BRANCH="${GHCR_IMAGE_NAME}:${BRANCH_NAME}"
-          IMAGE_REV="${GHCR_IMAGE_NAME}:${SHORT_REV}"
-          docker pull "${IMAGE_AMD64}"
-          docker pull "${IMAGE_ARM64}"
-          docker manifest rm "${IMAGE_BRANCH}" || true
-          docker manifest rm "${IMAGE_REV}" || true
-          docker manifest create "${IMAGE_BRANCH}" "${IMAGE_AMD64}" "${IMAGE_ARM64}"
-          docker manifest create "${IMAGE_REV}" "${IMAGE_AMD64}" "${IMAGE_ARM64}"
-          docker manifest push "${IMAGE_BRANCH}"
-          docker manifest push "${IMAGE_REV}"
-          echo "IMAGE_REV=${IMAGE_REV}" >> $GITHUB_OUTPUT
-          # TODO Push to artifactory
+      # TODO Push to artifactory
+      - name: Combine Docker images
+        uses: int128/docker-manifest-create-action@v2
+        with:
+          tags: |
+            ${{ needs.build-docker.outputs.IMAGE }}
+            ${{ needs.build-docker.outputs.IMAGE_BRANCH }}
+          sources: |
+            ${{ needs.build-docker.outputs.IMAGE }}-amd64
+            ${{ needs.build-docker.outputs.IMAGE }}-arm64
+          push: true
 
   test:
     runs-on: self-hosted
@@ -147,7 +155,7 @@ jobs:
 
       - name: Run base Odoo tests
         run: |
-          export ODOO_IMAGE=${{ needs.combine-docker.outputs.IMAGE_REV }}
+          export ODOO_IMAGE=${{ needs.build-docker.outputs.IMAGE }}
           ./tests/run_tests.sh tests/modules
 
       - name: Cleanup
