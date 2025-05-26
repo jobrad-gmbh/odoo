@@ -17,8 +17,17 @@ on:
 
 jobs:
 
-  build-docker-amd64:
-    runs-on: self-hosted
+  build-docker:
+    strategy:
+      matrix:
+        include:
+          - runner: self-hosted
+            platform: linux/amd64
+            suffix: amd64
+          - runner: Linux-ARM64-2C-8GB
+            platform: linux/arm64
+            suffix: arm64
+    runs-on: ${{ matrix.runner }}
     permissions:
       contents: read
       packages: write
@@ -53,85 +62,29 @@ jobs:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
       with:
-        platforms: linux/amd64
+        platforms: ${{ matrix.platform }}
         driver-opts: |
           image=moby/buildkit:buildx-stable-1
           network=host
 
-    - name: Build and push Docker image (AMD64)
+    - name: Build and push Docker image
       uses: docker/build-push-action@v6
       with:
         context: .
         file: docker/Dockerfile
-        platforms: linux/amd64
+        platforms: ${{ matrix.platform }}
         push: true
         tags: |
-          ${{ env.GHCR_IMAGE_NAME }}:${{ env.SHORT_REV }}-amd64
+          ${{ env.GHCR_IMAGE_NAME }}:${{ env.SHORT_REV }}-${{ matrix.suffix }}
         cache-from: |
-          type=gha,scope=image-amd64
+          type=gha,scope=image-${{ matrix.suffix }}
         cache-to: |
-          type=gha,scope=image-amd64,mode=max
-        provenance: false
-
-  build-docker-arm64:
-    runs-on: Linux-ARM64-2C-8GB
-    permissions:
-      contents: read
-      packages: write
-    env:
-      GHCR_IMAGE_NAME: ghcr.io/jobrad-gmbh/odoo
-    steps:
-    - name: Clone
-      uses: actions/checkout@v3
-
-    - name: Clone enterprise addons
-      uses: actions/checkout@v3
-      with:
-        repository: jobrad-gmbh/odoo-addons-enterprise
-        ref: 14.0.10
-        token: ${{ secrets.ODOO_REPO_TOKEN }}
-        path: addons_enterprise
-        fetch-depth: 1
-
-    - name: Create variables
-      shell: bash
-      run: |
-        echo "BRANCH_NAME=$(echo ${GITHUB_REF} | sed 's/refs\/heads\///'  | sed 's/refs\/tags\///' | sed 's/\//_/g')" >> $GITHUB_ENV
-        echo "SHORT_REV=$(echo ${{ github.sha }})" >> $GITHUB_ENV
-
-    - name: Login to ghcr registry
-      uses: docker/login-action@v2
-      with:
-        registry: ghcr.io
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v3
-      with:
-        platforms: linux/arm64
-        driver-opts: |
-          image=moby/buildkit:buildx-stable-1
-          network=host
-
-    - name: Build and push Docker image (ARM64)
-      uses: docker/build-push-action@v6
-      with:
-        context: .
-        file: docker/Dockerfile
-        platforms: linux/arm64
-        push: true
-        tags: |
-          ${{ env.GHCR_IMAGE_NAME }}:${{ env.SHORT_REV }}-arm64
-        cache-from: |
-          type=gha,scope=image-arm64
-        cache-to: |
-          type=gha,scope=image-arm64,mode=max
+          type=gha,scope=image-${{ matrix.suffix }},mode=max
         provenance: false
 
   combine-docker:
     runs-on: [self-hosted, short]
-    needs: [build-docker-amd64, build-docker-arm64]
+    needs: [build-docker]
     permissions:
       contents: read
       packages: write
