@@ -35,10 +35,10 @@ jobs:
       GHCR_IMAGE_NAME: ghcr.io/jobrad-gmbh/odoo
     steps:
     - name: Clone
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Clone enterprise addons
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         repository: jobrad-gmbh/odoo-addons-enterprise
         ref: 14.0.10
@@ -53,7 +53,7 @@ jobs:
         echo "SHORT_REV=$(echo ${{ github.sha }})" >> $GITHUB_ENV
 
     - name: Login to ghcr registry
-      uses: docker/login-action@v2
+      uses: docker/login-action@v3
       with:
         registry: ghcr.io
         username: ${{ github.actor }}
@@ -100,14 +100,14 @@ jobs:
           echo "SHORT_REV=$(echo ${{ github.sha }})" >> $GITHUB_ENV
 
       - name: Login to ghcr registry
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Login to artifactory registry
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           registry: artifactory.service.jobrad.org
           username: github_runner
@@ -136,7 +136,7 @@ jobs:
     runs-on: self-hosted
     needs: combine-docker
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
