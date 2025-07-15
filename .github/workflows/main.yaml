@@ -142,7 +142,7 @@ jobs:
 
   test:
     runs-on: self-hosted
-    needs: combine-docker
+    needs: [build-docker, combine-docker]
     steps:
       - uses: actions/checkout@v4
 
@@ -156,6 +156,10 @@ jobs:
       - name: Run base Odoo tests
         run: |
           export ODOO_IMAGE=${{ needs.build-docker.outputs.IMAGE }}
+          if [ -z "$ODOO_IMAGE" ]; then
+            echo "ODOO_IMAGE is empty!"
+            exit 1
+          fi
           ./tests/run_tests.sh tests/modules
 
       - name: Cleanup
