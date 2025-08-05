@@ -61,25 +61,6 @@ RUN NODE_VERSION=20.19.2 \
 # lessc
 RUN npm install -g less@4.3.0
 
-# ghostscript
-RUN GHOSTSCRIPT_VERSION=10051 \
-    && GHOSTSCRIPT_FILE_NAME=ghostscript-10.05.1.tar.gz \
-    && GHOSTSCRIPT_BASE_NAME=$(basename ${GHOSTSCRIPT_FILE_NAME} .tar.gz) \
-    && curl -sL -o /tmp/${GHOSTSCRIPT_FILE_NAME} https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs${GHOSTSCRIPT_VERSION}/${GHOSTSCRIPT_FILE_NAME} \
-    && echo "121861b6d29b2461dec6575c9f3cab665b810bd408d4ec02c86719fa708b0a49 /tmp/${GHOSTSCRIPT_FILE_NAME}" | sha256sum -c - \
-    && tar -xzf /tmp/${GHOSTSCRIPT_FILE_NAME} -C /tmp \
-    && cd /tmp/${GHOSTSCRIPT_BASE_NAME}/ \
-    && ./configure \
-    && make -j$(nproc) \
-    && make install \
-    && ln -s /usr/local/bin/gs /usr/local/bin/ghostscript \
-    && mkdir /etc/odoo \
-    && sed -e 's^srgb.icc^/etc/odoo/default_rgb.icc^' \
-           -e 's^/OutputConditionIdentifier (sRGB)^/OutputConditionIdentifier (RGB)^' \
-           lib/PDFA_def.ps > /etc/odoo/PDFA_def.ps \
-    && cp iccprofiles/default_rgb.icc /etc/odoo/default_rgb.icc \
-    && rm -rf /tmp/${GHOSTSCRIPT_FILE_NAME} /tmp/${GHOSTSCRIPT_BASE_NAME}
-
 # odoo directories
 RUN useradd -s /usr/sbin/nologin --create-home --password odoo odoo \
   && mkdir /home/odoo/.local \
