@@ -430,6 +430,7 @@ class AccountMoveLine(models.Model):
         """
         Create column to stop ORM from computing it himself (too slow)
         """
+        res = super()._auto_init()
         if not column_exists(self.env.cr, self._table, 'analytic_distribution'):
             create_column(self.env.cr, self._table, 'analytic_distribution', 'jsonb')
             self.env.cr.execute("""
@@ -440,7 +441,7 @@ class AccountMoveLine(models.Model):
                         ELSE NULL
                 END;""",
             )
-        return super()._auto_init()
+        return res
 
     # -------------------------------------------------------------------------
     # COMPUTE METHODS
