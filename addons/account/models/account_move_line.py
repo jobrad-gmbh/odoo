@@ -7,7 +7,7 @@ from functools import lru_cache
 from odoo import api, fields, models, Command, _
 from odoo.exceptions import ValidationError, UserError, RedirectWarning
 from odoo.tools import frozendict, formatLang, format_date, float_compare, Query
-from odoo.tools.sql import create_index, column_exists, create_column
+from odoo.tools.sql import create_index, table_exists, column_exists, create_column
 from odoo.addons.web.controllers.utils import clean_action
 
 from odoo.addons.account.models.account_move import MAX_HASH_VERSION
@@ -426,22 +426,26 @@ class AccountMoveLine(models.Model):
         ),
     ]
 
+    
     def _auto_init(self):
         """
-        Create column to stop ORM from computing it himself (too slow)
+        Create column to stop ORM from computing it himself (too slow).
+        This will be run only if the database come from a migration.
         """
-        res = super()._auto_init()
-        if not column_exists(self.env.cr, self._table, 'analytic_distribution'):
+        if table_exists(self.env.cr, self._table) and not column_exists(self.env.cr, self._table, 'analytic_distribution'):
             create_column(self.env.cr, self._table, 'analytic_distribution', 'jsonb')
-            self.env.cr.execute("""
-                UPDATE account_move_line
-                SET analytic_distribution =
-                    CASE WHEN analytic_account_id IS NOT NULL
-                        THEN ('{"' || analytic_account_id || '": 100.0}')::jsonb
-                        ELSE NULL
-                END;""",
+            if column_exists(self.env.cr, self._table, 'analytic_account_id'):
+                self.env.cr.execute("""
+                    WITH updated AS (
+                        SELECT id, analytic_account_id
+                        FROM account_move_line
+                        WHERE analytic_account_id IS NOT NULL
+                    )
+                    UPDATE account_move_line
+                    SET analytic_distribution = ('{"' || updated.analytic_account_id || '": 100.0}')::jsonb
+                    WHERE id = updated.id;"""
             )
-        return res
+        return super()._auto_init()
 
     # -------------------------------------------------------------------------
     # COMPUTE METHODS
