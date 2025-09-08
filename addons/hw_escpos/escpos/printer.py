@@ -1,6 +1,5 @@
 #!/usr/bin/python
 
-from __future__ import print_function
 import serial
 import socket
 import usb.core

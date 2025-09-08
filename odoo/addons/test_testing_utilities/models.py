@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import division
-
 from itertools import count, zip_longest
 
 from odoo import api, fields, models, Command

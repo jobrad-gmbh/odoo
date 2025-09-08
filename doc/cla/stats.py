@@ -2,7 +2,6 @@
 #
 # Runme From the repo toplevel directory
 #
-from __future__ import print_function
 import subprocess
 import glob
 import re

@@ -1,4 +1,3 @@
-from __future__ import annotations
 
 import os
 import sys
@@ -6,6 +5,7 @@ import re
 import typing as t
 import warnings
 from werkzeug.datastructures import iter_multi_items
+import werkzeug.datastructures as ds
 from werkzeug.urls import _decode_idna
 
 import operator
@@ -98,13 +98,13 @@ class BaseURL(_URLTuple):
     _lbracket: str
     _rbracket: str
 
-    def __new__(cls, *args: t.Any, **kwargs: t.Any) -> BaseURL:
+    def __new__(cls, *args: t.Any, **kwargs: t.Any) -> "BaseURL":
         return super().__new__(cls, *args, **kwargs)
 
     def __str__(self) -> str:
         return self.to_url()
 
-    def replace(self, **kwargs: t.Any) -> BaseURL:
+    def replace(self, **kwargs: t.Any) -> "BaseURL":
         """Return an URL with the same values, except for those parameters
         given new values by whichever keyword arguments are specified."""
         return self._replace(**kwargs)
@@ -193,7 +193,7 @@ class BaseURL(_URLTuple):
         """
         return url_decode(self.query, *args, **kwargs)
 
-    def join(self, *args: t.Any, **kwargs: t.Any) -> BaseURL:
+    def join(self, *args: t.Any, **kwargs: t.Any) -> "BaseURL":
         """Joins this URL with another one.  This is just a convenience
         function for calling into :meth:`url_join` and then parsing the
         return value again.
@@ -370,7 +370,7 @@ class URL(BaseURL):
     _lbracket = "["
     _rbracket = "]"
 
-    def encode(self, charset: str = "utf-8", errors: str = "replace") -> BytesURL:
+    def encode(self, charset: str = "utf-8", errors: str = "replace") -> "BytesURL":
         """Encodes the URL to a tuple made out of bytes.  The charset is
         only being used for the path, query and fragment.
         """
@@ -405,7 +405,7 @@ class BytesURL(BaseURL):
         """Returns the netloc unchanged as bytes."""
         return self.netloc  # type: ignore
 
-    def decode(self, charset: str = "utf-8", errors: str = "replace") -> URL:
+    def decode(self, charset: str = "utf-8", errors: str = "replace") -> "URL":
         """Decodes the URL to a tuple made out of strings.  The charset is
         only being used for the path, query and fragment.
         """
@@ -493,7 +493,7 @@ def _url_unquote_legacy(value: str, unsafe: str = "") -> str:
 
 def url_parse(
     url: str, scheme: str | None = None, allow_fragments: bool = True
-) -> BaseURL:
+) -> "BaseURL":
     """Parses a URL from a string into a :class:`URL` tuple.  If the URL
     is lacking a scheme it can be provided as second argument. Otherwise,
     it is ignored.  Optionally fragments can be stripped from the URL
