@@ -1,5 +1,5 @@
 # Ubuntu 22.04
-FROM ubuntu:jammy-20250415.1
+FROM ubuntu:jammy-20250819
 
 # variables & locales
 ENV TZ=Europe/Berlin
@@ -44,13 +44,13 @@ fi
 
 # Node.js
 ENV PATH="${PATH}:/opt/node/bin"
-RUN NODE_VERSION=20.19.2 \
+RUN NODE_VERSION=20.19.5 \
     && if [ "$TARGETARCH" = "arm64" ]; then \
         NODE_ARCH="arm64"; \
-        NODE_SHA256="0d0c4a1c3a5aa657b76873eaa962936c7dc7a45047bd3957322544967713dc72"; \
+        NODE_SHA256="d462267863ae8ee556039ebdf559055a8ec562c633889ef1403f3adb449ba1dd"; \
     else \
         NODE_ARCH="x64"; \
-        NODE_SHA256="cbe59620b21732313774df4428586f7222a84af29e556f848abf624ba41caf90"; \
+        NODE_SHA256="315046739a513a70e03a4a55a8afda8cf979f30852e576075c340084e3f8ac0f"; \
     fi \
     && curl -sL -o /tmp/node.tar.xz https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-$NODE_ARCH.tar.xz \
     && echo "$NODE_SHA256 /tmp/node.tar.xz" | sha256sum -c - \
@@ -59,7 +59,7 @@ RUN NODE_VERSION=20.19.2 \
     && rm -rf /tmp/node.tar.xz
 
 # lessc
-RUN npm install -g less@4.3.0
+RUN npm install -g less@4.4.1
 
 # odoo directories
 RUN useradd -s /usr/sbin/nologin --create-home --password odoo odoo \
@@ -83,7 +83,7 @@ RUN PYTHON_VERSION="$(cat .python-version)" \
     && rm .python-version
 
 # Poetry
-RUN pip install --no-cache-dir poetry==2.1.3
+RUN pip install --no-cache-dir poetry==2.1.4
 
 USER odoo
 WORKDIR /opt/odoo
