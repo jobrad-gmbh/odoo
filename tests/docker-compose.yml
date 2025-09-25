@@ -1,6 +1,6 @@
 services:
   postgres:
-    image: postgres:15.10
+    image: postgres:17.6
     environment:
       POSTGRES_USER: &pguser odoo
       POSTGRES_PASSWORD: &pgpassword odoo
