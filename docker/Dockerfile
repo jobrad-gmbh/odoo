@@ -1,5 +1,5 @@
 # Ubuntu 22.04
-FROM ubuntu:jammy-20250819
+FROM ubuntu:jammy-20251001
 
 # variables & locales
 ENV TZ=Europe/Berlin
@@ -59,7 +59,7 @@ RUN NODE_VERSION=20.19.5 \
     && rm -rf /tmp/node.tar.xz
 
 # lessc
-RUN npm install -g less@4.4.1
+RUN npm install -g less@4.4.2
 
 # odoo directories
 RUN useradd -s /usr/sbin/nologin --create-home --password odoo odoo \
@@ -77,13 +77,13 @@ ENV PYENV_ROOT="/.pyenv"
 ENV PATH="${PYENV_ROOT}/shims:${PYENV_ROOT}/bin:${PATH}"
 COPY .python-version .
 RUN PYTHON_VERSION="$(cat .python-version)" \
-    && git clone --depth 1 -b v2.6.5 https://github.com/pyenv/pyenv.git "${PYENV_ROOT}" \
+    && git clone --depth 1 -b v2.6.11 https://github.com/pyenv/pyenv.git "${PYENV_ROOT}" \
     && pyenv install --verbose ${PYTHON_VERSION} \
     && pyenv global ${PYTHON_VERSION} \
     && rm .python-version
 
 # Poetry
-RUN pip install --no-cache-dir poetry==2.1.4
+RUN pip install --no-cache-dir poetry==2.2.1
 
 USER odoo
 WORKDIR /opt/odoo
