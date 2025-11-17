@@ -24,7 +24,7 @@ RUN apt-get update -qq \
     curl file xfonts-75dpi xfonts-base unzip build-essential fontconfig libfontconfig1 libpng16-16 \
     libldap2-dev libssl-dev poppler-utils fonts-dejavu cabextract libfreetype6 git libffi-dev libc6 \
     libstdc++6 libpoppler-cpp-dev pkg-config librdkafka-dev libpq-dev \
-    libbz2-dev libreadline-dev libsqlite3-dev liblzma-dev zlib1g-dev \
+    libbz2-dev libreadline-dev libsqlite3-dev liblzma-dev zlib1g-dev libdmtx0b \
     && rm -rf /var/lib/apt/lists/*
 
 ARG TARGETARCH
