@@ -69,10 +69,6 @@ RUN useradd -s /usr/sbin/nologin --create-home --password odoo odoo \
   && mkdir --parents /opt/odoo/tests \
   && chown --recursive odoo:odoo /opt/odoo
 
-# msfonts
-COPY docker/msfonts.sh /tmp/msfonts.sh
-RUN chmod +x /tmp/msfonts.sh; sync; /tmp/msfonts.sh; rm -rf /tmp/msfonts.sh
-
 # Python
 ENV PYENV_ROOT="/.pyenv"
 ENV PATH="${PYENV_ROOT}/shims:${PYENV_ROOT}/bin:${PATH}"
