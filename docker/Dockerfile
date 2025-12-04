@@ -30,17 +30,18 @@ RUN apt-get update -qq \
 ARG TARGETARCH
 
 # wkhtmltopdf
-RUN if [ "$TARGETARCH" = "arm64" ]; then \
-    curl -sL -o /tmp/wkhtmltox.deb https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6.1-2/wkhtmltox_0.12.6.1-2.jammy_arm64.deb \
-    && echo '0edcc573e8bbd7ba12885671e75cee8efe3ae11d /tmp/wkhtmltox.deb' | sha1sum -c - \
-    && apt-get install -y --no-install-recommends /tmp/wkhtmltox.deb \
-    && rm -rf /tmp/wkhtmltox.deb; \
+RUN WKHTMLTOPDF_VERSION=0.12.6.1-2 \
+    && if [ "$TARGETARCH" = "arm64" ]; then \
+        WKHTMLTOPDF_ARCH="arm64"; \
+        WKHTMLTOPDF_SHA1="0edcc573e8bbd7ba12885671e75cee8efe3ae11d"; \
     else \
-    curl -sL -o /tmp/wkhtmltox.deb https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6.1-2/wkhtmltox_0.12.6.1-2.jammy_amd64.deb \
-    && echo '800eb1c699d07238fee77bf9df1556964f00ffcf /tmp/wkhtmltox.deb' | sha1sum -c - \
+        WKHTMLTOPDF_ARCH="amd64"; \
+        WKHTMLTOPDF_SHA1="800eb1c699d07238fee77bf9df1556964f00ffcf"; \
+    fi \
+    && curl -sL -o /tmp/wkhtmltox.deb https://github.com/wkhtmltopdf/packaging/releases/download/${WKHTMLTOPDF_VERSION}/wkhtmltox_${WKHTMLTOPDF_VERSION}.jammy_${WKHTMLTOPDF_ARCH}.deb \
+    && echo "${WKHTMLTOPDF_SHA1} /tmp/wkhtmltox.deb" | sha1sum -c - \
     && apt-get install -y --no-install-recommends /tmp/wkhtmltox.deb \
-    && rm -rf /tmp/wkhtmltox.deb; \
-fi
+    && rm -rf /tmp/wkhtmltox.deb
 
 # Node.js
 ENV PATH="${PATH}:/opt/node/bin"
