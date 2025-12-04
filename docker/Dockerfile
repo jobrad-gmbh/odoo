@@ -7,25 +7,20 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update -qq \
-    && apt-get upgrade -y\
     && apt-get install -y locales -qq \
     && locale-gen en_US.UTF-8 \
     && dpkg-reconfigure locales \
-    && dpkg-reconfigure locales \
     && /usr/sbin/update-locale LANG=en_US.UTF-8 \
-    && rm -rf /var/lib/apt/lists/*
-ENV LANG=en_US.UTF-8
-ENV LANGUAGE=en_US.UTF-8
-ENV LC_ALL=en_US.UTF-8
-
-# dependencies for odoo or python packages
-RUN apt-get update -qq \
+    # dependencies for odoo or python packages
     && apt-get install -y --no-install-recommends libjpeg-dev libsasl2-dev libxslt-dev libxml2-dev ca-certificates tzdata \
     curl file xfonts-75dpi xfonts-base unzip build-essential fontconfig libfontconfig1 libpng16-16 \
     libldap2-dev libssl-dev poppler-utils fonts-dejavu cabextract libfreetype6 git libffi-dev libc6 \
     libstdc++6 libpoppler-cpp-dev pkg-config librdkafka-dev libpq-dev \
     libbz2-dev libreadline-dev libsqlite3-dev liblzma-dev zlib1g-dev libdmtx0b \
     && rm -rf /var/lib/apt/lists/*
+ENV LANG=en_US.UTF-8
+ENV LANGUAGE=en_US.UTF-8
+ENV LC_ALL=en_US.UTF-8
 
 ARG TARGETARCH
 
