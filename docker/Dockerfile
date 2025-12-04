@@ -92,7 +92,8 @@ ENV PATH="${VIRTUAL_ENV}/bin:${PATH}"
 COPY pyproject.toml .
 COPY poetry.lock .
 RUN poetry config virtualenvs.in-project true && \
-    poetry install --no-root --no-interaction --no-cache
+    poetry install --no-root --no-interaction && \
+    rm -rf ~/.cache/pypoetry
 
 COPY --chown=odoo:odoo . .
 
