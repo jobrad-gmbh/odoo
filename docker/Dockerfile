@@ -44,13 +44,13 @@ fi
 
 # Node.js
 ENV PATH="${PATH}:/opt/node/bin"
-RUN NODE_VERSION=20.19.5 \
+RUN NODE_VERSION=20.19.6 \
     && if [ "$TARGETARCH" = "arm64" ]; then \
         NODE_ARCH="arm64"; \
-        NODE_SHA256="d462267863ae8ee556039ebdf559055a8ec562c633889ef1403f3adb449ba1dd"; \
+        NODE_SHA256="e24741779ae4c2f3c79b362fa5c0c8bbcdca1a6240eb5906c58dc762dcb62e0e"; \
     else \
         NODE_ARCH="x64"; \
-        NODE_SHA256="315046739a513a70e03a4a55a8afda8cf979f30852e576075c340084e3f8ac0f"; \
+        NODE_SHA256="c514127107ebf6e3885f793b06674574d71fe22e3df91a78c52c5a6f84b3b5b0"; \
     fi \
     && curl -sL -o /tmp/node.tar.xz https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-$NODE_ARCH.tar.xz \
     && echo "$NODE_SHA256 /tmp/node.tar.xz" | sha256sum -c - \
