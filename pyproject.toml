@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "odoo"
 package-mode = false
-requires-poetry = "2.2.1"
+requires-poetry = "2.3.1"
 
 [tool.poetry.dependencies]
 python = "^3.11.14"
@@ -40,7 +40,7 @@ qrcode = "6.1"
 reportlab = "3.6.13"
 requests = "2.32.4"
 setuptools = "80.9.0"
-urllib3 = "2.6.0"
+urllib3 = "2.6.3"
 vobject = "0.9.9"
 Werkzeug = "3.1.4"
 xlrd = "1.2.0"
