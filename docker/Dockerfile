@@ -1,5 +1,5 @@
 # Ubuntu 22.04
-FROM ubuntu:jammy-20251001
+FROM ubuntu:jammy-20260109
 
 # variables & locales
 ENV TZ=Europe/Berlin
@@ -7,50 +7,46 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update -qq \
-    && apt-get upgrade -y\
     && apt-get install -y locales -qq \
     && locale-gen en_US.UTF-8 \
     && dpkg-reconfigure locales \
-    && dpkg-reconfigure locales \
     && /usr/sbin/update-locale LANG=en_US.UTF-8 \
-    && rm -rf /var/lib/apt/lists/*
-ENV LANG=en_US.UTF-8
-ENV LANGUAGE=en_US.UTF-8
-ENV LC_ALL=en_US.UTF-8
-
-# dependencies for odoo or python packages
-RUN apt-get update -qq \
+    # dependencies for odoo or python packages
     && apt-get install -y --no-install-recommends libjpeg-dev libsasl2-dev libxslt-dev libxml2-dev ca-certificates tzdata \
     curl file xfonts-75dpi xfonts-base unzip build-essential fontconfig libfontconfig1 libpng16-16 \
     libldap2-dev libssl-dev poppler-utils fonts-dejavu cabextract libfreetype6 git libffi-dev libc6 \
     libstdc++6 libpoppler-cpp-dev pkg-config librdkafka-dev libpq-dev \
     libbz2-dev libreadline-dev libsqlite3-dev liblzma-dev zlib1g-dev libdmtx0b \
     && rm -rf /var/lib/apt/lists/*
+ENV LANG=en_US.UTF-8
+ENV LANGUAGE=en_US.UTF-8
+ENV LC_ALL=en_US.UTF-8
 
 ARG TARGETARCH
 
 # wkhtmltopdf
-RUN if [ "$TARGETARCH" = "arm64" ]; then \
-    curl -sL -o /tmp/wkhtmltox.deb https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6.1-2/wkhtmltox_0.12.6.1-2.jammy_arm64.deb \
-    && echo '0edcc573e8bbd7ba12885671e75cee8efe3ae11d /tmp/wkhtmltox.deb' | sha1sum -c - \
-    && apt-get install -y --no-install-recommends /tmp/wkhtmltox.deb \
-    && rm -rf /tmp/wkhtmltox.deb; \
+RUN WKHTMLTOPDF_VERSION=0.12.6.1-2 \
+    && if [ "$TARGETARCH" = "arm64" ]; then \
+        WKHTMLTOPDF_ARCH="arm64"; \
+        WKHTMLTOPDF_SHA1="0edcc573e8bbd7ba12885671e75cee8efe3ae11d"; \
     else \
-    curl -sL -o /tmp/wkhtmltox.deb https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6.1-2/wkhtmltox_0.12.6.1-2.jammy_amd64.deb \
-    && echo '800eb1c699d07238fee77bf9df1556964f00ffcf /tmp/wkhtmltox.deb' | sha1sum -c - \
+        WKHTMLTOPDF_ARCH="amd64"; \
+        WKHTMLTOPDF_SHA1="800eb1c699d07238fee77bf9df1556964f00ffcf"; \
+    fi \
+    && curl -sL -o /tmp/wkhtmltox.deb https://github.com/wkhtmltopdf/packaging/releases/download/${WKHTMLTOPDF_VERSION}/wkhtmltox_${WKHTMLTOPDF_VERSION}.jammy_${WKHTMLTOPDF_ARCH}.deb \
+    && echo "${WKHTMLTOPDF_SHA1} /tmp/wkhtmltox.deb" | sha1sum -c - \
     && apt-get install -y --no-install-recommends /tmp/wkhtmltox.deb \
-    && rm -rf /tmp/wkhtmltox.deb; \
-fi
+    && rm -rf /tmp/wkhtmltox.deb
 
 # Node.js
 ENV PATH="${PATH}:/opt/node/bin"
-RUN NODE_VERSION=20.19.5 \
+RUN NODE_VERSION=20.20.0 \
     && if [ "$TARGETARCH" = "arm64" ]; then \
         NODE_ARCH="arm64"; \
-        NODE_SHA256="d462267863ae8ee556039ebdf559055a8ec562c633889ef1403f3adb449ba1dd"; \
+        NODE_SHA256="752113754a7dddf0622b3740a2b2bec3dbaf1792a18711b55871d76444d8892a"; \
     else \
         NODE_ARCH="x64"; \
-        NODE_SHA256="315046739a513a70e03a4a55a8afda8cf979f30852e576075c340084e3f8ac0f"; \
+        NODE_SHA256="4f48b52acf42130844a3a75e94da0e9629009d09e4101b2304895c24f3fbe609"; \
     fi \
     && curl -sL -o /tmp/node.tar.xz https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-$NODE_ARCH.tar.xz \
     && echo "$NODE_SHA256 /tmp/node.tar.xz" | sha256sum -c - \
@@ -59,7 +55,7 @@ RUN NODE_VERSION=20.19.5 \
     && rm -rf /tmp/node.tar.xz
 
 # lessc
-RUN npm install -g less@4.4.2
+RUN npm install -g less@4.5.1
 
 # odoo directories
 RUN useradd -s /usr/sbin/nologin --create-home --password odoo odoo \
@@ -68,22 +64,18 @@ RUN useradd -s /usr/sbin/nologin --create-home --password odoo odoo \
   && mkdir --parents /opt/odoo/tests \
   && chown --recursive odoo:odoo /opt/odoo
 
-# msfonts
-COPY docker/msfonts.sh /tmp/msfonts.sh
-RUN chmod +x /tmp/msfonts.sh; sync; /tmp/msfonts.sh; rm -rf /tmp/msfonts.sh
-
 # Python
 ENV PYENV_ROOT="/.pyenv"
 ENV PATH="${PYENV_ROOT}/shims:${PYENV_ROOT}/bin:${PATH}"
 COPY .python-version .
 RUN PYTHON_VERSION="$(cat .python-version)" \
-    && git clone --depth 1 -b v2.6.11 https://github.com/pyenv/pyenv.git "${PYENV_ROOT}" \
+    && git clone --depth 1 -b v2.6.15 https://github.com/pyenv/pyenv.git "${PYENV_ROOT}" \
     && pyenv install --verbose ${PYTHON_VERSION} \
     && pyenv global ${PYTHON_VERSION} \
     && rm .python-version
 
 # Poetry
-RUN pip install --no-cache-dir poetry==2.2.1
+RUN pip install --no-cache-dir poetry==2.3.1
 
 USER odoo
 WORKDIR /opt/odoo
@@ -92,10 +84,10 @@ WORKDIR /opt/odoo
 ENV VIRTUAL_ENV="/opt/odoo/.venv"
 ENV VIRTUAL_ENV_PROMPT="odoo"
 ENV PATH="${VIRTUAL_ENV}/bin:${PATH}"
-COPY pyproject.toml .
-COPY poetry.lock .
+COPY pyproject.toml poetry.lock ./
 RUN poetry config virtualenvs.in-project true && \
-    poetry install --no-root --no-interaction --no-cache
+    poetry install --no-root --no-interaction && \
+    rm -rf ~/.cache/pypoetry
 
 COPY --chown=odoo:odoo . .
 
