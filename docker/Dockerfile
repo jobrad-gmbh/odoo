@@ -69,7 +69,7 @@ ENV PYENV_ROOT="/.pyenv"
 ENV PATH="${PYENV_ROOT}/shims:${PYENV_ROOT}/bin:${PATH}"
 COPY .python-version .
 RUN PYTHON_VERSION="$(cat .python-version)" \
-    && git clone --depth 1 -b v2.6.15 https://github.com/pyenv/pyenv.git "${PYENV_ROOT}" \
+    && git clone --depth 1 -b v2.6.26 https://github.com/pyenv/pyenv.git "${PYENV_ROOT}" \
     && pyenv install --verbose ${PYTHON_VERSION} \
     && pyenv global ${PYTHON_VERSION} \
     && rm .python-version
