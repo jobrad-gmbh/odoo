@@ -40,13 +40,13 @@ RUN WKHTMLTOPDF_VERSION=0.12.6.1-2 \
 
 # Node.js
 ENV PATH="${PATH}:/opt/node/bin"
-RUN NODE_VERSION=20.20.0 \
+RUN NODE_VERSION=20.20.1 \
     && if [ "$TARGETARCH" = "arm64" ]; then \
         NODE_ARCH="arm64"; \
-        NODE_SHA256="752113754a7dddf0622b3740a2b2bec3dbaf1792a18711b55871d76444d8892a"; \
+        NODE_SHA256="f9a7b07fafd1adaf2c375af2ede31f462395377a8a6c9427d32793a68135e774"; \
     else \
         NODE_ARCH="x64"; \
-        NODE_SHA256="4f48b52acf42130844a3a75e94da0e9629009d09e4101b2304895c24f3fbe609"; \
+        NODE_SHA256="1592ef30f7a63309581a130f7fd8b3311a3e08ee0c609a3d13234590fe35409f"; \
     fi \
     && curl -sL -o /tmp/node.tar.xz https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-$NODE_ARCH.tar.xz \
     && echo "$NODE_SHA256 /tmp/node.tar.xz" | sha256sum -c - \
