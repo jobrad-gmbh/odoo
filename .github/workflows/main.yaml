@@ -21,7 +21,7 @@ jobs:
     strategy:
       matrix:
         include:
-          - runner: self-hosted
+          - runner: ubuntu-24.04
             platform: linux/amd64
             suffix: amd64
           - runner: Linux-ARM64-2C-8GB
@@ -108,7 +108,7 @@ jobs:
         provenance: false
 
   combine-docker:
-    runs-on: [self-hosted, short]
+    runs-on: ubuntu-24.04
     needs: [build-docker]
     permissions:
       contents: read
@@ -141,7 +141,7 @@ jobs:
           push: true
 
   test:
-    runs-on: self-hosted
+    runs-on: ubuntu-24.04
     needs: [build-docker, combine-docker]
     steps:
       - uses: actions/checkout@v4
