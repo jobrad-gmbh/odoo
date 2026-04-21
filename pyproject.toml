@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "odoo"
 package-mode = false
-requires-poetry = "2.3.2"
+requires-poetry = "2.3.4"
 
 [tool.poetry.dependencies]
 python = "^3.11.15"
