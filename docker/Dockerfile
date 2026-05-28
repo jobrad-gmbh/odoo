@@ -1,5 +1,5 @@
 # Ubuntu 22.04
-FROM ubuntu:jammy-20260410
+FROM ubuntu:jammy-20260509
 
 # variables & locales
 ENV TZ=Europe/Berlin
@@ -69,13 +69,13 @@ ENV PYENV_ROOT="/.pyenv"
 ENV PATH="${PYENV_ROOT}/shims:${PYENV_ROOT}/bin:${PATH}"
 COPY .python-version .
 RUN PYTHON_VERSION="$(cat .python-version)" \
-    && git clone --depth 1 -b v2.6.27 https://github.com/pyenv/pyenv.git "${PYENV_ROOT}" \
+    && git clone --depth 1 -b v2.6.31 https://github.com/pyenv/pyenv.git "${PYENV_ROOT}" \
     && pyenv install --verbose ${PYTHON_VERSION} \
     && pyenv global ${PYTHON_VERSION} \
     && rm .python-version
 
 # Poetry
-RUN pip install --no-cache-dir poetry==2.3.4
+RUN pip install --no-cache-dir poetry==2.4.1
 
 USER odoo
 WORKDIR /opt/odoo
