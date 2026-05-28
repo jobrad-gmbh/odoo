@@ -75,7 +75,7 @@ RUN PYTHON_VERSION="$(cat .python-version)" \
     && rm .python-version
 
 # Poetry
-RUN pip install --no-cache-dir poetry==2.3.4
+RUN pip install --no-cache-dir poetry==2.4.1
 
 USER odoo
 WORKDIR /opt/odoo
