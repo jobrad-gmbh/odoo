@@ -55,7 +55,7 @@ RUN NODE_VERSION=24.19.0 \
     && rm -rf /tmp/node.tar.xz
 
 # lessc
-RUN npm install -g less@4.6.4
+RUN npm install -g less@4.9.0
 
 # odoo directories
 RUN useradd -s /usr/sbin/nologin --create-home --password odoo odoo \
