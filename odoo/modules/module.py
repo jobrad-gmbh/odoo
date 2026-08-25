@@ -534,12 +534,20 @@ def adapt_version(version):
 
 current_test = False
 
+# Backported from Odoo 19 to remove dependency on `pkg_resources`.
+# See: https://github.com/odoo/odoo/commit/e0e9d7a9353f0b41d3930e7ca61140b9fd51bb71
+class MissingDependency(Exception):
+    def __init__(self, msg_template: str, dependency: str):
+        self.dependency = dependency
+        super().__init__(msg_template.format(dependency=dependency))
 
-def check_python_external_dependency(pydep):
+# Backported from Odoo 19 to remove dependency on `pkg_resources`.
+def check_python_external_dependency(pydep: str) -> None:
     try:
         requirement = Requirement(pydep)
     except InvalidRequirement as e:
-        raise Exception('%s is an invalid external dependency specification: %s' % (pydep, e)) from e
+        msg = '%s is an invalid external dependency specification: %s' % (pydep, e)
+        raise ValueError(msg) from e
 
     if requirement.marker and not requirement.marker.evaluate():
         _logger.debug(
@@ -557,10 +565,12 @@ def check_python_external_dependency(pydep):
             _logger.warning("python external dependency on '%s' does not appear to be a valid PyPI package. Using a PyPI package name is recommended.", pydep)
             return
         except ImportError:
-            raise Exception('External dependency %s not installed: %s' % (pydep, e)) from e
+            msg = 'External dependency {dependency!r} not installed: %s' % (e,)
+            raise MissingDependency(msg, pydep) from e
 
     if requirement.specifier and not requirement.specifier.contains(version):
-        raise Exception('External dependency version mismatch: %s (installed: %s)' % (pydep, version))
+        msg = 'External dependency version mismatch: {dependency} (installed: %s)' % (version,)
+        raise MissingDependency(msg, pydep)
 
 
 def check_manifest_dependencies(manifest):
