@@ -102,7 +102,7 @@ class TestExternalPythonDependency(BaseCase):
 
     def test_unsatisfied_version_constraint(self):
         with patch.object(module.importlib.metadata, 'version', return_value='1.0'):
-            with self.assertRaisesRegex(Exception, 'version mismatch'):
+            with self.assertRaisesRegex(module.MissingDependency, 'version mismatch'):
                 module.check_python_external_dependency('example>=2.0')
 
     def test_missing_distribution_with_importable_module(self):
@@ -115,8 +115,12 @@ class TestExternalPythonDependency(BaseCase):
         not_found = module.importlib.metadata.PackageNotFoundError('example')
         with patch.object(module.importlib.metadata, 'version', side_effect=not_found), \
              patch.object(module.importlib, 'import_module', side_effect=ImportError):
-            with self.assertRaisesRegex(Exception, 'not installed'):
+            with self.assertRaisesRegex(module.MissingDependency, 'not installed'):
                 module.check_python_external_dependency('example')
+
+    def test_invalid_requirement(self):
+        with self.assertRaisesRegex(ValueError, 'invalid external dependency specification'):
+            module.check_python_external_dependency('example>>>1.0')
 
     def test_ignored_environment_marker(self):
         with patch.object(module.importlib.metadata, 'version') as version:
