@@ -4,7 +4,7 @@ package-mode = false
 requires-poetry = "2.4.1"
 
 [tool.poetry.dependencies]
-python = "^3.11.15"
+python = "^3.11.16"
 
 [tool.poetry.group.odoo.dependencies]
 babel = "2.16.0"

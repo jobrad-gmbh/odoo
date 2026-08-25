@@ -1,5 +1,5 @@
 # Ubuntu 22.04
-FROM ubuntu:jammy-20260509
+FROM ubuntu:jammy-20260810
 
 # variables & locales
 ENV TZ=Europe/Berlin
@@ -55,7 +55,7 @@ RUN NODE_VERSION=24.19.0 \
     && rm -rf /tmp/node.tar.xz
 
 # lessc
-RUN npm install -g less@4.6.4
+RUN npm install -g less@4.9.0
 
 # odoo directories
 RUN useradd -s /usr/sbin/nologin --create-home --password odoo odoo \
@@ -69,7 +69,7 @@ ENV PYENV_ROOT="/.pyenv"
 ENV PATH="${PYENV_ROOT}/shims:${PYENV_ROOT}/bin:${PATH}"
 COPY .python-version .
 RUN PYTHON_VERSION="$(cat .python-version)" \
-    && git clone --depth 1 -b v2.6.31 https://github.com/pyenv/pyenv.git "${PYENV_ROOT}" \
+    && git clone --depth 1 -b v2.8.4 https://github.com/pyenv/pyenv.git "${PYENV_ROOT}" \
     && pyenv install --verbose ${PYTHON_VERSION} \
     && pyenv global ${PYTHON_VERSION} \
     && rm .python-version
