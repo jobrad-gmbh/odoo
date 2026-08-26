@@ -38,7 +38,7 @@ class TestWebsiteRedirect(TransactionCase):
         with self.assertRaises(ValidationError) as error:
             self.env['website.rewrite'].create({
                 'name': 'Test Website Redirect',
-                'redirect_type': '301',
+                'redirect_type': '308',
                 'url_from': '/website/info',
                 'url_to': '#',
             })
@@ -47,7 +47,7 @@ class TestWebsiteRedirect(TransactionCase):
         with self.assertRaises(ValidationError) as error:
             self.env['website.rewrite'].create({
                 'name': 'Test Website Redirect',
-                'redirect_type': '301',
+                'redirect_type': '308',
                 'url_from': '/website/info',
                 'url_to': '/website/info',
             })
