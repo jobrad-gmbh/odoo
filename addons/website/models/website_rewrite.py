@@ -92,7 +92,6 @@ class WebsiteRewrite(models.Model):
                 if rewrite.url_to.split('#')[0] == rewrite.url_from.split('#')[0]:
                     raise ValidationError(_("base URL of 'URL to' should not be same as 'URL from'."))
 
-            if rewrite.redirect_type == '308':
                 if not rewrite.url_to.startswith('/'):
                     raise ValidationError(_('"URL to" must start with a leading slash.'))
                 for param in re.findall('/<.*?>', rewrite.url_from):
