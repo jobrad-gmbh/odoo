@@ -6,13 +6,15 @@ import collections.abc
 import copy
 import functools
 import importlib
+import importlib.metadata
 import logging
 import os
-import pkg_resources
 import re
 import sys
 import warnings
 from os.path import join as opj, normpath
+
+from packaging.requirements import InvalidRequirement, Requirement
 
 import odoo
 import odoo.tools as tools
@@ -532,24 +534,43 @@ def adapt_version(version):
 
 current_test = False
 
+# Backported from Odoo 19 to remove dependency on `pkg_resources`.
+# See: https://github.com/odoo/odoo/commit/e0e9d7a9353f0b41d3930e7ca61140b9fd51bb71
+class MissingDependency(Exception):
+    def __init__(self, msg_template: str, dependency: str):
+        self.dependency = dependency
+        super().__init__(msg_template.format(dependency=dependency))
 
-def check_python_external_dependency(pydep):
+# Backported from Odoo 19 to remove dependency on `pkg_resources`.
+def check_python_external_dependency(pydep: str) -> None:
     try:
-        pkg_resources.get_distribution(pydep)
-    except pkg_resources.DistributionNotFound as e:
+        requirement = Requirement(pydep)
+    except InvalidRequirement as e:
+        msg = '%s is an invalid external dependency specification: %s' % (pydep, e)
+        raise ValueError(msg) from e
+
+    if requirement.marker and not requirement.marker.evaluate():
+        _logger.debug(
+            "Ignored external dependency %s because environment markers do not match",
+            pydep
+        )
+        return
+
+    try:
+        version = importlib.metadata.version(requirement.name)
+    except importlib.metadata.PackageNotFoundError as e:
         try:
+            # Some legacy manifests use an import name instead of a PyPI distribution name.
             importlib.import_module(pydep)
-            _logger.info("python external dependency on '%s' does not appear to be a valid PyPI package. Using a PyPI package name is recommended.", pydep)
+            _logger.warning("python external dependency on '%s' does not appear to be a valid PyPI package. Using a PyPI package name is recommended.", pydep)
+            return
         except ImportError:
-            # backward compatibility attempt failed
-            _logger.warning("DistributionNotFound: %s", e)
-            raise Exception('Python library not installed: %s' % (pydep,))
-    except pkg_resources.VersionConflict as e:
-        _logger.warning("VersionConflict: %s", e)
-        raise Exception('Python library version conflict: %s' % (pydep,))
-    except Exception as e:
-        _logger.warning("get_distribution(%s) failed: %s", pydep, e)
-        raise Exception('Error finding python library %s' % (pydep,))
+            msg = 'External dependency {dependency!r} not installed: %s' % (e,)
+            raise MissingDependency(msg, pydep) from e
+
+    if requirement.specifier and not requirement.specifier.contains(version):
+        msg = 'External dependency version mismatch: {dependency} (installed: %s)' % (version,)
+        raise MissingDependency(msg, pydep)
 
 
 def check_manifest_dependencies(manifest):

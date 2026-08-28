@@ -6,6 +6,7 @@ from os.path import join as opj
 from unittest.mock import patch
 
 import odoo.addons
+from odoo.modules import module
 from odoo.modules.module import load_manifest
 from odoo.modules.module import get_manifest
 from odoo.release import major_version
@@ -91,3 +92,37 @@ class TestModuleManifest(BaseCase):
             manifest = load_manifest(self.module_name)
         self.assertEqual(manifest['license'], 'LGPL-3')
         self.assertIn("Missing `license` key", capture.output[0])
+
+
+class TestExternalPythonDependency(BaseCase):
+
+    def test_satisfied_version_constraint(self):
+        with patch.object(module.importlib.metadata, 'version', return_value='2.0'):
+            module.check_python_external_dependency('example>=1.0')
+
+    def test_unsatisfied_version_constraint(self):
+        with patch.object(module.importlib.metadata, 'version', return_value='1.0'):
+            with self.assertRaisesRegex(module.MissingDependency, 'version mismatch'):
+                module.check_python_external_dependency('example>=2.0')
+
+    def test_missing_distribution_with_importable_module(self):
+        not_found = module.importlib.metadata.PackageNotFoundError('ldap')
+        with patch.object(module.importlib.metadata, 'version', side_effect=not_found), \
+             patch.object(module.importlib, 'import_module'):
+            module.check_python_external_dependency('ldap')
+
+    def test_missing_distribution_and_module(self):
+        not_found = module.importlib.metadata.PackageNotFoundError('example')
+        with patch.object(module.importlib.metadata, 'version', side_effect=not_found), \
+             patch.object(module.importlib, 'import_module', side_effect=ImportError):
+            with self.assertRaisesRegex(module.MissingDependency, 'not installed'):
+                module.check_python_external_dependency('example')
+
+    def test_invalid_requirement(self):
+        with self.assertRaisesRegex(ValueError, 'invalid external dependency specification'):
+            module.check_python_external_dependency('example>>>1.0')
+
+    def test_ignored_environment_marker(self):
+        with patch.object(module.importlib.metadata, 'version') as version:
+            module.check_python_external_dependency("example; python_version < '0'")
+        version.assert_not_called()
