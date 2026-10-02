@@ -1,5 +1,5 @@
 # Ubuntu 22.04
-FROM ubuntu:jammy-20260509
+FROM ubuntu:jammy-20260810
 
 # variables & locales
 ENV TZ=Europe/Berlin
@@ -40,13 +40,13 @@ RUN WKHTMLTOPDF_VERSION=0.12.6.1-2 \
 
 # Node.js
 ENV PATH="${PATH}:/opt/node/bin"
-RUN NODE_VERSION=20.20.2 \
+RUN NODE_VERSION=24.19.0 \
     && if [ "$TARGETARCH" = "arm64" ]; then \
         NODE_ARCH="arm64"; \
-        NODE_SHA256="73093db209e4e9e09dd7d15a47aeaab1b74833830df03efa5f942a1122c5fa71"; \
+        NODE_SHA256="01443c1e1a29e531ccad5a46fefa6df490d2189c49f7955904aecdbb0fe86fdc"; \
     else \
         NODE_ARCH="x64"; \
-        NODE_SHA256="df770b2a6f130ed8627c9782c988fda9669fa23898329a61a871e32f965e007d"; \
+        NODE_SHA256="14b342e71204f811bde6153be8e04b62aef63c236fef92b55f9c83154b409647"; \
     fi \
     && curl -sL -o /tmp/node.tar.xz https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-$NODE_ARCH.tar.xz \
     && echo "$NODE_SHA256 /tmp/node.tar.xz" | sha256sum -c - \
@@ -55,7 +55,7 @@ RUN NODE_VERSION=20.20.2 \
     && rm -rf /tmp/node.tar.xz
 
 # lessc
-RUN npm install -g less@4.6.4
+RUN npm install -g less@4.9.0
 
 # odoo directories
 RUN useradd -s /usr/sbin/nologin --create-home --password odoo odoo \
@@ -69,7 +69,7 @@ ENV PYENV_ROOT="/.pyenv"
 ENV PATH="${PYENV_ROOT}/shims:${PYENV_ROOT}/bin:${PATH}"
 COPY .python-version .
 RUN PYTHON_VERSION="$(cat .python-version)" \
-    && git clone --depth 1 -b v2.6.31 https://github.com/pyenv/pyenv.git "${PYENV_ROOT}" \
+    && git clone --depth 1 -b v2.8.4 https://github.com/pyenv/pyenv.git "${PYENV_ROOT}" \
     && pyenv install --verbose ${PYTHON_VERSION} \
     && pyenv global ${PYTHON_VERSION} \
     && rm .python-version
