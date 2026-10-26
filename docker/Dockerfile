@@ -55,7 +55,7 @@ RUN NODE_VERSION=24.22.1 \
     && rm -rf /tmp/node.tar.xz
 
 # lessc
-RUN npm install -g less@4.9.0
+RUN npm install -g less@4.9.1
 
 # odoo directories
 RUN useradd -s /usr/sbin/nologin --create-home --password odoo odoo \
@@ -69,13 +69,13 @@ ENV PYENV_ROOT="/.pyenv"
 ENV PATH="${PYENV_ROOT}/shims:${PYENV_ROOT}/bin:${PATH}"
 COPY .python-version .
 RUN PYTHON_VERSION="$(cat .python-version)" \
-    && git clone --depth 1 -b v2.8.4 https://github.com/pyenv/pyenv.git "${PYENV_ROOT}" \
+    && git clone --depth 1 -b v2.8.8 https://github.com/pyenv/pyenv.git "${PYENV_ROOT}" \
     && pyenv install --verbose ${PYTHON_VERSION} \
     && pyenv global ${PYTHON_VERSION} \
     && rm .python-version
 
 # Poetry
-RUN pip install --no-cache-dir poetry==2.4.1
+RUN pip install --no-cache-dir poetry==2.5.1
 
 USER odoo
 WORKDIR /opt/odoo
