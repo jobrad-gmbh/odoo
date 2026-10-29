@@ -74,8 +74,8 @@ RUN PYTHON_VERSION="$(cat .python-version)" \
     && pyenv global ${PYTHON_VERSION} \
     && rm .python-version
 
-# Poetry
-RUN pip install --no-cache-dir poetry==2.5.1
+# pip & Poetry
+RUN pip install --no-cache-dir --upgrade pip==26.2.2 poetry==2.5.1
 
 USER odoo
 WORKDIR /opt/odoo
