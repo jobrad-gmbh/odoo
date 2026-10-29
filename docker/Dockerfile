@@ -1,5 +1,5 @@
 # Ubuntu 22.04
-FROM ubuntu:jammy-20260810
+FROM ubuntu:jammy-20261020
 
 # variables & locales
 ENV TZ=Europe/Berlin
