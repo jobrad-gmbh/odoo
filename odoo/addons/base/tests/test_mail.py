@@ -16,7 +16,7 @@ from odoo.tools import (
     email_domain_normalize, email_normalize, email_split, email_split_and_format, html2plaintext,
     misc, formataddr, email_anonymize,
     prepend_html_content,
-    config,
+    config, mail,
 )
 
 from . import test_mail_examples
@@ -324,6 +324,27 @@ class TestSanitizer(BaseCase):
         img_tag = '<img src="@">'
         sanitized = html_sanitize(img_tag, sanitize_tags=False, strip_classes=True)
         self.assertEqual(img_tag, sanitized, "img with can have cid containing @ and shouldn't be escaped")
+
+    def test_comment_o_tag_mxss(self):
+        payloads = [
+            '<p>x</p><!--<o:x>> <img src=x onerror="alert(1)"> -->',
+            '<p>x</p><!--<o:x>> <script>alert(1)</script> -->',
+        ]
+        for payload in payloads:
+            with self.subTest(payload=payload):
+                html_result = str(html_sanitize(payload))
+                self.assertNotIn('onerror', html_result)
+                self.assertNotIn('<script', html_result)
+                self.assertNotIn('alert(1)', html_result)
+
+    @patch.object(mail.html, 'fromstring', wraps=mail.html.fromstring)
+    def test_comment_o_tag_normalization_order(self, fromstring_mock):
+        payload = '<p>x</p><!--<o:x>> <img src=x onerror="alert(1)"> -->'
+        html_sanitize(payload)
+        first_parse_input = fromstring_mock.call_args_list[0].args[0]
+        self.assertNotIn('<o:x>', first_parse_input)
+        self.assertNotIn('<!-->', first_parse_input)
+        self.assertIn('<!-- -->', first_parse_input)
 
     # ms office is currently not supported, have to find a way to support it
     # def test_30_email_msoffice(self):
