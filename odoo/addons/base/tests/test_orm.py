@@ -2,6 +2,7 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from collections import defaultdict
+from unittest.mock import patch
 
 import psycopg2
 
@@ -213,6 +214,46 @@ class TestORM(TransactionCase):
                                   groupby=['date:month', 'date:day'],
                                   orderby='date DESC', lazy=False)
         self.assertEqual([item['date:day'] for item in res], days)
+
+    def test_read_group_groupby_spec(self):
+        partners = self.env['res.partner'].create([
+            {'name': 'Spec A', 'date': '2024-01-15'},
+            {'name': 'Spec B', 'date': '2024-02-20'},
+        ])
+        domain = [('id', 'in', partners.ids)]
+
+        self.assertTrue(partners.read_group(domain, ['__count'], ['name']))
+        self.assertTrue(partners.read_group(domain, ['__count'], ['date:month']))
+        self.assertTrue(partners.read_group(domain, ['__count'], ['date:month', 'name'], lazy=False))
+
+    def test_read_group_groupby_spec_injection(self):
+        partners = self.env['res.partner']
+
+        for spec in (
+            'name:x" , (SELECT 1) --',
+            'date:month" , (SELECT 1) --',
+            'date:month:x" , (SELECT 1) --',
+            'name:month ',
+            'name:month; SELECT 1',
+            'name:month/1',
+            '"name"',
+        ):
+            with self.assertRaisesRegex(
+                ValueError, 'Invalid aggregate/groupby specification', msg=spec,
+            ):
+                partners.read_group([], ['__count'], [spec])
+
+    @mute_logger('odoo.sql_db')
+    @patch('odoo.models.parse_read_group_spec', new=lambda spec: None)
+    def test_read_group_groupby_spec_injection_without_validation(self):
+        partners = self.env['res.partner']
+        injected = 'injected_groupby_column'
+
+        with self.assertRaisesRegex(psycopg2.errors.UndefinedColumn, injected):
+            with self.cr.savepoint():
+                partners.read_group(
+                    [], ['__count'], [f'name:x" , {injected} --'], orderby='id',
+                )
 
     def test_write_duplicate(self):
         p1 = self.env['res.partner'].create({'name': 'W'})
